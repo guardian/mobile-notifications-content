@@ -1,0 +1,11 @@
+stacks: [content-api-mobile-notifications]
+regions: [eu-west-1]
+
+deployments:
+  mobile-content-notifications-lambda:
+    type: aws-lambda
+    parameters:
+      bucket: content-api-dist
+      functionNames: [mobile-content-notifications-lambda-]
+      fileName: mobile-content-notifications-lambda.jar
+      prefixStack: false
