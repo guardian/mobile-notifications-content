@@ -20,7 +20,6 @@ object ContentApi {
       val anHourAgo = DateTime.now().minusHours(1)
       content.webPublicationDate.map { pubDate =>
         val contentDateTime = new DateTime(pubDate.dateTime)
-        println(s"Date Check: $contentDateTime Hour Ago: $anHourAgo")
         contentDateTime.isAfter(anHourAgo)
       }.getOrElse(false)
     }

@@ -73,9 +73,7 @@ object Lambda extends NotificationsDebugLogger {
   }
 
   private def sendNotification(content: Content): Boolean = {
-    lazy val haveSeen = dynamo.haveSeenContentItem(content.id)
-    val shouldSendNotification = content.isRecent && !haveSeen
-    logDebug(s"ShouldSend notification for ${content.id}: Is recent ${content.isRecent} Published: ${content.getLoggablePublicationDate} seen previously: $haveSeen, Should send: $shouldSendNotification .")
+    val shouldSendNotification = content.isRecent && !dynamo.haveSeenContentItem(content.id)
     if (shouldSendNotification) {
       logDebug(s"Sending notification for: ${content.id}")
       messageSender.send(content)
