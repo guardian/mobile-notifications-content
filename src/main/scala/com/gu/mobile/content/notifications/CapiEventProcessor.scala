@@ -12,7 +12,7 @@ object CapiEventProcessor extends NotificationsDebugLogger {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def process(records: Seq[Record])(sendNotification: Event => Future[Boolean]) = {
-    val map = records.flatMap { record =>
+    val maybeNotificationsSent = records.flatMap { record =>
       val event = eventFromRecord(record)
       event.map {
         e => sendNotification(e)
@@ -23,9 +23,9 @@ object CapiEventProcessor extends NotificationsDebugLogger {
       }.toOption
     }
 
-    Future.sequence(map).map {
-      results =>
-        val notificationCount = results.count(_ == true)
+    Future.sequence(maybeNotificationsSent).map {
+      notificationsSent =>
+        val notificationCount = notificationsSent.count(_ == true)
         log(s"Sent $notificationCount notifications")
     }
   }
