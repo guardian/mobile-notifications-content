@@ -16,13 +16,12 @@ object ContentApi {
 
     def shortUrl: Option[String] = content.fields.flatMap { f => f.shortUrl }
 
-    //TODO - should this return false by default
     def isRecent: Boolean = {
       val anHourAgo = DateTime.now().minusHours(1)
       content.webPublicationDate.map { pubDate =>
         val contentDateTime = new DateTime(pubDate.dateTime)
         contentDateTime.isAfter(anHourAgo)
-      }.getOrElse(true)
+      }.getOrElse(false)
     }
 
     def getLoggablePublicationDate: String = {

@@ -1,8 +1,5 @@
 package com.gu.mobile.content.notifications
 
-/**
- * Created by nbennett on 05/06/17.
- */
 trait NotificationsDebugLogger {
 
   val showDebug: Boolean = false
@@ -14,5 +11,4 @@ trait NotificationsDebugLogger {
   }
 
   def log(message: String) = println(message)
-
 }

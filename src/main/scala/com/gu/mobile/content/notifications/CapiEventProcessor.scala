@@ -26,7 +26,7 @@ object CapiEventProcessor extends NotificationsDebugLogger {
     Future.sequence(map).map {
       results =>
         val notificationCount = results.count(_ == true)
-        log(s"sent $notificationCount notifications")
+        log(s"Sent $notificationCount notifications")
     }
   }
 

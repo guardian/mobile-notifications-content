@@ -25,6 +25,7 @@ class NotificationsDynamoDb(dynamoDB: DynamoDB, tableName: String) {
 object NotificationsDynamoDb extends NotificationsDebugLogger {
   def apply(config: Config): NotificationsDynamoDb = {
 
+    //Table is in the mobile aws account wheras the lambda runs in the capi account
     log(s"Configuring database access with cross acccount role: ${config.crossAccountDynamoRole} on table: ${config.contentDynamoTableName}")
 
     val dynamoCredentialsProvider = new AWSCredentialsProviderChain(

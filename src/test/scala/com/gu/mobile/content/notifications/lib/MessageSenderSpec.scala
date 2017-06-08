@@ -40,7 +40,6 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
     }
 
     "record message error" in {
-
       val messageSender = new MessageSender(config, apiClient, payloadBuilder, metrics)
       when(payloadBuilder.buildPayLoad(content)) thenReturn Some(mockPayload)
       when(apiClient.send(mockPayload)) thenReturn successfulError
@@ -52,7 +51,6 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
     }
 
     "record message failure" in {
-
       val messageSender = new MessageSender(config, apiClient, payloadBuilder, metrics)
       when(payloadBuilder.buildPayLoad(content)) thenReturn Some(mockPayload)
       when(apiClient.send(mockPayload)) thenReturn messageFailure
@@ -62,7 +60,5 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
         verify(metrics, times(1)).sendError(Matchers.any[MetricDataPoint])
       }
     }
-
   }
-
 }

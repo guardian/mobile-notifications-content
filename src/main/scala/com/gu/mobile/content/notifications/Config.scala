@@ -20,12 +20,12 @@ case class Config(
   debug: Boolean = false
 )
 
-//Todo Refactor
 object Config extends NotificationsDebugLogger {
   val bucket = Option(System.getenv("ConfigurationBucket")).getOrElse(sys.error("No bucket containing configuration file provided. Lambda will not run"))
   val configurationKey = Option(System.getenv("ConfigurationKey")).getOrElse(sys.error("No filename for configuaration provided. Lambda will not run"))
   val configurationS3GetRole = Option(System.getenv("ConfigurationS3GetRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
 
+  //Reads configuration from a bucket in the mobile acccount
   val s3DestinationConfiguration = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider(),
     new STSAssumeRoleSessionCredentialsProvider.Builder(configurationS3GetRole, "mobile-s3").build()

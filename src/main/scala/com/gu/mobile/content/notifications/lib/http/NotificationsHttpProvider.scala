@@ -14,7 +14,6 @@ object NotificationsHttpProvider extends HttpProvider {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   override def post(postUrl: String, contentType: ContentType, body: Array[Byte]): Future[HttpResponse] = {
-    println(s"++++++++++++++++++++ URL: $postUrl  ${contentType.toString}")
     def myPost = url(postUrl).POST.setContentType(contentType.mediaType, contentType.charset).setBody(body)
     processResponse(Http(myPost))
   }
@@ -29,7 +28,5 @@ object NotificationsHttpProvider extends HttpProvider {
       val status = r.getStatusCode
       val body = r.getResponseBody
       if (status >= 200 && status < 300) HttpOk(status, body) else HttpError(status, body)
-
   }
-
 }
