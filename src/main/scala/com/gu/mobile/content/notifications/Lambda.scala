@@ -58,7 +58,6 @@ object Lambda extends NotificationsDebugLogger {
                 val send = sendNotification(content)
                 Future.successful(send)
               case EventPayload.RetrievableContent(content) =>
-
                 logDebug(s"Handle retrievable content or not: ${content.id}")
                 handleRetrievableContent(content)
               case UnknownUnionField(e) =>
@@ -67,7 +66,7 @@ object Lambda extends NotificationsDebugLogger {
             }
           }.getOrElse(Future.successful(false))
         case _ =>
-          logDebug("Receive non-updatable event type ")
+          logDebug("Received non-updatable event type")
           Future.successful(false)
       }
     }
@@ -102,11 +101,11 @@ object Lambda extends NotificationsDebugLogger {
     capiClient.getResponse(itemQuery) map { itemResponse =>
       itemResponse.content match {
         case Some(content) => CapiResponseSuccess(content)
-        case _ => CapiResponseFailure(s"No content found for $contentId")
+        case _ => CapiResponseFailure(s"Retrievable Content: No content found for $contentId")
       }
     } recover {
       case GuardianContentApiError(status, message, _) =>
-        CapiResponseFailure(s"Recieved response from CAPI: $status with message: $message")
+        CapiResponseFailure(s"Retrievable Contenr: Recieved response from CAPI: $status with message: $message")
     }
   }
 
