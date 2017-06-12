@@ -12,6 +12,3 @@ Deploy the latest build of **mobile-content-notifications-lambda** in [RiffRaff]
 
 The lambda gets it's configuration and does some simple content tracking using AWS resources in the mobile account, using cross account roles. These resources are created by this [Cloudformation](The lambda gets it's configuration and does some simple content tracking using AWS resources in the mobile account, using cross account roles. These resources are created by this [Cloudformation]()
  here. 
- 
-
-                                            #

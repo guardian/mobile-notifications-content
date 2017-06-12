@@ -17,9 +17,12 @@ trait ContentAlertPayloadBuilder {
   val config: Config
 
   private val topicsWithoutPrefix = Set(
+    Topic(TagSeries, "football/series/the-uefa-euro-minute-2016"),
+    Topic(TagSeries, "sport/series/the-olympic-games-minute-2016"),
     Topic(TagSeries, "membership/series/weekend-reading"),
     Topic(TagSeries, "membership/series/weekend-round-up"),
-    Topic(TagSeries, "world/series/guardian-morning-briefing")
+    Topic(TagSeries, "world/series/guardian-morning-briefing"),
+    Topic(TagSeries, "politics/series/the-snap")
   )
 
   def buildPayLoad(content: Content): Option[ContentAlertPayload] = {

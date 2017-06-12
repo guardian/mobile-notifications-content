@@ -24,8 +24,6 @@ assemblyMergeStrategy in assembly := {
     oldStrategy(x)
 }
 
-//hel//helo
-
 libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-java-sdk-sts" % "1.11.136",
   "com.amazonaws" % "amazon-kinesis-client" % "1.7.5",
@@ -36,7 +34,7 @@ libraryDependencies ++= Seq(
   "com.gu" %% "content-api-client" % "11.14",
   "com.gu" %% "mobile-notifications-client" % "0.5.35",
   "io.spray" %%  "spray-json"  % "1.3.2",
-  "org.apache.thrift" % "libthrift" % "0.9.1" force(),
+  "org.apache.thrift" % "libthrift" % "0.9.1",
   "com.twitter" %% "scrooge-core" % "4.6.0",
   "org.joda" % "joda-convert" % "1.8.1",
   "org.jsoup" % "jsoup" % "1.8.3",
