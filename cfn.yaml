@@ -115,6 +115,7 @@ Resources:
             Ref: ConfigurationBucket
           ConfigurationKey: !Sub ${Stage}/${App}/${App}.properties
           ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
+          Stage: ${Stage}
       Description: lambda to replace the content-notifications-service
       Handler: com.gu.mobile.content.notifications.Lambda::handler
       MemorySize: 384

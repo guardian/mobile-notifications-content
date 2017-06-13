@@ -17,6 +17,7 @@ case class Config(
   contentApiKey: String,
   crossAccountDynamoRole: String,
   contentDynamoTableName: String,
+  stage: String,
   debug: Boolean = false
 )
 
@@ -24,6 +25,8 @@ object Config extends NotificationsDebugLogger {
   val bucket = Option(System.getenv("ConfigurationBucket")).getOrElse(sys.error("No bucket containing configuration file provided. Lambda will not run"))
   val configurationKey = Option(System.getenv("ConfigurationKey")).getOrElse(sys.error("No filename for configuaration provided. Lambda will not run"))
   val configurationS3GetRole = Option(System.getenv("ConfigurationS3GetRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
+  val stage = Option(System.getenv("Stage")).getOrElse(sys.error("No Stage set. Lambda will not run"))
+
 
   //Reads configuration from a bucket in the mobile acccount
   val s3DestinationConfiguration = new AWSCredentialsProviderChain(
@@ -60,7 +63,7 @@ object Config extends NotificationsDebugLogger {
 
     val debug = getProperty(properties, "debug").map(_.toBoolean).getOrElse(false)
 
-    Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, debug)
+    Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, stage, debug)
   }
 
   private def loadProperties(bucket: String, key: String): Try[Properties] = {

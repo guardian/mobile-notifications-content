@@ -33,11 +33,11 @@ class MessageSender(config: Config, apiClient: ApiClient, payloadBuilder: Conten
             println(s"Successfully sent notification for : ${n.title}")
             metrics.send(MetricDataPoint(name = "SendNotificationLatency", value = duration, unit = StandardUnit.Milliseconds))
           case Success(Left(error)) =>
-            metrics.sendError(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration, unit = StandardUnit.Milliseconds))
             println(s"Error sending notification: $n. error: ${error.description}  ")
+            metrics.send(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration, unit = StandardUnit.Milliseconds))
           case Failure(error) =>
-            metrics.sendError(MetricDataPoint(name = "SendNotificationFailureLatency", value = duration, unit = StandardUnit.Milliseconds))
             println(s"Failed to send notification: $n. error: ${error.getMessage}")
+            metrics.send(MetricDataPoint(name = "SendNotificationFailureLatency", value = duration, unit = StandardUnit.Milliseconds))
         }
       }
     }

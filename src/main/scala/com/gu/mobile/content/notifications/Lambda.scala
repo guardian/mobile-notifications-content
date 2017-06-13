@@ -36,7 +36,9 @@ object Lambda extends NotificationsDebugLogger {
     httpProvider = NotificationsHttpProvider
   )
 
-  private val messageSender = new MessageSender(config, apiClient, payLoadBuilder, new CloudWatchMetrics())
+  val metrics = new CloudWatchMetrics(config)
+
+  private val messageSender = new MessageSender(config, apiClient, payLoadBuilder, metrics)
   private val dynamo = NotificationsDynamoDb(config)
   private val capiClient = new GuardianContentClient(apiKey = config.contentApiKey)
 
@@ -73,7 +75,10 @@ object Lambda extends NotificationsDebugLogger {
   }
 
   private def sendNotification(content: Content): Boolean = {
-    val shouldSendNotification = content.isRecent && !dynamo.haveSeenContentItem(content.id)
+    val haveSeen = dynamo.haveSeenContentItem(content.id)
+    val isRecent = content.isRecent
+    val shouldSendNotification = isRecent && !haveSeen
+    log(s"Send notification: ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate} Is Recent: ${content.isRecent} Not previously seend ${!haveSeen}")
     if (shouldSendNotification) {
       logDebug(s"Sending notification for: ${content.id}")
       messageSender.send(content)
