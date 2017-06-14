@@ -18,9 +18,9 @@ class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugL
 
   override val showDebug: Boolean = config.debug
 
-  implicit val executionContext: ExecutionContext = actorSystem.dispatcher
-
   private val actorSystem: ActorSystem = ActorSystem("MessageSending-timicMetric")
+
+  implicit val executionContext: ExecutionContext = actorSystem.dispatcher
 
   logDebug("+++ Actor system created")
   private val cloudWatchClient = AmazonCloudWatchClientBuilder.defaultClient()
