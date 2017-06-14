@@ -7,11 +7,11 @@ import com.gu.mobile.content.notifications.Config
 import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
 import org.joda.time.LocalDate
-import org.scalatest.WordSpec
-import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
+import org.scalatest.{ MustMatchers, WordSpec, WordSpecLike }
+import org.scalatest.mockito.MockitoSugar
 
-class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
+class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with MustMatchers {
 
   val conf = mock[Config]
   when(conf.debug).thenReturn(false)
@@ -84,23 +84,23 @@ class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
   "Content Alert Payload Builder" must {
     "not build payload without tage" in {
       val unTaggedItem = item.copy(tags = Nil)
-      assert(builder.buildPayLoad(unTaggedItem) === None)
+      builder.buildPayLoad(unTaggedItem) mustEqual None
     }
 
     "not build payload when no tag can be translated to a topic " in {
       val unTaggedItem = item.copy(tags = List(Tag("blah", TagType.PaidContent, None, None, "random title", "", "")))
-      assert(builder.buildPayLoad(unTaggedItem) === None)
+      builder.buildPayLoad(unTaggedItem) mustEqual None
     }
 
     "create content alert for payload" in {
-      assert(builder.buildPayLoad(item) === Some(expectedPayloadForItem))
+      builder.buildPayLoad(item) mustEqual Some(expectedPayloadForItem)
     }
 
     "create content alert payload for content with standfirst" in {
       val fieldsWithStandfirst = contentFields.copy(standfirst = Some("<b>some standfirst</b>"))
       val itemWithStandfirst = item.copy(fields = Some(fieldsWithStandfirst))
       val payloadWithStandFirst = expectedPayloadForItem.copy(message = "some standfirst")
-      assert(builder.buildPayLoad(itemWithStandfirst) === Some(payloadWithStandFirst))
+      builder.buildPayLoad(itemWithStandfirst) mustEqual Some(payloadWithStandFirst)
     }
 
     "series tag should take precedence over the rest of the tags if there is only one" in {
@@ -126,14 +126,14 @@ class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
     "use no imageUri if no image is found" in {
       val itemWithoutImages = item.copy(elements = None)
       val expectedPayloadWithoutImages = expectedPayloadForItem.copy(imageUrl = None)
-      assert(builder.buildPayLoad(itemWithoutImages) === Some(expectedPayloadWithoutImages))
+      builder.buildPayLoad(itemWithoutImages) mustEqual Some(expectedPayloadWithoutImages)
     }
 
     "use imageUri when a valid main image is found" in {
       val itemWithImages = item.copy(elements = contentElements)
       val expectedPayloadWithImages = expectedPayloadForItem.copy(imageUrl = Some(new URI("https://some.url/image1000.jpg")))
       val load = builder.buildPayLoad(itemWithImages)
-      assert(load === Some(expectedPayloadWithImages))
+      load mustEqual Some(expectedPayloadWithImages)
     }
 
     "do not prefix title for weekend round up" in {
@@ -141,7 +141,7 @@ class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
       val topic = Topic(TagSeries, "membership/series/weekend-round-up")
       val minuteItem = item.copy(tags = List(tag))
       val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = Set(topic))
-      assert(builder.buildPayLoad(minuteItem) === Some(expectedMinutePayload))
+      builder.buildPayLoad(minuteItem) mustEqual Some(expectedMinutePayload)
     }
 
     "do not prefix title for weekend reading" in {
@@ -149,7 +149,7 @@ class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
       val topic = Topic(TagSeries, "membership/series/weekend-reading")
       val minuteItem = item.copy(tags = List(tag))
       val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = Set(topic))
-      assert(builder.buildPayLoad(minuteItem) === Some(expectedMinutePayload))
+      builder.buildPayLoad(minuteItem) mustEqual Some(expectedMinutePayload)
     }
 
     "do not prefix title for guardian-morning-briefing" in {
@@ -157,7 +157,7 @@ class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
       val topic = Topic(TagSeries, "world/series/guardian-morning-briefing")
       val contentItem = item.copy(tags = List(tag))
       val expectedPayload = expectedPayloadForItem.copy(title = "headline", topic = Set(topic))
-      assert(builder.buildPayLoad(contentItem) === Some(expectedPayload))
+      builder.buildPayLoad(contentItem) mustEqual Some(expectedPayload)
     }
 
     "should have a maximum of 20 topics" in {
@@ -166,7 +166,7 @@ class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
       val expectedTopics = manyTags.map(tag => Topic(TagKeyword, tag.id)).take(20).toSet
       val expectedPayload = expectedPayloadForItem.copy(topic = expectedTopics)
 
-      assert(builder.buildPayLoad(contentItem) === Some(expectedPayload))
+      builder.buildPayLoad(contentItem) mustEqual Some(expectedPayload)
     }
   }
 
@@ -177,7 +177,7 @@ class ContentAlertPayloadBuilderSpec extends WordSpec with MockitoSugar {
 
     val content = item.copy(tags = tags)
     val payLoad = builder.buildPayLoad(content)
-    assert(payLoad === Some(expectedPayload))
+    payLoad mustEqual Some(expectedPayload)
 
   }
 

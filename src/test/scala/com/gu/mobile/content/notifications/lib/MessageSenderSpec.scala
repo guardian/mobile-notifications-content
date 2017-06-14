@@ -5,7 +5,7 @@ import com.gu.mobile.content.notifications.Config
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
 import com.gu.mobile.notifications.client.{ ApiClient, ApiHttpError }
-import org.mockito.{ ArgumentCaptor, Matchers }
+import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.mockito.MockitoSugar
@@ -37,7 +37,7 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
       messageSender.send(content)
       eventually {
         verify(metrics).send(captor.capture())
-        assert(captor.getValue.name === "SendNotificationLatency")
+        captor.getValue.name mustEqual "SendNotificationLatency"
       }
     }
 
@@ -48,7 +48,7 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
       messageSender.send(content)
       eventually {
         verify(metrics).send(captor.capture())
-        assert(captor.getValue.name === "SendNotificationErrorLatency")
+        captor.getValue.name mustEqual "SendNotificationErrorLatency"
       }
     }
 
@@ -59,7 +59,7 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
       messageSender.send(content)
       eventually {
         verify(metrics).send(captor.capture())
-        assert(captor.getValue.name === "SendNotificationFailureLatency")
+        captor.getValue.name mustEqual "SendNotificationFailureLatency"
       }
     }
   }

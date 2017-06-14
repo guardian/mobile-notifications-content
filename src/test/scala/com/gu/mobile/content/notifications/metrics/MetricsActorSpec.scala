@@ -2,16 +2,14 @@ package com.gu.mobile.content.notifications.metrics
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest
-import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.mockito.{ ArgumentCaptor, Matchers }
-import org.scalatest.WordSpec
-import org.specs2.mutable.Spec
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{ MustMatchers, WordSpecLike }
 import org.specs2.specification.Scope
-import org.specs2.matcher.{ Matchers => MustMatchers }
-import org.specs2.specification.dsl.ActionDsl
 
-class MetricsActorSpec extends Spec with MockitoSugar with MustMatchers {
+class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers {
+
   "The Metric Actor Logic" should {
     "not call cloudwatch if there is not data" in new MetricActorScope {
       actorLogic.aggregatePoint(Nil)
