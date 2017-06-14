@@ -29,7 +29,6 @@ class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugL
   private val metricsActor = actorSystem.actorOf(props)
   logDebug("+++ Actor created")
 
-
   actorSystem.scheduler.schedule(
     initialDelay = 0.second,
     interval = 1.minute,

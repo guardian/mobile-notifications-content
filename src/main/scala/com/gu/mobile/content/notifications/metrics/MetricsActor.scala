@@ -81,6 +81,8 @@ trait MetricActorLogic extends NotificationsDebugLogger {
     if (points.isEmpty) {
       logDebug(s"No metrics sent to cloudwatch")
     } else {
+
+      logDebug(s"Sending metrics to cloudwatch")
       val metricsPerNameSpaceMatches = aggregatePointsPerNamespaceMatches(points)
 
       val metricsCount = metricsPerNameSpaceMatches.foldLeft(0) { case (sum, (_, batch)) => sum + batch.size }
@@ -95,6 +97,11 @@ trait MetricActorLogic extends NotificationsDebugLogger {
             metricRequest.setMetricData(awsMetricsBatch)
             cloudWatch.putMetricData(metricRequest)
         }
+        logDebug(s"Sent metrics to cloudwatch. " +
+          s"Data points: ${points.size}, " +
+          s"Metrics: $metricsCount, " +
+          s"Namespaces: $namespacesCount, " +
+          s"Batches: $batchesCount")
       } catch {
         case e: Exception => sys.error(s"Unable to send metrics to cloud ${e.getMessage}")
       }
