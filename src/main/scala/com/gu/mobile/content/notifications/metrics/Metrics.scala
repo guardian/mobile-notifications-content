@@ -1,14 +1,13 @@
 package com.gu.mobile.content.notifications.metrics
 
-import akka.actor.{ActorSystem, Props}
-import com.amazonaws.regions.{Region, Regions}
-import com.amazonaws.services.cloudwatch.{AmazonCloudWatchClient, AmazonCloudWatchClientBuilder}
+import akka.actor.{ ActorSystem, Props }
+import com.amazonaws.regions.{ Region, Regions }
+import com.amazonaws.services.cloudwatch.{ AmazonCloudWatchClient, AmazonCloudWatchClientBuilder }
 import com.amazonaws.services.cloudwatch.model.StandardUnit
-import com.gu.mobile.content.notifications.{Config, NotificationsDebugLogger}
+import com.gu.mobile.content.notifications.{ Config, NotificationsDebugLogger }
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-
 
 trait Metrics {
   def send(mdp: MetricDataPoint)
@@ -28,13 +27,13 @@ class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugL
   private val metricsActor = actorSystem.actorOf(props)
 
   actorSystem.scheduler.schedule(
-    initialDelay =  0.second,
+    initialDelay = 0.second,
     interval = 1.minute,
     receiver = metricsActor,
     message = MetricsActor.Aggregate
   )
 
-  def send(mdp: MetricDataPoint) : Unit = {
+  def send(mdp: MetricDataPoint): Unit = {
     logDebug(s"Sending metric: $mdp")
 
     metricsActor ! mdp
@@ -42,12 +41,11 @@ class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugL
 }
 
 case class MetricDataPoint(
-  namespage: String = "mobile-notifications-lambda",
-  name: String,
-  value: Double,
-  unit: StandardUnit = StandardUnit.None
-)  {
+    namespage: String = "mobile-notifications-lambda",
+    name: String,
+    value: Double,
+    unit: StandardUnit = StandardUnit.None
+) {
   override def toString = s"Namespace: $namespage Name: $name value: $value"
 }
-
 

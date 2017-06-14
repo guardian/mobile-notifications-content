@@ -27,7 +27,6 @@ object Config extends NotificationsDebugLogger {
   val configurationS3GetRole = Option(System.getenv("ConfigurationS3GetRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
   val stage = Option(System.getenv("Stage")).getOrElse(sys.error("No Stage set. Lambda will not run"))
 
-
   //Reads configuration from a bucket in the mobile acccount
   val s3DestinationConfiguration = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider(),
