@@ -39,7 +39,7 @@ object Config extends NotificationsDebugLogger {
     .build()
 
   def load(): Config = {
-    log(s"Loading config. Bucket: $bucket Key: $configurationKey")
+    log(s"Loading config. Bucket: $bucket Key: $configurationKey Stage: $stage")
     val properties = loadProperties(bucket, configurationKey) getOrElse sys.error("Could not load propeties from s3. Lambda will not run")
 
     val notificationsHost = getMandatoryProperty(properties, "notifications.host")

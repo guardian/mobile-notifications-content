@@ -115,7 +115,7 @@ Resources:
             Ref: ConfigurationBucket
           ConfigurationKey: !Sub ${Stage}/${App}/${App}.properties
           ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
-          Stage: ${Stage}
+          Stage: !Sub ${Stage}
       Description: lambda to replace the content-notifications-service
       Handler: com.gu.mobile.content.notifications.Lambda::handler
       MemorySize: 384
@@ -128,6 +128,7 @@ Resources:
     Properties:
       FunctionName: !Ref Lambda
       Enabled: true
-      EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
+     # EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
+      EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-PROD
       StartingPosition: LATEST
 
