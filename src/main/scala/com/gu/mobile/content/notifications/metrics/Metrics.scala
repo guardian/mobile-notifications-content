@@ -21,10 +21,14 @@ class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugL
   implicit val executionContext: ExecutionContext = actorSystem.dispatcher
 
   private val actorSystem: ActorSystem = ActorSystem("MessageSending-timicMetric")
+
+  logDebug("+++ Actor system created")
   private val cloudWatchClient = AmazonCloudWatchClientBuilder.defaultClient()
 
   val props = Props(new MetricsActor(cloudWatchClient, config))
   private val metricsActor = actorSystem.actorOf(props)
+  logDebug("+++ Actor created")
+
 
   actorSystem.scheduler.schedule(
     initialDelay = 0.second,
@@ -32,6 +36,8 @@ class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugL
     receiver = metricsActor,
     message = MetricsActor.Aggregate
   )
+
+  logDebug("Actor scheduled")
 
   def send(mdp: MetricDataPoint): Unit = {
     logDebug(s"Sending metric: $mdp")

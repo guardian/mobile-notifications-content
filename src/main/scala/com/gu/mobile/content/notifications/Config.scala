@@ -62,7 +62,9 @@ object Config extends NotificationsDebugLogger {
 
     val debug = getProperty(properties, "debug").map(_.toBoolean).getOrElse(false)
 
-    Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, stage, debug)
+    val c = Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, stage, debug)
+    log("Config created")
+    c
   }
 
   private def loadProperties(bucket: String, key: String): Try[Properties] = {

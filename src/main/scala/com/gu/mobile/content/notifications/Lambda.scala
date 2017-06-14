@@ -27,6 +27,7 @@ case class CapiResponseFailure(errorMsg: String) extends CapiResponse
 object Lambda extends NotificationsDebugLogger {
 
   private val config = Config.load()
+  logDebug("++++ ConficLoaded")
   private val payLoadBuilder = new ContentAlertPayloadBuilder {
     override val config: Config = Lambda.config
   }
@@ -37,6 +38,8 @@ object Lambda extends NotificationsDebugLogger {
   )
 
   val metrics = new CloudWatchMetrics(config)
+
+  logDebug("++++ Metrics Created")
 
   private val messageSender = new MessageSender(config, apiClient, payLoadBuilder, metrics)
   private val dynamo = NotificationsDynamoDb(config)
