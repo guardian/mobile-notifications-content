@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: lambda to replace the content-notifications-service
+Parameters:
+  Stack:
+    Description: Stack name
+    Type: String
+    Default: content-api-mobile-notifications
+  App:
+    Description: Application name
+    Type: String
+    Default: mobile-content-notifications-lambda
+  Stage:
+    Description: Stage name
+    Type: String
+    AllowedValues:
+      - CODE
+      - PROD
+    Default: CODE
+  DeployBucket:
+    Description: S3 Bucket where RiffRaff uploads artifacts on deploy
+    Type: String
+    Default: content-api-dist
+  MobileAccountId:
+    Description: Account ID of the gu moble account which
+    Type: String
+    Default: 201359054765
+  CrossAccountBaseRoleName:
+    Description: Base constituent name of the mobile account roles to assume
+    Type: String
+    Default: mobile-content-notifications-lambda-cross-account
+  ConfigurationBucket:
+    Description: S3 Bucket containing app configuration
+    Type: String
+    Default: mobile-notifications-dist
+  ConfigurationFileName:
+    Description: Name of file containing the application configuration
+    Type: String
+    Default: mobile-content-notifications-lambda.properties
+  KinesisStreamName:
+        Description: Capi kinesis stream
+        Type: String
+        Default: content-api-firehose-v2
+Resources:
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Path: /
+      Policies:
+        - PolicyName: assume-mobile-s3-read-role
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action: sts:AssumeRole
+              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
+        - PolicyName: assume-mobile-dynamo-role
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action: sts:AssumeRole
+              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-dynamo-${Stage}
+        - PolicyName: logs
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource: "*"
+        - PolicyName: invoke-lambda
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource: "*"
+        - PolicyName: iam-read-and-assume
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - iam:PassRole
+                - iam:GenerateCredentialReport
+                - iam:Get*
+                - iam:List*
+              Resource: "*"
+        - PolicyName: kinesis-read
+          PolicyDocument:
+             Statement:
+               Effect: Allow
+               Action:
+                 - Kinesis:DescribeStream
+                 - Kinesis:GetRecords
+                 - Kinesis:GetShardIterator
+                 - Kinesis:ListStream
+               Resource: "*"
+        - PolicyName: cloudwatch-put-metric-daata
+          PolicyDocument:
+             Statement:
+               Effect: Allow
+               Action:
+                  - cloudwatch:PutMetricData
+               Resource: "*"
+
+  Lambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${App}-${Stage}
+      Code:
+        S3Bucket:
+          Ref: DeployBucket
+        S3Key: !Sub ${Stack}/${Stage}/${App}/${App}.jar
+      Environment:
+        Variables:
+          ConfigurationBucket:
+            Ref: ConfigurationBucket
+          ConfigurationKey: !Sub ${Stage}/${App}/${App}.properties
+          ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
+          Stage: !Sub ${Stage}
+      Description: lambda to replace the content-notifications-service
+      Handler: com.gu.mobile.content.notifications.Lambda::handler
+      MemorySize: 384
+      Role: !GetAtt ExecutionRole.Arn
+      Runtime: java8
+      Timeout: 60
+
+  EventSource:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      FunctionName: !Ref Lambda
+      Enabled: true
+      EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
+      StartingPosition: LATEST
+
