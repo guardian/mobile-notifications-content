@@ -101,6 +101,14 @@ Resources:
                  - Kinesis:GetShardIterator
                  - Kinesis:ListStream
                Resource: "*"
+        - PolicyName: cloudwatch-put-metric-daata
+          PolicyDocument:
+             Statement:
+               Effect: Allow
+               Action:
+                  - cloudwatch:PutMetricData
+               Resource: "*"
+
   Lambda:
     Type: AWS::Lambda::Function
     Properties:
