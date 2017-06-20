@@ -25,6 +25,8 @@ trait ContentAlertPayloadBuilder {
     Topic(TagSeries, "politics/series/the-snap")
   )
 
+  private val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
+
   def buildPayLoad(content: Content): Option[ContentAlertPayload] = {
     val followableTag: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
       .orElse(content.tags.findOne(_.`type` == TagType.Blog))
@@ -67,7 +69,9 @@ trait ContentAlertPayloadBuilder {
     def title = content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)
     def reason = followableTag.map { ft => ft.webTitle }.getOrElse("Following")
 
-    if (topics.intersect(topicsWithoutPrefix).nonEmpty) {
+    if (topics.contains(briefingTopic)) {
+      s"Got a minute? $title"
+    } else if (topics.intersect(topicsWithoutPrefix).nonEmpty) {
       title
     } else {
       s"$reason: $title"
