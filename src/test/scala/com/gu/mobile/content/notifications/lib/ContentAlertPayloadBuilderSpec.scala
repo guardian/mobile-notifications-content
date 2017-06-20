@@ -160,6 +160,16 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       builder.buildPayLoad(contentItem) mustEqual Some(expectedPayload)
     }
 
+    "use a specific title for the minute notification" in {
+      val briefingTag = Tag("us-news/series/the-campaign-minute-2016", TagType.Series, None, None, "Steve", "", "")
+      val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
+      val expectedTitle = "Got a minute? headline"
+      val contentItem = item.copy(tags = List(briefingTag))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = expectedTitle, topic = Set(briefingTopic))
+      builder.buildPayLoad(contentItem) mustBe Some(expectedMinutePayload)
+
+    }
+
     "should have a maximum of 20 topics" in {
       val manyTags = (1 to 25).toList.map(index => Tag(s"idKeyword_$index", TagType.Keyword, None, None, s"World_$index", "", ""))
       val contentItem = item.copy(tags = manyTags)
