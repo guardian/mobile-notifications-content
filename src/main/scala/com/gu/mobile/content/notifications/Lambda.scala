@@ -76,16 +76,21 @@ object Lambda extends NotificationsDebugLogger {
   }
 
   private def sendNotification(content: Content): Boolean = {
-    val haveSeen = dynamo.haveSeenContentItem(content.id)
-    val isRecent = content.isRecent
-    val shouldSendNotification = isRecent && !haveSeen
-    log(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate} Is Recent: ${content.isRecent} Not previously seen ${!haveSeen}")
-    if (shouldSendNotification) {
-      logDebug(s"Sending notification for: ${content.id}")
-      messageSender.send(content)
-      dynamo.saveContentItem(content.id)
+    log(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
+    if (content.isRecent) {
+      val haveSeen = dynamo.haveSeenContentItem(content.id)
+      if (haveSeen) {
+        log(s"Ignoring duplicate piece of content ${content.id}")
+      } else {
+        logDebug(s"Sending notification for: ${content.id}")
+        messageSender.send(content)
+        dynamo.saveContentItem(content.id)
+      }
+      !haveSeen
+    } else {
+      log(s"Ignoring older piece of content ${content.id}")
+      false
     }
-    shouldSendNotification
   }
 
   private def handleRetrievableContent(retrievableContent: RetrievableContent): Future[Boolean] = {
