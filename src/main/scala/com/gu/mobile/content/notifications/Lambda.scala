@@ -56,19 +56,17 @@ object Lambda extends NotificationsDebugLogger {
     CapiEventProcessor.process(userRecords.asScala) { event =>
       event.eventType match {
         case EventType.Update =>
-          event.payload.map { payload =>
-            payload match {
-              case EventPayload.Content(content) =>
-                logDebug(s"Handle content update ${content.id}")
-                val send = sendNotification(content)
-                Future.successful(send)
-              case EventPayload.RetrievableContent(content) =>
-                logDebug(s"Handle retrievable content or not: ${content.id}")
-                handleRetrievableContent(content)
-              case UnknownUnionField(e) =>
-                logDebug(s"Unknown event payload $e. Consider updating capi models")
-                Future.successful(false)
-            }
+          event.payload.map {
+            case EventPayload.Content(content) =>
+              logDebug(s"Handle content update ${content.id}")
+              val send = sendNotification(content)
+              Future.successful(send)
+            case EventPayload.RetrievableContent(content) =>
+              logDebug(s"Handle retrievable content or not: ${content.id}")
+              handleRetrievableContent(content)
+            case UnknownUnionField(e) =>
+              logDebug(s"Unknown event payload $e. Consider updating capi models")
+              Future.successful(false)
           }.getOrElse(Future.successful(false))
         case _ =>
           logDebug("Received non-updatable event type")
