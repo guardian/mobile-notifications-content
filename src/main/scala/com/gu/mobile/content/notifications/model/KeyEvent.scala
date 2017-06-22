@@ -33,7 +33,9 @@ class KeyEventProvider(notificationsDynamoDb: NotificationsDynamoDb) {
   def getLatestKeyEvent(content: Content): Option[(Content, KeyEvent)] = {
     KeyEvent.fromContent(content).flatMap { keyEvent =>
       notificationsDynamoDb.haveSeenBlogEvent(content.id, keyEvent.blockId) match {
-        case true => None
+        case true =>
+          notificationsDynamoDb.saveLiveBlogEvent(content.id, keyEvent.blockId)
+          None
         case _ => Some((content, keyEvent))
       }
     }
