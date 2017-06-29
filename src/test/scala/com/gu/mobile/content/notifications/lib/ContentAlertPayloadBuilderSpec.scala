@@ -14,7 +14,6 @@ import org.scalatest.mockito.MockitoSugar
 class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with MustMatchers {
 
   val conf = mock[Config]
-  when(conf.debug).thenReturn(false)
   val builder = new ContentAlertPayloadBuilder {
     override val config: Config = conf
   }

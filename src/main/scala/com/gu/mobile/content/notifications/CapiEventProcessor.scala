@@ -7,7 +7,7 @@ import com.gu.mobile.content.notifications.CapiEventProcessor.eventFromRecord
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Try
 
-object CapiEventProcessor extends NotificationsDebugLogger {
+object CapiEventProcessor extends Logging {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
@@ -18,7 +18,7 @@ object CapiEventProcessor extends NotificationsDebugLogger {
         e => sendNotification(e)
       }.recover {
         case error =>
-          log(s"Failed to deserialize Kinesis record: ${error.getMessage}")
+          logger.error(s"Failed to deserialize Kinesis record: ${error.getMessage}", error)
           Future.successful(false)
       }.toOption
     }
@@ -26,7 +26,7 @@ object CapiEventProcessor extends NotificationsDebugLogger {
     Future.sequence(maybeNotificationsSent).map {
       notificationsSent =>
         val notificationCount = notificationsSent.count(_ == true)
-        log(s"Sent $notificationCount notifications")
+        logger.info(s"Sent $notificationCount notifications")
     }
   }
 

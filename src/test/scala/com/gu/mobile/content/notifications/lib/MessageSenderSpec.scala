@@ -16,7 +16,7 @@ import scala.concurrent.Future
 
 class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers with OneInstancePerTest with BeforeAndAfterEach {
 
-  val config = new Config(true, "", "", "", "", "", "", false)
+  val config = new Config(true, "", "", "", "", "", "")
   val apiClient = mock[ApiClient]
   val content = mock[Content]
   val mockPayload = mock[ContentAlertPayload]

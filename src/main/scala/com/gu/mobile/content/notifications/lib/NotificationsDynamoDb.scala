@@ -6,7 +6,7 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec
 import com.amazonaws.services.dynamodbv2.document.{ DynamoDB, Item }
-import com.gu.mobile.content.notifications.{ Config, NotificationsDebugLogger }
+import com.gu.mobile.content.notifications.{ Config, Logging }
 import org.joda.time.DateTime
 
 class NotificationsDynamoDb(dynamoDB: DynamoDB, tableName: String) {
@@ -24,11 +24,11 @@ class NotificationsDynamoDb(dynamoDB: DynamoDB, tableName: String) {
   }
 }
 
-object NotificationsDynamoDb extends NotificationsDebugLogger {
+object NotificationsDynamoDb extends Logging {
   def apply(config: Config): NotificationsDynamoDb = {
 
     //Table is in the mobile aws account wheras the lambda runs in the capi account
-    log(s"Configuring database access with cross acccount role: ${config.crossAccountDynamoRole} on table: ${config.contentDynamoTableName}")
+    logger.info(s"Configuring database access with cross acccount role: ${config.crossAccountDynamoRole} on table: ${config.contentDynamoTableName}")
 
     val dynamoCredentialsProvider = new AWSCredentialsProviderChain(
       new ProfileCredentialsProvider(),

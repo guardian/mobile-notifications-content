@@ -17,11 +17,10 @@ case class Config(
   contentApiKey: String,
   crossAccountDynamoRole: String,
   contentDynamoTableName: String,
-  stage: String,
-  debug: Boolean = false
+  stage: String
 )
 
-object Config extends NotificationsDebugLogger {
+object Config extends Logging {
   val bucket = Option(System.getenv("ConfigurationBucket")).getOrElse(sys.error("No bucket containing configuration file provided. Lambda will not run"))
   val configurationKey = Option(System.getenv("ConfigurationKey")).getOrElse(sys.error("No filename for configuaration provided. Lambda will not run"))
   val configurationS3GetRole = Option(System.getenv("ConfigurationS3GetRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
@@ -39,31 +38,29 @@ object Config extends NotificationsDebugLogger {
     .build()
 
   def load(): Config = {
-    log(s"Loading config. Bucket: $bucket Key: $configurationKey Stage: $stage")
+    logger.info(s"Loading config. Bucket: $bucket Key: $configurationKey Stage: $stage")
     val properties = loadProperties(bucket, configurationKey) getOrElse sys.error("Could not load propeties from s3. Lambda will not run")
 
     val notificationsHost = getMandatoryProperty(properties, "notifications.host")
-    log(s"notifications.host: $notificationsHost")
+    logger.info(s"notifications.host: $notificationsHost")
 
     val notificationsKey = getMandatoryProperty(properties, "notifications.key")
-    log(s"notifications.key: $notificationsKey")
+    logger.info(s"notifications.key: $notificationsKey")
 
     val guardianNotificationsEnabled = getMandatoryProperty(properties, "notifications.enabled").toBoolean
-    log(s"notifications.enable $guardianNotificationsEnabled")
+    logger.info(s"notifications.enable $guardianNotificationsEnabled")
 
     val contentDynamoTableName = getMandatoryProperty(properties, "content.notifications.table")
-    log(s"content.notifications.table: $contentDynamoTableName")
+    logger.info(s"content.notifications.table: $contentDynamoTableName")
 
     val crossAccountDynamoRole = getMandatoryProperty(properties, "content.notifications.crossAccountDynamoRole")
-    log(s"content.notifications.table: $contentDynamoTableName")
+    logger.info(s"content.notifications.table: $contentDynamoTableName")
 
     val contentApiKey = getMandatoryProperty(properties, "content.api.key")
-    log(s"content.api.key $contentApiKey")
+    logger.info(s"content.api.key $contentApiKey")
 
-    val debug = getProperty(properties, "debug").map(_.toBoolean).getOrElse(false)
-
-    val c = Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, stage, debug)
-    log("Config created")
+    val c = Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, stage)
+    logger.info("Config created")
     c
   }
 
