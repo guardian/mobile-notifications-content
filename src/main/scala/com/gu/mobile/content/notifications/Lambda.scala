@@ -77,7 +77,6 @@ object Lambda extends Logging {
       if (haveSeen) {
         logger.info(s"Ignoring duplicate content ${content.id}")
       } else {
-        logger.info(s"Sending notification for: ${content.id}")
         try {
           messageSender.send(content)
           dynamo.saveContentItem(content.id)

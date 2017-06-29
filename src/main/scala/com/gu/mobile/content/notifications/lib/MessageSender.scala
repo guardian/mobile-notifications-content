@@ -24,6 +24,7 @@ class MessageSender(config: Config, apiClient: ApiClient, payloadBuilder: Conten
     lazy val duration = System.currentTimeMillis() - start
 
     if (config.guardianNotificationsEnabled) {
+      logger.info(s"Sending notification $notification")
       apiClient.send(notification) onComplete {
         case Success(Right(_)) =>
           logger.info(s"Successfully sent notification for : ${notification.title}")
