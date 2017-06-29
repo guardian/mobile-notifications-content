@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications.lib
 
-import com.gu.contentapi.client.model.v1.{ Asset, Content }
+import com.gu.contentapi.client.model.v1.{Asset, Content, Tag, TagType}
 import org.joda.time.DateTime
 import org.jsoup.Jsoup
 
@@ -18,11 +18,14 @@ object ContentApi {
 
     def isRecent: Boolean = {
       val anHourAgo = DateTime.now().minusHours(1)
-      content.webPublicationDate.map { pubDate =>
+      content.webPublicationDate.exists { pubDate =>
         val contentDateTime = new DateTime(pubDate.dateTime)
         contentDateTime.isAfter(anHourAgo)
-      }.getOrElse(false)
+      }
     }
+
+    private val followableTagTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
+    def followableTags: Seq[Tag] = content.tags.filter(tag => followableTagTypes.contains(tag.`type`))
 
     def getLoggablePublicationDate: String = {
       content.webPublicationDate.map(_.toString()).getOrElse("Unknown date")

@@ -59,7 +59,7 @@ object Lambda extends NotificationsDebugLogger {
           event.payload.map {
             case EventPayload.Content(content) =>
               logDebug(s"Handle content update ${content.id}")
-              val send = sendNotification(content)
+              val send = processContent(content)
               Future.successful(send)
             case EventPayload.RetrievableContent(content) =>
               logDebug(s"Handle retrievable content or not: ${content.id}")
@@ -75,12 +75,12 @@ object Lambda extends NotificationsDebugLogger {
     }
   }
 
-  private def sendNotification(content: Content): Boolean = {
+  private def processContent(content: Content): Boolean = {
     log(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
-    if (content.isRecent) {
+    if (content.isRecent && content.followableTags.nonEmpty) {
       val haveSeen = dynamo.haveSeenContentItem(content.id)
       if (haveSeen) {
-        log(s"Ignoring duplicate piece of content ${content.id}")
+        log(s"Ignoring duplicate content ${content.id}")
       } else {
         logDebug(s"Sending notification for: ${content.id}")
         messageSender.send(content)
@@ -88,14 +88,18 @@ object Lambda extends NotificationsDebugLogger {
       }
       !haveSeen
     } else {
-      log(s"Ignoring older piece of content ${content.id}")
+      if (!content.isRecent) {
+        log(s"Ignoring older content ${content.id}")
+      } else {
+        log(s"Ignoring content ${content.id} as it doesn't contain followable tags: ${content.tags}")
+      }
       false
     }
   }
 
   private def handleRetrievableContent(retrievableContent: RetrievableContent): Future[Boolean] = {
     retrieveContent(retrievableContent) map {
-      case CapiResponseSuccess(content) => sendNotification(content)
+      case CapiResponseSuccess(content) => processContent(content)
       case CapiResponseFailure(errorMsg) =>
         log(errorMsg)
         false
