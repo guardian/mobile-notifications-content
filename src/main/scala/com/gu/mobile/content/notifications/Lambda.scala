@@ -83,8 +83,14 @@ object Lambda extends NotificationsDebugLogger {
         log(s"Ignoring duplicate content ${content.id}")
       } else {
         logDebug(s"Sending notification for: ${content.id}")
-        messageSender.send(content)
-        dynamo.saveContentItem(content.id)
+        try {
+          messageSender.send(content)
+          dynamo.saveContentItem(content.id)
+        } catch {
+          case e: Exception =>
+            log(s"Unable to send notification for ${content.id}, see stacktrace bellow")
+            e.printStackTrace()
+        }
       }
       !haveSeen
     } else {
