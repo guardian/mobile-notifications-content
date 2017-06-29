@@ -6,7 +6,7 @@ description:= "lambda to replace the content-notifications-service"
 
 version := "1.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.11"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -24,26 +24,27 @@ assemblyMergeStrategy in assembly := {
     oldStrategy(x)
 }
 
+val awsSdkVersion = "1.11.156"
+
 libraryDependencies ++= Seq(
-  "com.amazonaws" % "aws-java-sdk-sts" % "1.11.136",
-  "com.amazonaws" % "amazon-kinesis-client" % "1.7.5",
+  "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
+  "com.amazonaws" % "amazon-kinesis-client" % "1.7.6",
   "com.amazonaws" % "aws-lambda-java-core" % "1.1.0",
   "com.amazonaws" % "aws-lambda-java-events" % "1.3.0",
-  "com.amazonaws" % "aws-java-sdk-cloudwatch" % "1.11.136",
-  "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.11.136",
-  "com.gu" %% "content-api-client" % "11.14",
+  "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
+  "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
+  "com.gu" %% "content-api-client" % "11.19",
   "com.gu" %% "mobile-notifications-client" % "0.5.35",
-  "io.spray" %%  "spray-json"  % "1.3.2",
   "org.apache.thrift" % "libthrift" % "0.9.1",
-  "com.twitter" %% "scrooge-core" % "4.6.0",
   "org.joda" % "joda-convert" % "1.8.1",
   "org.jsoup" % "jsoup" % "1.8.3",
   "com.typesafe.play" %% "play-json" % "2.3.2",
+  "org.slf4j" % "slf4j-simple" % "1.7.25",
+  "com.typesafe.akka" %% "akka-actor" % "2.5.2",
   "org.scalatest" %% "scalatest" % "3.0.0" % "test",
   "org.mockito" % "mockito-all" % "1.9.0" % "test",
-  "org.specs2" %% "specs2-core" % "3.8.6" % "test",
-  "org.specs2" %% "specs2-matcher-extra" % "3.8.6" % "test",
-  "com.typesafe.akka" %% "akka-actor" % "2.5.2"
+  "org.specs2" %% "specs2-core" % "3.9.1" % "test",
+  "org.specs2" %% "specs2-matcher-extra" % "3.9.1" % "test"
 )
 
 enablePlugins(RiffRaffArtifact)

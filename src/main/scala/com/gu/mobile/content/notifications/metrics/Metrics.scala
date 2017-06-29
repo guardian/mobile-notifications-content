@@ -4,7 +4,7 @@ import akka.actor.{ ActorSystem, Props }
 import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.cloudwatch.{ AmazonCloudWatchClient, AmazonCloudWatchClientBuilder }
 import com.amazonaws.services.cloudwatch.model.StandardUnit
-import com.gu.mobile.content.notifications.{ Config, NotificationsDebugLogger }
+import com.gu.mobile.content.notifications.{ Config, Logging }
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -14,20 +14,18 @@ trait Metrics {
   def executionContext: ExecutionContext
 }
 
-class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugLogger {
-
-  override val showDebug: Boolean = config.debug
+class CloudWatchMetrics(config: Config) extends Metrics with Logging {
 
   private val actorSystem: ActorSystem = ActorSystem("MessageSending-timicMetric")
 
   implicit val executionContext: ExecutionContext = actorSystem.dispatcher
+  logger.debug("Actor system created")
 
-  logDebug("+++ Actor system created")
   private val cloudWatchClient = AmazonCloudWatchClientBuilder.defaultClient()
 
   val props = Props(new MetricsActor(cloudWatchClient, config))
   private val metricsActor = actorSystem.actorOf(props)
-  logDebug("+++ Actor created")
+  logger.debug("Actor created")
 
   actorSystem.scheduler.schedule(
     initialDelay = 0.second,
@@ -36,10 +34,10 @@ class CloudWatchMetrics(config: Config) extends Metrics with NotificationsDebugL
     message = MetricsActor.Aggregate
   )
 
-  logDebug("Actor scheduled")
+  logger.debug("Actor scheduled")
 
   def send(mdp: MetricDataPoint): Unit = {
-    logDebug(s"Sending metric: $mdp")
+    logger.info(s"Sending metric: $mdp")
 
     metricsActor ! mdp
   }

@@ -24,10 +24,9 @@ sealed trait CapiResponse
 case class CapiResponseSuccess(content: Content) extends CapiResponse
 case class CapiResponseFailure(errorMsg: String) extends CapiResponse
 
-object Lambda extends NotificationsDebugLogger {
+object Lambda extends Logging {
 
   private val config = Config.load()
-  logDebug("++++ ConficLoaded")
   private val payLoadBuilder = new ContentAlertPayloadBuilder {
     override val config: Config = Lambda.config
   }
@@ -39,13 +38,9 @@ object Lambda extends NotificationsDebugLogger {
 
   val metrics = new CloudWatchMetrics(config)
 
-  logDebug("++++ Metrics Created")
-
   private val messageSender = new MessageSender(config, apiClient, payLoadBuilder, metrics)
   private val dynamo = NotificationsDynamoDb(config)
   private val capiClient = new GuardianContentClient(apiKey = config.contentApiKey)
-
-  override val showDebug: Boolean = config.debug
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
@@ -58,46 +53,45 @@ object Lambda extends NotificationsDebugLogger {
         case EventType.Update =>
           event.payload.map {
             case EventPayload.Content(content) =>
-              logDebug(s"Handle content update ${content.id}")
+              logger.debug(s"Handle content update ${content.id}")
               val send = processContent(content)
               Future.successful(send)
             case EventPayload.RetrievableContent(content) =>
-              logDebug(s"Handle retrievable content or not: ${content.id}")
+              logger.debug(s"Handle retrievable content or not: ${content.id}")
               handleRetrievableContent(content)
             case UnknownUnionField(e) =>
-              logDebug(s"Unknown event payload $e. Consider updating capi models")
+              logger.error(s"Unknown event payload $e. Consider updating capi models")
               Future.successful(false)
           }.getOrElse(Future.successful(false))
         case _ =>
-          logDebug("Received non-updatable event type")
+          logger.error("Received non-updatable event type")
           Future.successful(false)
       }
     }
   }
 
   private def processContent(content: Content): Boolean = {
-    log(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
+    logger.info(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
     if (content.isRecent && content.followableTags.nonEmpty) {
       val haveSeen = dynamo.haveSeenContentItem(content.id)
       if (haveSeen) {
-        log(s"Ignoring duplicate content ${content.id}")
+        logger.info(s"Ignoring duplicate content ${content.id}")
       } else {
-        logDebug(s"Sending notification for: ${content.id}")
+        logger.info(s"Sending notification for: ${content.id}")
         try {
           messageSender.send(content)
           dynamo.saveContentItem(content.id)
         } catch {
           case e: Exception =>
-            log(s"Unable to send notification for ${content.id}, see stacktrace bellow")
-            e.printStackTrace()
+            logger.error(s"Unable to send notification for ${content.id}", e)
         }
       }
       !haveSeen
     } else {
       if (!content.isRecent) {
-        log(s"Ignoring older content ${content.id}")
+        logger.info(s"Ignoring older content ${content.id}")
       } else {
-        log(s"Ignoring content ${content.id} as it doesn't contain followable tags: ${content.tags}")
+        logger.info(s"Ignoring content ${content.id} as it doesn't contain followable tags: ${content.tags}")
       }
       false
     }
@@ -107,14 +101,14 @@ object Lambda extends NotificationsDebugLogger {
     retrieveContent(retrievableContent) map {
       case CapiResponseSuccess(content) => processContent(content)
       case CapiResponseFailure(errorMsg) =>
-        log(errorMsg)
+        logger.error(errorMsg)
         false
     }
   }
 
   private def retrieveContent(retrievableContent: RetrievableContent): Future[CapiResponse] = {
     val contentId = retrievableContent.id
-    val itemQuery = new ItemQuery(contentId)
+    val itemQuery = ItemQuery(contentId)
       .showElements("all")
       .showFields("all")
       .showTags("all")

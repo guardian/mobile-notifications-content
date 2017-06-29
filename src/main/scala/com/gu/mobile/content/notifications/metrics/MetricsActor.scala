@@ -3,23 +3,22 @@ package com.gu.mobile.content.notifications.metrics
 import akka.actor.Actor
 import com.amazonaws.services.cloudwatch.model._
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch
-import com.gu.mobile.content.notifications.{ Config, NotificationsDebugLogger }
+import com.gu.mobile.content.notifications.{ Config, Logging }
 
 import scala.collection.JavaConversions._
 
 class MetricsActor(val cloudWatch: AmazonCloudWatch, config: Config) extends Actor with MetricActorLogic {
 
   override val stage = config.stage
-  override val showDebug: Boolean = config.debug
 
   var dataPoints = List.empty[MetricDataPoint] //This is fucked up dooode
 
   override def receive: Receive = {
     case metricDataPoint: MetricDataPoint =>
-      logDebug("+++ Metrics actor: Recieved datapoint ")
+      logger.debug("Metrics actor: Recieved datapoint ")
       dataPoints = metricDataPoint :: dataPoints
     case MetricsActor.Aggregate =>
-      logDebug("+++ Metrics actor: Recieved Aggregate ")
+      logger.debug("Metrics actor: Recieved Aggregate ")
       aggregatePoint(dataPoints)
       dataPoints = Nil
   }
@@ -29,7 +28,7 @@ object MetricsActor {
   case object Aggregate
 }
 
-trait MetricActorLogic extends NotificationsDebugLogger {
+trait MetricActorLogic extends Logging {
 
   val stage: String
   def cloudWatch: AmazonCloudWatch
@@ -79,10 +78,9 @@ trait MetricActorLogic extends NotificationsDebugLogger {
 
   def aggregatePoint(points: List[MetricDataPoint]): Unit = {
     if (points.isEmpty) {
-      logDebug(s"No metrics sent to cloudwatch")
+      logger.debug(s"No metrics sent to cloudwatch")
     } else {
-
-      logDebug(s"Sending metrics to cloudwatch")
+      logger.debug(s"Sending metrics to cloudwatch")
       val metricsPerNameSpaceMatches = aggregatePointsPerNamespaceMatches(points)
 
       val metricsCount = metricsPerNameSpaceMatches.foldLeft(0) { case (sum, (_, batch)) => sum + batch.size }
@@ -97,7 +95,7 @@ trait MetricActorLogic extends NotificationsDebugLogger {
             metricRequest.setMetricData(awsMetricsBatch)
             cloudWatch.putMetricData(metricRequest)
         }
-        logDebug(s"Sent metrics to cloudwatch. " +
+        logger.info(s"Sent metrics to cloudwatch. " +
           s"Data points: ${points.size}, " +
           s"Metrics: $metricsCount, " +
           s"Namespaces: $namespacesCount, " +
