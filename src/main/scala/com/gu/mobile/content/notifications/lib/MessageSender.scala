@@ -19,24 +19,22 @@ class MessageSender(config: Config, apiClient: ApiClient, payloadBuilder: Conten
     sendNotification(payloadBuilder.buildPayLoad(content))
   }
 
-  private def sendNotification(notification: Option[ContentAlertPayload]) {
+  private def sendNotification(notification: ContentAlertPayload) {
 
     val start = System.currentTimeMillis()
     lazy val duration = System.currentTimeMillis() - start
 
-    notification.foreach { n =>
-      if (config.guardianNotificationsEnabled) {
-        apiClient.send(n) onComplete {
-          case Success(Right(_)) =>
-            logDebug(s"Successfully sent notification for : ${n.title}")
-            metrics.send(MetricDataPoint(name = "SendNotificationLatency", value = duration, unit = StandardUnit.Milliseconds))
-          case Success(Left(error)) =>
-            logDebug(s"Error sending notification: $n. error: ${error.description}  ")
-            metrics.send(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration, unit = StandardUnit.Milliseconds))
-          case Failure(error) =>
-            logDebug(s"Failed to send notification: $n. error: ${error.getMessage}")
-            metrics.send(MetricDataPoint(name = "SendNotificationFailureLatency", value = duration, unit = StandardUnit.Milliseconds))
-        }
+    if (config.guardianNotificationsEnabled) {
+      apiClient.send(notification) onComplete {
+        case Success(Right(_)) =>
+          logDebug(s"Successfully sent notification for : ${notification.title}")
+          metrics.send(MetricDataPoint(name = "SendNotificationLatency", value = duration, unit = StandardUnit.Milliseconds))
+        case Success(Left(error)) =>
+          logDebug(s"Error sending notification: $notification. error: ${error.description}  ")
+          metrics.send(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration, unit = StandardUnit.Milliseconds))
+        case Failure(error) =>
+          logDebug(s"Failed to send notification: $notification. error: ${error.getMessage}")
+          metrics.send(MetricDataPoint(name = "SendNotificationFailureLatency", value = duration, unit = StandardUnit.Milliseconds))
       }
     }
   }

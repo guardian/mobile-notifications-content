@@ -5,13 +5,13 @@ import java.net.URI
 import com.gu.mobile.content.notifications.lib.Seqs._
 import com.gu.mobile.content.notifications.lib.ContentApi._
 import com.gu.contentapi.client.model.v1._
-import com.gu.mobile.content.notifications.Config
+import com.gu.mobile.content.notifications.{ Config, NotificationsDebugLogger }
 import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
 
 import scala.util.Try
 
-trait ContentAlertPayloadBuilder {
+trait ContentAlertPayloadBuilder extends NotificationsDebugLogger {
 
   val Sender = "mobile-notifications-content"
   val config: Config
@@ -27,30 +27,24 @@ trait ContentAlertPayloadBuilder {
 
   private val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
 
-  def buildPayLoad(content: Content): Option[ContentAlertPayload] = {
+  def buildPayLoad(content: Content): ContentAlertPayload = {
     val followableTag: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
       .orElse(content.tags.findOne(_.`type` == TagType.Blog))
       .orElse(content.tags.findOne(_.`type` == TagType.Contributor))
 
     val topics = content.tags.flatMap(tagToTopic).take(20).toSet
 
-    if (content.tags.isEmpty || topics.isEmpty) {
-      None
-    } else {
-      Some(
-        ContentAlertPayload(
-          title = contentTitle(content, followableTag, topics),
-          message = content.textStandFirst getOrElse content.webTitle,
-          imageUrl = selectMainImage(content, minWidth = 750).map(new URI(_)),
-          thumbnailUrl = content.thumbNail.map(new URI(_)),
-          sender = Sender,
-          link = getGuardianLink(content),
-          importance = Importance.Major,
-          topic = topics,
-          debug = config.debug
-        )
-      )
-    }
+    ContentAlertPayload(
+      title = contentTitle(content, followableTag, topics),
+      message = content.textStandFirst getOrElse content.webTitle,
+      imageUrl = selectMainImage(content, minWidth = 750).map(new URI(_)),
+      thumbnailUrl = content.thumbNail.map(new URI(_)),
+      sender = Sender,
+      link = getGuardianLink(content),
+      importance = Importance.Major,
+      topic = topics,
+      debug = config.debug
+    )
   }
 
   private def getTopicType(tagType: TagType): Option[TopicType] = tagType match {
