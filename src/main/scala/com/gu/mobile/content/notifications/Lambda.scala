@@ -64,7 +64,7 @@ object Lambda extends Logging {
               Future.successful(false)
           }.getOrElse(Future.successful(false))
         case _ =>
-          logger.error("Received non-updatable event type")
+          logger.info("Received non-updatable event type")
           Future.successful(false)
       }
     }
