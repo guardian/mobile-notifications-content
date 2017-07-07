@@ -21,7 +21,7 @@ object LiveBlogLambda extends Lambda {
           val tags = content.tags.map(_.id).toList
           if(tags.exists(_ == "tone/minutebyminute" )) {
             val maybeLastEvent = KeyEvent.fromContent(content)
-            logDebug(s"Key events: id: ${content.id} events: $maybeLastEvent")
+            logger.info(s"Key events: id: ${content.id} events: $maybeLastEvent")
           }
           Future.successful(true)
         case _ => Future.successful(true)

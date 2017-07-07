@@ -27,37 +27,37 @@ object ContentLambda extends Lambda {
         case EventType.Update =>
           event.payload.map {
             case EventPayload.Content(content) =>
-              logDebug(s"Handle content update ${content.id}")
+              logger.info(s"Handle content update ${content.id}")
               val send = sendNotification(content)
               Future.successful(send)
             case EventPayload.RetrievableContent(content) =>
-              logDebug(s"Handle retrievable content or not: ${content.id}")
+              logger.info(s"Handle retrievable content or not: ${content.id}")
               handleRetrievableContent(content)
             case UnknownUnionField(e) =>
-              logDebug(s"Unknown event payload $e. Consider updating capi models")
+              logger.info(s"Unknown event payload $e. Consider updating capi models")
               Future.successful(false)
         }.getOrElse(Future.successful(false))
         case _ =>
-          logDebug("Received non-updatable event type")
+          logger.info("Received non-updatable event type")
           Future.successful(false)
       }
     }
   }
 
   private def sendNotification(content: Content): Boolean = {
-    log(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
+    logger.info(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
     if (content.isRecent) {
       val haveSeen = dynamo.haveSeenContentItem(content.id)
       if (haveSeen) {
-        log(s"Ignoring duplicate piece of content ${content.id}")
+        logger.info(s"Ignoring duplicate piece of content ${content.id}")
       } else {
-        logDebug(s"Sending notification for: ${content.id}")
+        logger.info(s"Sending notification for: ${content.id}")
         messageSender.send(content)
         dynamo.saveContentItem(content.id)
       }
       !haveSeen
     } else {
-      log(s"Ignoring older piece of content ${content.id}")
+      logger.info(s"Ignoring older piece of content ${content.id}")
       false
     }
   }
