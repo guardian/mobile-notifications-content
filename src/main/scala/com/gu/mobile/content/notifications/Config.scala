@@ -17,6 +17,7 @@ case class Config(
   contentApiKey: String,
   crossAccountDynamoRole: String,
   contentDynamoTableName: String,
+  liveBlogContentDynamoTableName: String,
   stage: String
 )
 
@@ -59,7 +60,22 @@ object Config extends Logging {
     val contentApiKey = getMandatoryProperty(properties, "content.api.key")
     logger.info(s"content.api.key $contentApiKey")
 
-    val c = Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, stage)
+    val contentLiveBlogDynamoTableName = getMandatoryProperty(properties, "mobile-liveblog-content-notifications")
+
+    logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
+
+    val debug = getProperty(properties, "debug").map(_.toBoolean).getOrElse(false)
+
+    val c = Config(
+      guardianNotificationsEnabled,
+      notificationsHost,
+      notificationsKey,
+      contentApiKey,
+      crossAccountDynamoRole,
+      contentDynamoTableName,
+      contentLiveBlogDynamoTableName,
+      stage
+    )
     logger.info("Config created")
     c
   }

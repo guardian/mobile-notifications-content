@@ -1,13 +1,11 @@
+
 package com.gu.mobile.content.notifications.lib.http
 
-import java.util
-
-import com.gu.mobile.content.notifications.Logging
-import com.gu.mobile.notifications.client.{ContentType, HttpProvider, HttpResponse}
-
-import scala.concurrent.{ExecutionContext, Future}
-import com.gu.mobile.notifications.client._
 import okhttp3.{MediaType, OkHttpClient, Request, RequestBody, Response}
+import com.gu.mobile.notifications.client.{ ContentType, HttpProvider, HttpResponse, _ }
+import com.ning.http.client.Response
+
+import scala.concurrent.{ ExecutionContext, Future }
 
 object NotificationsHttpProvider extends HttpProvider {
 

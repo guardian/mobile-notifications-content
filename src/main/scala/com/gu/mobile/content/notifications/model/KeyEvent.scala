@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications.model
 
-import com.gu.contentapi.client.model.v1.{CapiDateTime, Content}
+import com.gu.contentapi.client.model.v1.{ CapiDateTime, Content }
 import com.gu.contentapi.client.utils.CapiModelEnrichment.RichCapiDateTime
 
 case class KeyEvent(id: String, title: Option[String], body: String, publishedDate: Option[CapiDateTime]) {

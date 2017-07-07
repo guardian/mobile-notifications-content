@@ -15,6 +15,10 @@ import com.gu.mobile.content.notifications.lib.ContentApi._
 import com.gu.mobile.content.notifications.lib.http.NotificationsHttpProvider
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
 import com.gu.mobile.content.notifications.model.KeyEvent
+import com.gu.mobile.content.notifications.lib.http.NotificationsHttpProvider
+import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb }
+import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
+import com.gu.mobile.notifications.client.{ ApiClient => NotificiationsApiClient }
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -31,6 +35,7 @@ object Lambda extends Logging {
   val payLoadBuilder = new ContentAlertPayloadBuilder {
     override val config: Config = Lambda.config
   }
+
   val apiClient = NotificiationsApiClient(
     host = config.notificationsHost,
     apiKey = config.notificationsKey,

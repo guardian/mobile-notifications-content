@@ -1,10 +1,16 @@
 package com.gu.mobile.content.notifications.metrics
 
 import akka.actor.{ ActorSystem, Props }
+<<<<<<< 73655607f9c9f06630db2777173bca44fcc857af
 import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.cloudwatch.{ AmazonCloudWatchClient, AmazonCloudWatchClientBuilder }
 import com.amazonaws.services.cloudwatch.model.StandardUnit
 import com.gu.mobile.content.notifications.{ Config, Logging }
+=======
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder
+import com.amazonaws.services.cloudwatch.model.StandardUnit
+import com.gu.mobile.content.notifications.{ Config, NotificationsDebugLogger }
+>>>>>>> fix live blog lambda
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._

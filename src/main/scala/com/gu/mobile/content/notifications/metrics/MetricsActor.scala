@@ -2,8 +2,12 @@ package com.gu.mobile.content.notifications.metrics
 
 import akka.actor.Actor
 import com.amazonaws.services.cloudwatch.model._
+<<<<<<< 73655607f9c9f06630db2777173bca44fcc857af
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.gu.mobile.content.notifications.{ Config, Logging }
+=======
+import com.gu.mobile.content.notifications.{ Config, NotificationsDebugLogger }
+>>>>>>> fix live blog lambda
 
 import scala.collection.JavaConversions._
 
