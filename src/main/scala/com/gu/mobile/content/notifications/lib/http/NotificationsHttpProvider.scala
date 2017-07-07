@@ -17,7 +17,6 @@ object NotificationsHttpProvider extends HttpProvider with Logging {
     .build()
 
   def post(postUrl: String, contentType: ContentType, body: Array[Byte]): Future[HttpResponse] = {
-    logger.info(s"++++++++++++ Media type: ${contentType.mediaType} Charset: ${contentType.charset}")
     val mediaType = MediaType.parse(s"${contentType.mediaType}; charset=${contentType.charset}")
     val tbody = RequestBody.create(mediaType, body)
     val request = new Request.Builder()
@@ -47,9 +46,7 @@ object NotificationsHttpProvider extends HttpProvider with Logging {
       val status = r.code
       val body = r.body.string()
 
-      val isError = status >= 200 && status < 300
-      logger.info(s"++ Response - status: $status body ${body} Error: $isError")
-      if (isError) HttpOk(status, body) else HttpError(status, body)
+      if (status >= 200 && status < 300) HttpOk(status, body) else HttpError(status, body)
   }
 
 }
