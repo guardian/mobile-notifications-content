@@ -2,13 +2,14 @@ package com.gu.mobile.content.notifications.lib.http
 
 import java.util
 
-import com.gu.mobile.notifications.client.{ ContentType, HttpProvider, HttpResponse }
+import com.gu.mobile.content.notifications.Logging
+import com.gu.mobile.notifications.client.{ContentType, HttpProvider, HttpResponse}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import com.gu.mobile.notifications.client._
-import okhttp3.{ MediaType, OkHttpClient, RequestBody, Request, Response }
+import okhttp3.{MediaType, OkHttpClient, Request, RequestBody, Response}
 
-object NotificationsHttpProvider extends HttpProvider {
+object NotificationsHttpProvider extends HttpProvider with Logging {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   val client = new OkHttpClient.Builder()
@@ -16,7 +17,8 @@ object NotificationsHttpProvider extends HttpProvider {
     .build()
 
   def post(postUrl: String, contentType: ContentType, body: Array[Byte]): Future[HttpResponse] = {
-    val mediaType = MediaType.parse(s"${contentType.mediaType} ${contentType.charset}")
+    logger.info(s"++++++++++++ Media type: ${contentType.mediaType} Charset: ${contentType.charset}")
+    val mediaType = MediaType.parse(s"${contentType.mediaType}; ${contentType.charset}")
     val tbody = RequestBody.create(mediaType, body)
     val request = new Request.Builder()
       .url(postUrl)
