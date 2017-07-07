@@ -18,7 +18,7 @@ object NotificationsHttpProvider extends HttpProvider with Logging {
 
   def post(postUrl: String, contentType: ContentType, body: Array[Byte]): Future[HttpResponse] = {
     logger.info(s"++++++++++++ Media type: ${contentType.mediaType} Charset: ${contentType.charset}")
-    val mediaType = MediaType.parse(s"${contentType.mediaType}; ${contentType.charset}")
+    val mediaType = MediaType.parse(s"${contentType.mediaType}; charset=${contentType.charset}")
     val tbody = RequestBody.create(mediaType, body)
     val request = new Request.Builder()
       .url(postUrl)
