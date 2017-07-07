@@ -22,6 +22,7 @@ object LiveBlogLambda extends Lambda {
         case (contentWithNewKeyEvent, keyEvent) =>
           logger.info(s"Found new key event for content: ${contentWithNewKeyEvent.id} block id: ${keyEvent.blockId}")
           messageSender.send(contentWithNewKeyEvent, Some(keyEvent))
+          logger.info("++++ Message sent!")
           true
       }.getOrElse {
         logger.info(s"No new key event found for content: ${content.id}")

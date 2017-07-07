@@ -5,8 +5,9 @@ import java.net.URI
 import com.gu.mobile.content.notifications.lib.Seqs._
 import com.gu.mobile.content.notifications.lib.ContentApi._
 import com.gu.contentapi.client.model.v1._
-import com.gu.mobile.content.notifications.{ Config, Logging }
-import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
+import com.gu.mobile.content.notifications.model.KeyEvent
+import com.gu.mobile.content.notifications.{Config, Logging}
+import com.gu.mobile.notifications.client.models.TopicTypes.{TagBlog, TagContributor, TagKeyword, TagSeries}
 import com.gu.mobile.notifications.client.models._
 
 import scala.util.Try
@@ -44,6 +45,19 @@ trait ContentAlertPayloadBuilder extends Logging {
       importance = Importance.Major,
       topic = topics,
       debug = false
+    )
+  }
+
+  def buildPayLoad(content: Content, keyEvent: KeyEvent): ContentAlertPayload = {
+    ContentAlertPayload(
+      title = s"Liveblog update: ${keyEvent.title.getOrElse(content.webTitle)}",
+      message = if (keyEvent.title.isDefined) content.webTitle else "",
+      thumbnailUrl = content.thumbNail.map(new URI(_)),
+      sender = Sender,
+      link = getGuardianLink(content, Some(keyEvent.blockId)),
+      importance = Importance.Major,
+      topic = Set(Topic(TopicTypes.Content, content.id)),
+      debug = config.debug
     )
   }
 

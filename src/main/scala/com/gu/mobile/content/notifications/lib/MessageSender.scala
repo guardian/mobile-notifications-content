@@ -2,19 +2,30 @@ package com.gu.mobile.content.notifications.lib
 
 import com.amazonaws.services.cloudwatch.model.StandardUnit
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.mobile.content.notifications.{ Config, Logging }
-import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
+import com.gu.mobile.content.notifications.{Config, Logging}
+import com.gu.mobile.content.notifications.metrics.{MetricDataPoint, Metrics}
+import com.gu.mobile.content.notifications.model.KeyEvent
 import com.gu.mobile.notifications.client.ApiClient
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
+
 import scala.concurrent.ExecutionContext
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 
 class MessageSender(config: Config, apiClient: ApiClient, payloadBuilder: ContentAlertPayloadBuilder, metrics: Metrics) extends Logging {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  def send(content: Content): Unit = {
-    sendNotification(payloadBuilder.buildPayLoad(content))
+  def send(content: Content, maybeKeyEvent: Option[KeyEvent] = None): Unit = {
+    val payLoad = maybeKeyEvent match {
+      case Some(keyEvent) =>
+        logger.info("++ Build key event payload")
+        payloadBuilder.buildPayLoad(content, keyEvent)
+      case _ =>
+        logger.info("++ Build content payload")
+        payloadBuilder.buildPayLoad(content)
+    }
+    logger.info(s"++++ Built payload")
+    sendNotification(payLoad)
   }
 
   private def sendNotification(notification: ContentAlertPayload) {

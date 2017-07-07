@@ -4,11 +4,11 @@ import com.gu.contentapi.client.model.v1.{CapiDateTime, Content}
 import com.gu.contentapi.client.utils.CapiModelEnrichment.RichCapiDateTime
 import com.gu.mobile.content.notifications.lib.NotificationsDynamoDb
 
-case class KeyEvent(id: String, title: Option[String], body: String, publishedDate: Option[CapiDateTime]) {
+case class KeyEvent(blockId: String, title: Option[String], body: String, publishedDate: Option[CapiDateTime]) {
   //TODO - this is just for debugging, blat it later
   lazy val pTitle = title.getOrElse("**")
   lazy val pDate = publishedDate.map(_.toString()).getOrElse("**!**")
-  override def toString = s"Key event. Id: ${id} title: ${pTitle}: publised $pDate"
+  override def toString = s"Key event. Id: ${blockId} title: ${pTitle}: publised $pDate"
 }
 
 object KeyEvent {
