@@ -2,31 +2,51 @@ package com.gu.mobile.content.notifications.lib.http
 
 import java.util
 
-import com.gu.mobile.notifications.client.{ ContentType, HttpProvider, HttpResponse }
+import com.gu.mobile.content.notifications.Logging
+import com.gu.mobile.notifications.client.{ContentType, HttpProvider, HttpResponse}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import com.gu.mobile.notifications.client._
-import com.ning.http.client.Response
-import dispatch._
+import okhttp3.{MediaType, OkHttpClient, Request, RequestBody, Response}
 
 object NotificationsHttpProvider extends HttpProvider {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  val client = new OkHttpClient.Builder()
+    .retryOnConnectionFailure(true)
+    .build()
 
-  override def post(postUrl: String, contentType: ContentType, body: Array[Byte]): Future[HttpResponse] = {
-    def myPost = url(postUrl).POST.setContentType(contentType.mediaType, contentType.charset).setBody(body)
-    processResponse(Http(myPost))
+  def post(postUrl: String, contentType: ContentType, body: Array[Byte]): Future[HttpResponse] = {
+    val mediaType = MediaType.parse(s"${contentType.mediaType}; charset=${contentType.charset}")
+    val tbody = RequestBody.create(mediaType, body)
+    val request = new Request.Builder()
+      .url(postUrl)
+      .post(tbody)
+      .build()
+
+    val response = client.newCall(request).execute()
+    processResponse(
+      Future.successful(response)
+    )
   }
 
-  override def get(getUrl: String): Future[HttpResponse] = {
-    val resp = Http(url(getUrl))
-    processResponse(resp)
+  def get(getUrl: String): Future[HttpResponse] = {
+    val request = new Request.Builder()
+      .url(getUrl)
+      .build()
+
+    val response = client.newCall(request).execute()
+    processResponse(
+      Future.successful(response)
+    )
   }
 
   def processResponse(response: Future[Response]) = response map {
     r =>
-      val status = r.getStatusCode
-      val body = r.getResponseBody
+      val status = r.code
+      val body = r.body.string()
+
       if (status >= 200 && status < 300) HttpOk(status, body) else HttpError(status, body)
   }
+
 }

@@ -41,6 +41,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % "2.3.2",
   "org.slf4j" % "slf4j-simple" % "1.7.25",
   "com.typesafe.akka" %% "akka-actor" % "2.5.2",
+  "com.squareup.okhttp3" % "okhttp" % "3.8.1",
   "org.scalatest" %% "scalatest" % "3.0.0" % "test",
   "org.mockito" % "mockito-all" % "1.9.0" % "test",
   "org.specs2" %% "specs2-core" % "3.9.1" % "test",
