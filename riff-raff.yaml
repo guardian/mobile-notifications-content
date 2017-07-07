@@ -6,6 +6,6 @@ deployments:
     type: aws-lambda
     parameters:
       bucket: content-api-dist
-      functionNames: [mobile-content-notifications-lambda-]
+      functionNames: [mobile-content-notifications-liveblogs-lambda-, mobile-content-notifications-lambda-]
       fileName: mobile-content-notifications-lambda.jar
       prefixStack: false
