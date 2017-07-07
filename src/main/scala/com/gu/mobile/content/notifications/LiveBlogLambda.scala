@@ -3,29 +3,32 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.crier.model.event.v1.EventPayload
-import com.gu.mobile.content.notifications.model.KeyEvent
+import com.gu.mobile.content.notifications.model.{KeyEvent, KeyEventProvider}
 
 import scala.collection.JavaConverters._
 import scala.concurrent.Future
-
 object LiveBlogLambda extends Lambda {
 
-  def handler(event: KinesisEvent) {
-    val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
-    val userRecords = UserRecord.deaggregate(rawRecord.asJava)
+  val keyEventProvider = new KeyEventProvider(dynamo)
 
-    CapiEventProcessor.process(userRecords.asScala) { event =>
-      event.payload.map {
-        case EventPayload.Content(content) =>
-          val tags = content.tags.map(_.id).toList
-          if(tags.exists(_ == "tone/minutebyminute" )) {
-            val maybeLastEvent = KeyEvent.fromContent(content)
-            logger.info(s"Key events: id: ${content.id} events: $maybeLastEvent")
-          }
-          Future.successful(true)
-        case _ => Future.successful(true)
-      }.getOrElse(Future.successful(true))
+  override def sendNotification(content: Content): Boolean = {
+    val isLiveBlog = content.tags.map(_.id).toList.exists(_ == "tone/minutebyminute")
+    val isLive = content.isLive
+    logger.info(s"Checking for new live updates to: ${content.id} isLiveBlog: $isLiveBlog live now: $isLive")
+    if (isLiveBlog && isLive) {
+      keyEventProvider.getLatestKeyEvent(content).map {
+        case (contentWithNewKeyEvent, keyEvent) =>
+          logger.info(s"Found new key event for content: ${contentWithNewKeyEvent.id} block id: ${keyEvent.blockId}")
+          messageSender.send(contentWithNewKeyEvent, Some(keyEvent))
+          true
+      }.getOrElse {
+        logger.info(s"No new key event found for content: ${content.id}")
+        false
+      }
+    } else {
+      false
     }
   }
 }

@@ -26,6 +26,7 @@ object ContentApi {
 
     private val followableTagTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
     def followableTags: Seq[Tag] = content.tags.filter(tag => followableTagTypes.contains(tag.`type`))
+    def isLive: Boolean = content.fields.flatMap(f => f.liveBloggingNow).getOrElse(false)
 
     def getLoggablePublicationDate: String = {
       content.webPublicationDate.map(_.toString()).getOrElse("Unknown date")
