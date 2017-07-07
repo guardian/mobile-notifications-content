@@ -3,20 +3,21 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
-import com.gu.contentapi.client.{ GuardianContentApiError, GuardianContentClient }
+import com.gu.contentapi.client.{GuardianContentApiError, GuardianContentClient}
 import com.gu.contentapi.client.model.ItemQuery
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
 import com.gu.crier.model.event.v1._
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb }
-import com.gu.mobile.notifications.client.{ ApiClient => NotificiationsApiClient }
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender }
+import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb}
+import com.gu.mobile.notifications.client.{ApiClient => NotificiationsApiClient}
+import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender}
 import com.gu.mobile.content.notifications.lib.ContentApi._
 import com.gu.mobile.content.notifications.lib.http.NotificationsHttpProvider
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
+import com.gu.mobile.content.notifications.model.KeyEvent
 
 import scala.collection.JavaConverters._
-import scala.concurrent.{ Await, ExecutionContext, Future }
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.Try
 import scala.concurrent.duration._
 
@@ -26,21 +27,20 @@ case class CapiResponseFailure(errorMsg: String) extends CapiResponse
 
 object Lambda extends Logging {
 
-  private val config = Config.load()
-  private val payLoadBuilder = new ContentAlertPayloadBuilder {
+  val config = Config.load()
+  val payLoadBuilder = new ContentAlertPayloadBuilder {
     override val config: Config = Lambda.config
   }
-  private val apiClient = NotificiationsApiClient(
+  val apiClient = NotificiationsApiClient(
     host = config.notificationsHost,
     apiKey = config.notificationsKey,
     httpProvider = NotificationsHttpProvider
   )
 
   val metrics = new CloudWatchMetrics(config)
-
-  private val messageSender = new MessageSender(config, apiClient, payLoadBuilder, metrics)
-  private val dynamo = NotificationsDynamoDb(config)
-  private val capiClient = new GuardianContentClient(apiKey = config.contentApiKey)
+  val messageSender = new MessageSender(config, apiClient, payLoadBuilder, metrics)
+  val dynamo = NotificationsDynamoDb(config)
+  val capiClient = new GuardianContentClient(apiKey = config.contentApiKey)
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
