@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import com.gu.mobile.notifications.client._
 import okhttp3.{MediaType, OkHttpClient, Request, RequestBody, Response}
 
-object NotificationsHttpProvider extends HttpProvider with Logging {
+object NotificationsHttpProvider extends HttpProvider {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
   val client = new OkHttpClient.Builder()
