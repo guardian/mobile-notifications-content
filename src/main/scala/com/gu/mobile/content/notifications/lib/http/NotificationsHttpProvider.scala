@@ -47,7 +47,7 @@ object NotificationsHttpProvider extends HttpProvider with Logging {
       val status = r.code
       val body = r.body.toString
 
-      logger.info(s"Response - status: $status body $body")
+      logger.info(s"++ Response - status: $status body ${body.toString}")
 
       if (status >= 200 && status < 300) HttpOk(status, body) else HttpError(status, body)
   }
