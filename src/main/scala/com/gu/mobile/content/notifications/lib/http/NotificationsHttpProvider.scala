@@ -45,12 +45,10 @@ object NotificationsHttpProvider extends HttpProvider with Logging {
   def processResponse(response: Future[Response]) = response map {
     r =>
       val status = r.code
-      val body = r.body.toString
-      0
+      val body = r.body.string()
 
-
-      val isError = status >= 200 && status < 3003
-      logger.info(s"++ Response - status: $status body ${body.toString} Error: $isError")
+      val isError = status >= 200 && status < 300
+      logger.info(s"++ Response - status: $status body ${body} Error: $isError")
       if (isError) HttpOk(status, body) else HttpError(status, body)
   }
 
