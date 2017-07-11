@@ -125,7 +125,7 @@ Resources:
           ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
           Stage: !Sub ${Stage}
       Description: lambda to replace the content-notifications-service
-      Handler: com.gu.mobile.content.notifications.Lambda::contentHandler
+      Handler: com.gu.mobile.content.notifications.ContentLambda::handler
       MemorySize: 384
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
@@ -142,7 +142,7 @@ Resources:
   LiveBlogLambda:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ${App}-${Stage}
+      FunctionName: !Sub ${App}-liveblogs-${Stage}
       Code:
         S3Bucket:
           Ref: DeployBucket
@@ -155,7 +155,7 @@ Resources:
           ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
           Stage: !Sub ${Stage}
       Description: lambda to replace the content-notifications-service
-      Handler: com.gu.mobile.content.notifications.Lambda::liveBlogUpdateHandler
+      Handler: com.gu.mobile.content.notifications.LiveBlogLambda::handler
       MemorySize: 384
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8

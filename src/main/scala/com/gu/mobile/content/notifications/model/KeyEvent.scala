@@ -14,34 +14,24 @@ case class KeyEvent(blockId: String, title: Option[String], body: String, publis
 }
 
 object KeyEvent extends Logging {
-  def fromContent(content: Content): Option[KeyEvent] = {
-    val keyEvents = content.blocks
+  def fromContent(content: Content): Option[KeyEvent] = content.blocks
       .flatMap(_._2)
       .getOrElse(Nil)
       .filter(_.attributes.keyEvent.exists(identity))
       .filter(_.published)
       .map(block => KeyEvent(block.id, block.title, block.bodyTextSummary, block.publishedDate, block.lastModifiedDate))
       .toList
-
-
-    val latest = keyEvents.headOption
-
-    latest.map { l =>  logger.info(s"++ KeyEvents: ${keyEvents} Latest: $l")}
-    latest
-  }
+      .headOption
 }
 
 class KeyEventProvider(notificationsDynamoDb: NotificationsDynamoDb) extends Logging {
 
   def getLatestKeyEvent(content: Content): Option[(Content, KeyEvent)] = {
     KeyEvent.fromContent(content).flatMap { keyEvent =>
-      logger.info(s"Handle content: ${content.id} key event ${keyEvent.blockId}: ")
       notificationsDynamoDb.haveSeenBlogEvent(content.id, keyEvent.blockId) match {
         case true =>
-          logger.info(s"Already seen key event with block id: ${keyEvent.blockId}")
           None
         case _ =>
-          logger.info(s"Found new block for content: ${content.id}: with block id ${keyEvent.blockId}")
           notificationsDynamoDb.saveLiveBlogEvent(content.id, keyEvent.blockId)
           Some((content, keyEvent))
       }
