@@ -22,12 +22,11 @@ object KeyEvent extends Logging {
       .filter(_.published)
       .map(block => KeyEvent(block.id, block.title, block.bodyTextSummary, block.publishedDate, block.lastModifiedDate))
       .toList
-      .reverse
 
 
-    logger.info(s"++ KeyEvents ${keyEvents}")
-    val latest = keyEvents.lastOption
-    latest.map { l => println(s"Key events: id: ${content.id} latest: $l") }
+    val latest = keyEvents.headOption
+
+    latest.map { l =>  logger.info(s"++ KeyEvents: ${keyEvents} Latest: $l")}
     latest
   }
 }
