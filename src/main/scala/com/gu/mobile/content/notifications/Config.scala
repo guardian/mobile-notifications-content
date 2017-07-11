@@ -55,18 +55,17 @@ object Config extends Logging {
     logger.info(s"content.notifications.table: $contentDynamoTableName")
 
     val crossAccountDynamoRole = getMandatoryProperty(properties, "content.notifications.crossAccountDynamoRole")
-    logger.info(s"content.notifications.table: $contentDynamoTableName")
+    logger.info(s"content.notifications.crossAccountDynamoRole: $crossAccountDynamoRole")
 
     val contentApiKey = getMandatoryProperty(properties, "content.api.key")
     logger.info(s"content.api.key $contentApiKey")
 
     val contentLiveBlogDynamoTableName = getMandatoryProperty(properties, "mobile-liveblog-notifications.table")
-
     logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
 
     val debug = getProperty(properties, "debug").map(_.toBoolean).getOrElse(false)
 
-    val c = Config(
+    Config(
       guardianNotificationsEnabled,
       notificationsHost,
       notificationsKey,
@@ -76,8 +75,6 @@ object Config extends Logging {
       contentLiveBlogDynamoTableName,
       stage
     )
-    logger.info("Config created")
-    c
   }
 
   private def loadProperties(bucket: String, key: String): Try[Properties] = {

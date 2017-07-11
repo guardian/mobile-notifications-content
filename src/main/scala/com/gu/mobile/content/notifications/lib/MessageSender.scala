@@ -18,13 +18,10 @@ class MessageSender(config: Config, apiClient: ApiClient, payloadBuilder: Conten
   def send(content: Content, maybeKeyEvent: Option[KeyEvent] = None): Unit = {
     val payLoad = maybeKeyEvent match {
       case Some(keyEvent) =>
-        logger.info("++ Build key event payload")
         payloadBuilder.buildPayLoad(content, keyEvent)
       case _ =>
-        logger.info("++ Build content payload")
         payloadBuilder.buildPayLoad(content)
     }
-    logger.info(s"++++ Built payload")
     sendNotification(payLoad)
   }
 
