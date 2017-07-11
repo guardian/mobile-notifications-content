@@ -13,9 +13,9 @@ case class KeyEvent(blockId: String, title: Option[String], body: String, publis
   override def toString = s"Key event. Id: ${blockId} title: ${pTitle}: publised $pDate"
 }
 
-object KeyEvent {
+object KeyEvent extends Logging {
   def fromContent(content: Content): Option[KeyEvent] = {
-    val latest = content.blocks
+    val keyEvents = content.blocks
       .flatMap(_._2)
       .getOrElse(Nil)
       .filter(_.attributes.keyEvent.exists(identity))
@@ -23,8 +23,10 @@ object KeyEvent {
       .map(block => KeyEvent(block.id, block.title, block.bodyTextSummary, block.publishedDate, block.lastModifiedDate))
       .toList
       .reverse
-      .lastOption
 
+
+    logger.info(s"++ KeyEvents ${keyEvents}")
+    val latest = keyEvents.lastOption
     latest.map { l => println(s"Key events: id: ${content.id} latest: $l") }
     latest
   }
