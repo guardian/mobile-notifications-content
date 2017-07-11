@@ -22,23 +22,23 @@ sealed trait CapiResponse
 case class CapiResponseSuccess(content: Content) extends CapiResponse
 case class CapiResponseFailure(errorMsg: String) extends CapiResponse
 
-object Lambda extends Logging {
+trait Lambda extends Logging {
 
-  val config = Config.load()
+  val configuration = Config.load()
   val payLoadBuilder = new ContentAlertPayloadBuilder {
-    override val config: Config = Lambda.config
+    override val config: Config = configuration
   }
 
   val apiClient = NotificiationsApiClient(
-    host = config.notificationsHost,
-    apiKey = config.notificationsKey,
+    host = configuration.notificationsHost,
+    apiKey = configuration.notificationsKey,
     httpProvider = NotificationsHttpProvider
   )
 
-  val metrics = new CloudWatchMetrics(config)
-  val messageSender = new MessageSender(config, apiClient, payLoadBuilder, metrics)
-  val dynamo = NotificationsDynamoDb(config)
-  val capiClient = new GuardianContentClient(apiKey = config.contentApiKey)
+  val metrics = new CloudWatchMetrics(configuration)
+  val messageSender = new MessageSender(configuration, apiClient, payLoadBuilder, metrics)
+  val dynamo = NotificationsDynamoDb(configuration)
+  val capiClient = new GuardianContentClient(apiKey = configuration.contentApiKey)
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
@@ -68,31 +68,7 @@ object Lambda extends Logging {
     }
   }
 
-  private def processContent(content: Content): Boolean = {
-    logger.info(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
-    if (content.isRecent && content.followableTags.nonEmpty) {
-      val haveSeen = dynamo.haveSeenContentItem(content.id)
-      if (haveSeen) {
-        logger.info(s"Ignoring duplicate content ${content.id}")
-      } else {
-        try {
-          messageSender.send(content)
-          dynamo.saveContentItem(content.id)
-        } catch {
-          case e: Exception =>
-            logger.error(s"Unable to send notification for ${content.id}", e)
-        }
-      }
-      !haveSeen
-    } else {
-      if (!content.isRecent) {
-        logger.info(s"Ignoring older content ${content.id}")
-      } else {
-        logger.info(s"Ignoring content ${content.id} as it doesn't contain followable tags: ${content.tags}")
-      }
-      false
-    }
-  }
+  def processContent(content: Content): Boolean
 
   private def handleRetrievableContent(retrievableContent: RetrievableContent): Future[Boolean] = {
     retrieveContent(retrievableContent) map {

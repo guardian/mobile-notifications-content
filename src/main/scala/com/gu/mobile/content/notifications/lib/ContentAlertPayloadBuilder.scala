@@ -6,8 +6,8 @@ import com.gu.mobile.content.notifications.lib.Seqs._
 import com.gu.mobile.content.notifications.lib.ContentApi._
 import com.gu.contentapi.client.model.v1._
 import com.gu.mobile.content.notifications.model.KeyEvent
-import com.gu.mobile.content.notifications.{Config, Logging}
-import com.gu.mobile.notifications.client.models.TopicTypes.{TagBlog, TagContributor, TagKeyword, TagSeries}
+import com.gu.mobile.content.notifications.{ Config, Logging }
+import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
 
 import scala.util.Try
@@ -54,10 +54,10 @@ trait ContentAlertPayloadBuilder extends Logging {
       message = if (keyEvent.title.isDefined) content.webTitle else "",
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
-      link = getGuardianLink(content, Some(keyEvent.blockId)),
+      link = getGuardianLink(content, Some(keyEvent)),
       importance = Importance.Major,
       topic = Set(Topic(TopicTypes.Content, content.id)),
-      debug = config.debug
+      debug = false
     )
   }
 
@@ -98,13 +98,13 @@ trait ContentAlertPayloadBuilder extends Logging {
     selectedAsset.flatMap(_.file)
   }
 
-  private def getGuardianLink(content: Content, block: Option[Block] = None) = GuardianLinkDetails(
+  private def getGuardianLink(content: Content, keyEvent: Option[KeyEvent] = None) = GuardianLinkDetails(
     contentApiId = content.id,
     shortUrl = content.shortUrl,
     title = content.webTitle,
     thumbnail = content.thumbNail,
     git = GITContent,
-    blockId = block.map { b => b.id }
+    blockId = keyEvent.map { b => b.blockId }
   )
 }
 

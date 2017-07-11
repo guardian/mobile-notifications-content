@@ -1,10 +1,10 @@
 package com.gu.mobile.content.notifications.model
 
-import com.gu.contentapi.client.model.v1.{CapiDateTime, Content}
+import com.gu.contentapi.client.model.v1.{ CapiDateTime, Content }
 import com.gu.contentapi.client.utils.CapiModelEnrichment.RichCapiDateTime
 import com.gu.mobile.content.notifications.lib.NotificationsDynamoDb
 
-case class KeyEvent(blockId: String, title: Option[String], body: String, publishedDate: Option[CapiDateTime]) {
+case class KeyEvent(blockId: String, title: Option[String], body: String, publishedDate: Option[CapiDateTime], lastModified: Option[CapiDateTime]) {
   //TODO - this is just for debugging, blat it later
   lazy val pTitle = title.getOrElse("**")
   lazy val pDate = publishedDate.map(_.toString()).getOrElse("**!**")
