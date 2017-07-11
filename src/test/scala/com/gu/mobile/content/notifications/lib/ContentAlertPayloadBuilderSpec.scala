@@ -4,11 +4,12 @@ import java.net.URI
 
 import com.gu.contentapi.client.model.v1._
 import com.gu.mobile.content.notifications.Config
-import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
+import com.gu.mobile.content.notifications.model.KeyEvent
+import com.gu.mobile.notifications.client.models.TopicTypes.{TagBlog, TagContributor, TagKeyword, TagSeries}
 import com.gu.mobile.notifications.client.models._
-import org.joda.time.LocalDate
+import org.joda.time.{DateTime, LocalDate}
 import org.mockito.Mockito._
-import org.scalatest.{ MustMatchers, WordSpec, WordSpecLike }
+import org.scalatest.{MustMatchers, WordSpec, WordSpecLike}
 import org.scalatest.mockito.MockitoSugar
 
 class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with MustMatchers {
@@ -79,6 +80,10 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     topic = Set(seriesTopic),
     debug = false
   )
+
+  val keyDate = Some(now, "iso8601"))
+  val keyEvent = KeyEvent("blockId", Some("blogPostTitle"), "body", now, now)
+
 
   "Content Alert Payload Builder" must {
 

@@ -60,7 +60,7 @@ object Config extends Logging {
     val contentApiKey = getMandatoryProperty(properties, "content.api.key")
     logger.info(s"content.api.key $contentApiKey")
 
-    val contentLiveBlogDynamoTableName = getMandatoryProperty(properties, "mobile-liveblog-notifications.table")
+    val contentLiveBlogDynamoTableName = getMandatoryProperty(properties, "content.liveblog-notifications.table")
     logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
 
     val debug = getProperty(properties, "debug").map(_.toBoolean).getOrElse(false)
