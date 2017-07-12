@@ -2,9 +2,9 @@ package com.gu.mobile.content.notifications.lib
 
 import java.net.URI
 
-import com.gu.mobile.content.notifications.lib.Seqs._
-import com.gu.mobile.content.notifications.lib.ContentApi._
 import com.gu.contentapi.client.model.v1._
+import com.gu.mobile.content.notifications.lib.ContentApi._
+import com.gu.mobile.content.notifications.lib.Seqs._
 import com.gu.mobile.content.notifications.model.KeyEvent
 import com.gu.mobile.content.notifications.{ Config, Logging }
 import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }

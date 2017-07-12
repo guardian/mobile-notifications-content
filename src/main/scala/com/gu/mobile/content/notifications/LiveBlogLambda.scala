@@ -1,8 +1,8 @@
 package com.gu.mobile.content.notifications
 
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.mobile.content.notifications.model.{ KeyEvent, KeyEventProvider }
 import com.gu.mobile.content.notifications.lib.ContentApi._
+import com.gu.mobile.content.notifications.model.KeyEventProvider
 
 object LiveBlogLambda extends Lambda {
 

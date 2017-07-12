@@ -2,12 +2,11 @@ package com.gu.mobile.content.notifications
 
 import java.util.Properties
 
-import com.amazonaws.auth.{ AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
+import com.amazonaws.auth.{ AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.s3.{ AmazonS3Client, AmazonS3ClientBuilder }
+import com.amazonaws.services.s3.AmazonS3ClientBuilder
 
-import scala.reflect.macros.whitebox
 import scala.util.Try
 
 case class Config(
@@ -62,8 +61,6 @@ object Config extends Logging {
 
     val contentLiveBlogDynamoTableName = getMandatoryProperty(properties, "content.liveblog-notifications.table")
     logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
-
-    val debug = getProperty(properties, "debug").map(_.toBoolean).getOrElse(false)
 
     Config(
       guardianNotificationsEnabled,

@@ -5,12 +5,11 @@ import java.net.URI
 import com.gu.contentapi.client.model.v1._
 import com.gu.mobile.content.notifications.Config
 import com.gu.mobile.content.notifications.model.KeyEvent
-import com.gu.mobile.notifications.client.models.TopicTypes.{TagBlog, TagContributor, TagKeyword, TagSeries}
+import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
-import org.joda.time.{DateTime, LocalDate}
-import org.mockito.Mockito._
-import org.scalatest.{MustMatchers, WordSpec, WordSpecLike}
+import org.joda.time.{ DateTime, LocalDate }
 import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{ MustMatchers, WordSpecLike }
 
 class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with MustMatchers {
 
@@ -81,9 +80,13 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     debug = false
   )
 
-  val keyDate = Some(now, "iso8601"))
-  val keyEvent = KeyEvent("blockId", Some("blogPostTitle"), "body", now, now)
+  val keyEvent = KeyEvent("blockId", Some("blogPostTitle"), "body", Option(DateTime.now()), Option(DateTime.now()))
 
+  val expectedBlogContentAlert = expectedPayloadForItem.copy(
+    title = "Liveblog update: blogPostTitle",
+    topic = Set(Topic(TopicTypes.Content, "newId")),
+    link = link.copy(blockId = Some("blockId"))
+  )
 
   "Content Alert Payload Builder" must {
 
@@ -173,6 +176,16 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
+  }
+
+  "create content alert for content & blogPost" in {
+    builder.buildPayLoad(item, keyEvent) mustEqual expectedBlogContentAlert
+  }
+
+  "create content alert for content & blogPost without title" in {
+    val keyEventWithoutTitle = keyEvent.copy(title = None)
+    val expectedContentAlertBlogWithoutTitle = expectedBlogContentAlert.copy(title = "Liveblog update: webTitle", message = "")
+    builder.buildPayLoad(item, keyEventWithoutTitle) mustEqual expectedContentAlertBlogWithoutTitle
   }
 
   def verifyContentAlert(tags: List[Tag], expectedReason: String) = {

@@ -2,9 +2,9 @@ package com.gu.mobile.content.notifications.lib
 
 import com.amazonaws.services.cloudwatch.model.StandardUnit
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.mobile.content.notifications.{ Config, Logging }
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.content.notifications.model.KeyEvent
+import com.gu.mobile.content.notifications.{ Config, Logging }
 import com.gu.mobile.notifications.client.ApiClient
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
 

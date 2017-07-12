@@ -1,8 +1,8 @@
 
 package com.gu.mobile.content.notifications.lib.http
 
-import okhttp3.{ MediaType, OkHttpClient, Request, RequestBody, Response }
 import com.gu.mobile.notifications.client.{ ContentType, HttpProvider, HttpResponse, _ }
+import okhttp3._
 
 import scala.concurrent.{ ExecutionContext, Future }
 

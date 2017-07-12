@@ -22,7 +22,6 @@ class NotificationsDynamoDb(dynamoDB: DynamoDB, config: Config) {
   def haveSeenContentItem(contentId: String): Boolean = {
     val getItemSpec = new GetItemSpec().withPrimaryKey("contentId", contentId)
     Option(contentTable.getItem(getItemSpec)).isDefined
-    Option(contentTable.getItem(getItemSpec)).isDefined
   }
 
   def haveSeenBlogEvent(contentId: String, blockId: String): Boolean = {
