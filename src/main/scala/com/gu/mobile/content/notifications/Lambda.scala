@@ -3,44 +3,40 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
-import com.gu.contentapi.client.{ GuardianContentApiError, GuardianContentClient }
 import com.gu.contentapi.client.model.ItemQuery
-import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
-import com.gu.crier.model.event.v1._
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb }
-import com.gu.mobile.notifications.client.{ ApiClient => NotificiationsApiClient }
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender }
-import com.gu.mobile.content.notifications.lib.ContentApi._
+import com.gu.contentapi.client.{ GuardianContentApiError, GuardianContentClient }
+import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
+import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
 import com.gu.mobile.content.notifications.lib.http.NotificationsHttpProvider
+import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb }
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
+import com.gu.mobile.notifications.client.{ ApiClient => NotificiationsApiClient }
 
 import scala.collection.JavaConverters._
-import scala.concurrent.{ Await, ExecutionContext, Future }
-import scala.util.Try
-import scala.concurrent.duration._
+import scala.concurrent.{ ExecutionContext, Future }
 
 sealed trait CapiResponse
 case class CapiResponseSuccess(content: Content) extends CapiResponse
 case class CapiResponseFailure(errorMsg: String) extends CapiResponse
 
-object Lambda extends Logging {
+trait Lambda extends Logging {
 
-  private val config = Config.load()
-  private val payLoadBuilder = new ContentAlertPayloadBuilder {
-    override val config: Config = Lambda.config
+  val configuration = Config.load()
+  val payLoadBuilder = new ContentAlertPayloadBuilder {
+    override val config: Config = configuration
   }
-  private val apiClient = NotificiationsApiClient(
-    host = config.notificationsHost,
-    apiKey = config.notificationsKey,
+
+  val apiClient = NotificiationsApiClient(
+    host = configuration.notificationsHost,
+    apiKey = configuration.notificationsKey,
     httpProvider = NotificationsHttpProvider
   )
 
-  val metrics = new CloudWatchMetrics(config)
-
-  private val messageSender = new MessageSender(config, apiClient, payLoadBuilder, metrics)
-  private val dynamo = NotificationsDynamoDb(config)
-  private val capiClient = new GuardianContentClient(apiKey = config.contentApiKey)
+  val metrics = new CloudWatchMetrics(configuration)
+  val messageSender = new MessageSender(configuration, apiClient, payLoadBuilder, metrics)
+  val dynamo = NotificationsDynamoDb(configuration)
+  val capiClient = new GuardianContentClient(apiKey = configuration.contentApiKey)
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
@@ -70,31 +66,7 @@ object Lambda extends Logging {
     }
   }
 
-  private def processContent(content: Content): Boolean = {
-    logger.info(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
-    if (content.isRecent && content.followableTags.nonEmpty) {
-      val haveSeen = dynamo.haveSeenContentItem(content.id)
-      if (haveSeen) {
-        logger.info(s"Ignoring duplicate content ${content.id}")
-      } else {
-        try {
-          messageSender.send(content)
-          dynamo.saveContentItem(content.id)
-        } catch {
-          case e: Exception =>
-            logger.error(s"Unable to send notification for ${content.id}", e)
-        }
-      }
-      !haveSeen
-    } else {
-      if (!content.isRecent) {
-        logger.info(s"Ignoring older content ${content.id}")
-      } else {
-        logger.info(s"Ignoring content ${content.id} as it doesn't contain followable tags: ${content.tags}")
-      }
-      false
-    }
-  }
+  def processContent(content: Content): Boolean
 
   private def handleRetrievableContent(retrievableContent: RetrievableContent): Future[Boolean] = {
     retrieveContent(retrievableContent) map {

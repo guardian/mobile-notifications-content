@@ -1,8 +1,7 @@
 package com.gu.mobile.content.notifications.metrics
 
 import akka.actor.{ ActorSystem, Props }
-import com.amazonaws.regions.{ Region, Regions }
-import com.amazonaws.services.cloudwatch.{ AmazonCloudWatchClient, AmazonCloudWatchClientBuilder }
+import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder
 import com.amazonaws.services.cloudwatch.model.StandardUnit
 import com.gu.mobile.content.notifications.{ Config, Logging }
 

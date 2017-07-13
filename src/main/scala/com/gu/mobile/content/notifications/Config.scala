@@ -2,12 +2,11 @@ package com.gu.mobile.content.notifications
 
 import java.util.Properties
 
-import com.amazonaws.auth.{ AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
+import com.amazonaws.auth.{ AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.s3.{ AmazonS3Client, AmazonS3ClientBuilder }
+import com.amazonaws.services.s3.AmazonS3ClientBuilder
 
-import scala.reflect.macros.whitebox
 import scala.util.Try
 
 case class Config(
@@ -17,6 +16,7 @@ case class Config(
   contentApiKey: String,
   crossAccountDynamoRole: String,
   contentDynamoTableName: String,
+  liveBlogContentDynamoTableName: String,
   stage: String
 )
 
@@ -54,14 +54,24 @@ object Config extends Logging {
     logger.info(s"content.notifications.table: $contentDynamoTableName")
 
     val crossAccountDynamoRole = getMandatoryProperty(properties, "content.notifications.crossAccountDynamoRole")
-    logger.info(s"content.notifications.table: $contentDynamoTableName")
+    logger.info(s"content.notifications.crossAccountDynamoRole: $crossAccountDynamoRole")
 
     val contentApiKey = getMandatoryProperty(properties, "content.api.key")
     logger.info(s"content.api.key $contentApiKey")
 
-    val c = Config(guardianNotificationsEnabled, notificationsHost, notificationsKey, contentApiKey, crossAccountDynamoRole, contentDynamoTableName, stage)
-    logger.info("Config created")
-    c
+    val contentLiveBlogDynamoTableName = getMandatoryProperty(properties, "content.liveblog-notifications.table")
+    logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
+
+    Config(
+      guardianNotificationsEnabled,
+      notificationsHost,
+      notificationsKey,
+      contentApiKey,
+      crossAccountDynamoRole,
+      contentDynamoTableName,
+      contentLiveBlogDynamoTableName,
+      stage
+    )
   }
 
   private def loadProperties(bucket: String, key: String): Try[Properties] = {

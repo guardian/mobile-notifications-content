@@ -2,7 +2,7 @@ package com.gu.mobile.content.notifications
 
 import java.nio.ByteBuffer
 
-import com.twitter.scrooge.{ TReusableMemoryTransport, ThriftStruct }
+import com.twitter.scrooge.ThriftStruct
 import org.apache.thrift.TBaseHelper
 import org.apache.thrift.protocol.{ TCompactProtocol, TProtocol }
 import org.apache.thrift.transport.TMemoryInputTransport
