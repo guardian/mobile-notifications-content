@@ -124,7 +124,7 @@ Resources:
           ConfigurationKey: !Sub ${Stage}/${App}/${App}.properties
           ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
           Stage: !Sub ${Stage}
-      Description: lambda to replace the content-notifications-service
+      Description: Lambda to send notification when new content is published
       Handler: com.gu.mobile.content.notifications.ContentLambda::handler
       MemorySize: 384
       Role: !GetAtt ExecutionRole.Arn
@@ -154,7 +154,7 @@ Resources:
           ConfigurationKey: !Sub ${Stage}/${App}/${App}.properties
           ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
           Stage: !Sub ${Stage}
-      Description: lambda to replace the content-notifications-service
+      Description: Lambda that sends push notifications when new key events are published on a liveblog
       Handler: com.gu.mobile.content.notifications.LiveBlogLambda::handler
       MemorySize: 384
       Role: !GetAtt ExecutionRole.Arn

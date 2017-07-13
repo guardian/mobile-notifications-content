@@ -30,7 +30,7 @@ class NotificationsDynamoDb(dynamoDB: DynamoDB, config: Config) {
   }
 
   def saveLiveBlogEvent(contentId: String, blockId: String) = {
-    val expiry = DateTime.now().plusDays(1).getMillis / 100
+    val expiry = DateTime.now().plusDays(1).getMillis / 1000
     liveBlogTable.putItem(new Item().withPrimaryKey("contentId", contentId, "blockId", blockId).withDouble("expiry", expiry))
   }
 }
