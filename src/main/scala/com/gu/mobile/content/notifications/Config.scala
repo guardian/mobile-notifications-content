@@ -60,7 +60,7 @@ object Config extends Logging {
     logger.info(s"content.api.key $contentApiKey")
 
     val contentLiveBlogDynamoTableName = getMandatoryProperty(properties, "content.liveblog-notifications.table")
-    logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
+    logger.info(s"content.liveblog-notifications.table $contentLiveBlogDynamoTableName")
 
     Config(
       guardianNotificationsEnabled,
