@@ -1,12 +1,11 @@
 package com.gu.mobile.content.notifications
 
-
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider}
+import com.amazonaws.auth.{ AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.gu.conf.{ConfigurationLoader, SSMConfigurationLocation}
-import com.gu.{AppIdentity, AwsIdentity}
+import com.gu.conf.{ ConfigurationLoader, SSMConfigurationLocation }
+import com.gu.{ AppIdentity, AwsIdentity }
 
 case class LambdaConfig(
   guardianNotificationsEnabled: Boolean,
@@ -21,23 +20,24 @@ case class LambdaConfig(
 
 object LambdaConfig extends Logging {
   val appName = Option(System.getenv("App")).getOrElse(sys.error("No app name set. Lambda will not rum"))
-  val CrossAccountSsmReadingRole = Option(System.getenv("CrossAccountSsmReadingRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
+  val stage = Option(System.getenv("Stage")).getOrElse(sys.error("Stage app name set. Lambda will not rum"))
+  val crossAccountSsmReadingRole = Option(System.getenv("CrossAccountSsmReadingRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
 
   val credentialsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider(),
-    
+    new STSAssumeRoleSessionCredentialsProvider.Builder(crossAccountSsmReadingRole, "mobile-ssm").build()
   )
 
-  val conf  = {
+  val conf = {
     val identity = AppIdentity.whoAmI(defaultAppName = appName)
-    ConfigurationLoader.load(identity) {
-      case AwsIdentity(app, stack, stage,  _) =>
+    ConfigurationLoader.load(identity, credentialsProvider) {
+      case AwsIdentity(app, stack, stage, _) =>
         val path = s"/$app/$stage/Sstack"
         logger.info(s"Attempting to retrieve config from ssm with path: $path")
         SSMConfigurationLocation(path = path)
     }
   }
-  
+
   def load(): LambdaConfig = {
 
     val notificationsHost = getMandatoryProperty("notifications.host")
