@@ -20,6 +20,7 @@ case class LambdaConfig(
 
 object LambdaConfig extends Logging {
   val appName = Option(System.getenv("App")).getOrElse(sys.error("No app name set. Lambda will not rum"))
+  val stack = Option(System.getenv("Stack")).getOrElse(sys.error("Stack app name set. Lambda will not rum"))
   val stage = Option(System.getenv("Stage")).getOrElse(sys.error("Stage app name set. Lambda will not rum"))
   val crossAccountSsmReadingRole = Option(System.getenv("CrossAccountSsmReadingRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
 
@@ -32,7 +33,7 @@ object LambdaConfig extends Logging {
     val identity = AppIdentity.whoAmI(defaultAppName = appName)
     ConfigurationLoader.load(identity, credentialsProvider) {
       case AwsIdentity(app, stack, stage, _) =>
-        val path = s"/$app/$stage/Sstack"
+        val path = s"/$app/$stage/$stage"
         logger.info(s"Attempting to retrieve config from ssm with path: $path")
         SSMConfigurationLocation(path = path)
     }
