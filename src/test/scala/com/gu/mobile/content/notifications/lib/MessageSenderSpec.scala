@@ -1,7 +1,7 @@
 package com.gu.mobile.content.notifications.lib
 
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.mobile.content.notifications.Config
+import com.gu.mobile.content.notifications.LambdaConfig
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
 import com.gu.mobile.notifications.client.{ ApiClient, ApiHttpError }
@@ -16,7 +16,7 @@ import scala.concurrent.Future
 
 class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers with OneInstancePerTest with BeforeAndAfterEach {
 
-  val config = new Config(true, "", "", "", "", "", "", "")
+  val config = new LambdaConfig(true, "", "", "", "", "", "", "")
   val apiClient = mock[ApiClient]
   val content = mock[Content]
   val mockPayload = mock[ContentAlertPayload]

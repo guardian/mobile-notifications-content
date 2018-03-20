@@ -119,10 +119,9 @@ Resources:
         S3Key: !Sub ${Stack}/${Stage}/${App}/${App}.jar
       Environment:
         Variables:
-          ConfigurationBucket:
-            Ref: ConfigurationBucket
-          ConfigurationKey: !Sub ${Stage}/${App}/${App}.properties
-          ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
+          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
+          App: !Sub ${App}
+          Stack: !Sub ${Stack}
           Stage: !Sub ${Stage}
       Description: Lambda to send notification when new content is published
       Handler: com.gu.mobile.content.notifications.ContentLambda::handler
@@ -149,10 +148,9 @@ Resources:
         S3Key: !Sub ${Stack}/${Stage}/${App}/${App}.jar
       Environment:
         Variables:
-          ConfigurationBucket:
-            Ref: ConfigurationBucket
-          ConfigurationKey: !Sub ${Stage}/${App}/${App}.properties
-          ConfigurationS3GetRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
+          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
+          App: !Sub ${App}
+          Stack: !Sub ${Stack}
           Stage: !Sub ${Stage}
       Description: Lambda that sends push notifications when new key events are published on a liveblog
       Handler: com.gu.mobile.content.notifications.LiveBlogLambda::handler

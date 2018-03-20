@@ -6,7 +6,7 @@ import com.gu.contentapi.client.model.v1._
 import com.gu.mobile.content.notifications.lib.ContentApi._
 import com.gu.mobile.content.notifications.lib.Seqs._
 import com.gu.mobile.content.notifications.model.KeyEvent
-import com.gu.mobile.content.notifications.{ Config, Logging }
+import com.gu.mobile.content.notifications.{ LambdaConfig, Logging }
 import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
 
@@ -15,7 +15,7 @@ import scala.util.Try
 trait ContentAlertPayloadBuilder extends Logging {
 
   val Sender = "mobile-notifications-content"
-  val config: Config
+  val config: LambdaConfig
 
   private val topicsWithoutPrefix = Set(
     Topic(TagSeries, "football/series/the-uefa-euro-minute-2016"),

@@ -22,9 +22,9 @@ case class CapiResponseFailure(errorMsg: String) extends CapiResponse
 
 trait Lambda extends Logging {
 
-  val configuration = Config.load()
+  val configuration = LambdaConfig.load()
   val payLoadBuilder = new ContentAlertPayloadBuilder {
-    override val config: Config = configuration
+    override val config: LambdaConfig = configuration
   }
 
   val apiClient = NotificiationsApiClient(

@@ -15,7 +15,10 @@ scalacOptions ++= Seq(
   "-Ywarn-dead-code"
 )
 
-resolvers += Resolver.sonatypeRepo("releases")
+resolvers ++= Seq(
+   Resolver.sonatypeRepo("releases"),
+  "Guardian Platform Bintray" at "https://dl.bintray.com/guardian/platforms"
+)
 
 assemblyMergeStrategy in assembly := {
   case "shared.thrift" => MergeStrategy.first
@@ -42,6 +45,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.7.25",
   "com.typesafe.akka" %% "akka-actor" % "2.5.2",
   "com.squareup.okhttp3" % "okhttp" % "3.8.1",
+  "com.gu" %% "simple-configuration-ssm" % "1.4.1",
   "org.scalatest" %% "scalatest" % "3.0.0" % "test",
   "org.mockito" % "mockito-all" % "1.9.0" % "test",
   "org.specs2" %% "specs2-core" % "3.9.1" % "test",

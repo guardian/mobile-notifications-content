@@ -3,7 +3,7 @@ package com.gu.mobile.content.notifications.lib
 import java.net.URI
 
 import com.gu.contentapi.client.model.v1._
-import com.gu.mobile.content.notifications.Config
+import com.gu.mobile.content.notifications.LambdaConfig
 import com.gu.mobile.content.notifications.model.KeyEvent
 import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
@@ -13,9 +13,9 @@ import org.scalatest.{ MustMatchers, WordSpecLike }
 
 class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with MustMatchers {
 
-  val conf = mock[Config]
+  val conf = mock[LambdaConfig]
   val builder = new ContentAlertPayloadBuilder {
-    override val config: Config = conf
+    override val config: LambdaConfig = conf
   }
 
   val now = LocalDate.now
