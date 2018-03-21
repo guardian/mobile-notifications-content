@@ -33,7 +33,7 @@ object LambdaConfig extends Logging {
     val identity = AppIdentity.whoAmI(defaultAppName = appName)
     ConfigurationLoader.load(identity, credentialsProvider) {
       case AwsIdentity(app, stack, stage, _) =>
-        val path = s"/$app/$stage/$stage"
+        val path = s"/$app/$stage/$stack"
         logger.info(s"Attempting to retrieve config from ssm with path: $path")
         SSMConfigurationLocation(path = path)
     }
