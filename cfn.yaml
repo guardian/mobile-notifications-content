@@ -53,6 +53,12 @@ Resources:
                 - lambda.amazonaws.com
       Path: /
       Policies:
+        - PolicyName: assume-mobile-ssm-read-config-role
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action: sts:AssumeRole
+              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
         - PolicyName: assume-mobile-s3-read-role
           PolicyDocument:
             Statement:
