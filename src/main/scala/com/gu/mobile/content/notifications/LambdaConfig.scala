@@ -1,11 +1,11 @@
 package com.gu.mobile.content.notifications
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{ AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
+import com.amazonaws.auth.{AWSCredentialsProvider, AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider}
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
-import com.gu.conf.{ ConfigurationLoader, SSMConfigurationLocation }
-import com.gu.{ AppIdentity, AwsIdentity }
+import com.gu.conf.{ConfigurationLoader, SSMConfigurationLocation}
+import com.gu.{AppIdentity, AwsIdentity}
 
 case class LambdaConfig(
   guardianNotificationsEnabled: Boolean,
@@ -26,14 +26,14 @@ object LambdaConfig extends Logging {
 
   logger.info(s"Cross account role: $crossAccountSsmReadingRole, Stack: $stack, Stage: $stage, App: $appName" )
 
-  val credentialsProvider = new AWSCredentialsProviderChain(
+  def credentialsProvider: AWSCredentialsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider(),
     new STSAssumeRoleSessionCredentialsProvider.Builder(crossAccountSsmReadingRole, "mobile-ssm").build()
   )
 
   val conf = {
     val identity = AppIdentity.whoAmI(defaultAppName = appName)
-    ConfigurationLoader.load(identity, credentialsProvider) {
+    ConfigurationLoader.load(identity = identity, credentials = credentialsProvider) {
       case AwsIdentity(app, stack, stage, _) =>
         val path = s"/$app/$stage/$stack"
         logger.info(s"Attempting to retrieve config from ssm with path: $path")
