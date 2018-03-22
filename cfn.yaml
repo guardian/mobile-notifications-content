@@ -4,11 +4,11 @@ Parameters:
   Stack:
     Description: Stack name
     Type: String
-    Default: content-api-mobile-notifications
+    Default: mobile-notification
   App:
     Description: Application name
     Type: String
-    Default: mobile-content-notifications-lambda
+    Default: mobile-content-notifications
   Stage:
     Description: Stage name
     Type: String

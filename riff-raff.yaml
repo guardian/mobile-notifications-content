@@ -1,8 +1,8 @@
-stacks: [content-api-mobile-notifications]
+stacks: [mobile-notification]
 regions: [eu-west-1]
 
 deployments:
-  mobile-content-notifications-lambda:
+  mobile-content-notifications:
     type: aws-lambda
     parameters:
       bucket: content-api-dist
