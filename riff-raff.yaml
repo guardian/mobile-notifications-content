@@ -1,4 +1,4 @@
-stacks: [mobile-notification]
+stacks: [content-api-mobile-notifications]
 regions: [eu-west-1]
 
 deployments:
@@ -7,5 +7,5 @@ deployments:
     parameters:
       bucket: content-api-dist
       functionNames: [mobile-content-notifications-lambda-liveblogs-, mobile-content-notifications-lambda-]
-      fileName: mobile-content-notifications.jar
+      fileName: mobile-content-notifications-lambda.jar
       prefixStack: false
