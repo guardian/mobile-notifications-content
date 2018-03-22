@@ -24,7 +24,7 @@ object LambdaConfig extends Logging {
   val stage = Option(System.getenv("Stage")).getOrElse(sys.error("Stage app name set. Lambda will not rum"))
   val crossAccountSsmReadingRole = Option(System.getenv("CrossAccountSsmReadingRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
 
-  logger.info(s"Cross account role: $crossAccountSsmReadingRole" )
+  logger.info(s"Cross account role: $crossAccountSsmReadingRole, Stack: $stack, Stage: $stage, App: $appName" )
 
   val credentialsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider(),
