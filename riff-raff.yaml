@@ -1,4 +1,4 @@
-stacks: [mobile-content-notifications]
+stacks: [content-api-mobile-notifications]
 regions: [eu-west-1]
 
 deployments:
