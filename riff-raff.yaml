@@ -2,7 +2,7 @@ stacks: [mobile-notification]
 regions: [eu-west-1]
 
 deployments:
-  mobile-content-notifications:
+  mobile-content-notifications-lambda:
     type: aws-lambda
     parameters:
       bucket: content-api-dist
