@@ -9,10 +9,11 @@ deployments:
       functionNames: [mobile-content-notifications-lambda-liveblogs-, mobile-content-notifications-lambda-]
       fileName: mobile-content-notifications-lambda.jar
       prefixStack: false
-   mobile-content-notifications-lambda-cfn:
-      type: cloud-formation
-      app: mobile-content-notifications-lambda
-      parameters:
-        prependStackToCloudFormationStackName: true
-        cloudFormationStackName: mobile-content-notifications-lambda
-        templatePath: cfn.yaml
+    dependencies: [mobile-content-notifications-lambda-cfn]
+  mobile-content-notifications-lambda-cfn:
+    type: cloud-formation
+    app: mobile-content-notifications-lambda
+    parameters:
+      prependStackToCloudFormationStackName: true
+      cloudFormationStackName: mobile-content-notifications-lambda
+      templatePath: cfn.yaml
