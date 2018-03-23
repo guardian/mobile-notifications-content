@@ -2,12 +2,10 @@ package com.gu.mobile.content.notifications
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.auth.{AWSCredentialsProvider, AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider}
-import com.amazonaws.regions.Regions
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.gu.conf.{ConfigurationLoader, SSMConfigurationLocation}
 import com.gu.{AppIdentity, AwsIdentity}
 
-case class LambdaConfig(
+case class Configuration (
   guardianNotificationsEnabled: Boolean,
   notificationsHost: String,
   notificationsKey: String,
@@ -18,7 +16,7 @@ case class LambdaConfig(
   stage: String
 )
 
-object LambdaConfig extends Logging {
+object Configuration extends Logging {
   val appName = Option(System.getenv("App")).getOrElse(sys.error("No app name set. Lambda will not rum"))
   val stack = Option(System.getenv("Stack")).getOrElse(sys.error("Stack app name set. Lambda will not rum"))
   val stage = Option(System.getenv("Stage")).getOrElse(sys.error("Stage app name set. Lambda will not rum"))
@@ -35,13 +33,11 @@ object LambdaConfig extends Logging {
     val identity = AppIdentity.whoAmI(defaultAppName = appName)
     ConfigurationLoader.load(identity = identity, credentials = credentialsProvider) {
       case AwsIdentity(app, stack, stage, _) =>
-        val path = s"/$app/$stage/$stack"
-        logger.info(s"Attempting to retrieve config from ssm with path: $path")
-        SSMConfigurationLocation(path = path)
+        SSMConfigurationLocation(path = s"/$app/$stage/$stack")
     }
   }
 
-  def load(): LambdaConfig = {
+  def load(): Configuration = {
 
     val notificationsHost = getMandatoryProperty("notifications.host")
     logger.info(s"notifications.host: $notificationsHost")
@@ -64,7 +60,7 @@ object LambdaConfig extends Logging {
     val contentLiveBlogDynamoTableName = getMandatoryProperty("content.liveblog-notifications.table")
     logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
 
-    LambdaConfig(
+    Configuration(
       guardianNotificationsEnabled,
       notificationsHost,
       notificationsKey,
