@@ -59,12 +59,6 @@ Resources:
               Effect: Allow
               Action: sts:AssumeRole
               Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
-        - PolicyName: assume-mobile-s3-read-role
-          PolicyDocument:
-            Statement:
-              Effect: Allow
-              Action: sts:AssumeRole
-              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-s3-${Stage}
         - PolicyName: assume-mobile-dynamo-role
           PolicyDocument:
             Statement:
