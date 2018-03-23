@@ -5,16 +5,16 @@ import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
 import com.gu.contentapi.client.model.ItemQuery
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.contentapi.client.{ GuardianContentApiError, GuardianContentClient }
+import com.gu.contentapi.client.{GuardianContentApiError, GuardianContentClient}
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
-import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
+import com.gu.crier.model.event.v1.{EventPayload, RetrievableContent, _}
 import com.gu.mobile.content.notifications.lib.http.NotificationsHttpProvider
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb }
+import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb}
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
-import com.gu.mobile.notifications.client.{ ApiClient => NotificiationsApiClient }
+import com.gu.mobile.notifications.client.{ApiClient => NotificiationsApiClient}
 
 import scala.collection.JavaConverters._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait CapiResponse
 case class CapiResponseSuccess(content: Content) extends CapiResponse
