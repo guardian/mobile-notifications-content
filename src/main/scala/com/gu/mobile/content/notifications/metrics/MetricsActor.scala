@@ -3,11 +3,11 @@ package com.gu.mobile.content.notifications.metrics
 import akka.actor.Actor
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model._
-import com.gu.mobile.content.notifications.{ Config, Logging }
+import com.gu.mobile.content.notifications.{Configuration, Logging}
 
 import scala.collection.JavaConversions._
 
-class MetricsActor(val cloudWatch: AmazonCloudWatch, config: Config) extends Actor with MetricActorLogic {
+class MetricsActor(val cloudWatch: AmazonCloudWatch, config: Configuration) extends Actor with MetricActorLogic {
 
   override val stage = config.stage
 

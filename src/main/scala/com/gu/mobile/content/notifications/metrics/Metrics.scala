@@ -1,9 +1,9 @@
 package com.gu.mobile.content.notifications.metrics
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.{ActorSystem, Props}
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder
 import com.amazonaws.services.cloudwatch.model.StandardUnit
-import com.gu.mobile.content.notifications.{ Config, Logging }
+import com.gu.mobile.content.notifications.{Configuration, Logging}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -13,7 +13,7 @@ trait Metrics {
   def executionContext: ExecutionContext
 }
 
-class CloudWatchMetrics(config: Config) extends Metrics with Logging {
+class CloudWatchMetrics(config: Configuration) extends Metrics with Logging {
 
   private val actorSystem: ActorSystem = ActorSystem("MessageSending-timicMetric")
 

@@ -2,16 +2,16 @@ package com.gu.mobile.content.notifications.lib
 
 import com.amazonaws.services.cloudwatch.model.StandardUnit
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
+import com.gu.mobile.content.notifications.metrics.{MetricDataPoint, Metrics}
 import com.gu.mobile.content.notifications.model.KeyEvent
-import com.gu.mobile.content.notifications.{ Config, Logging }
+import com.gu.mobile.content.notifications.{Configuration, Logging}
 import com.gu.mobile.notifications.client.ApiClient
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
 
 import scala.concurrent.ExecutionContext
-import scala.util.{ Failure, Success }
+import scala.util.{Failure, Success}
 
-class MessageSender(config: Config, apiClient: ApiClient, payloadBuilder: ContentAlertPayloadBuilder, metrics: Metrics) extends Logging {
+class MessageSender(config: Configuration, apiClient: ApiClient, payloadBuilder: ContentAlertPayloadBuilder, metrics: Metrics) extends Logging {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
