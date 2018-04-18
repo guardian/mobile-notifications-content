@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications.model
 
-import com.gu.contentapi.client.model.v1.{CapiDateTime, Content}
+import com.gu.contentapi.client.model.v1.{ CapiDateTime, Content }
 import com.gu.mobile.content.notifications.Logging
 import com.gu.mobile.content.notifications.lib.NotificationsDynamoDb
 import org.joda.time.DateTime

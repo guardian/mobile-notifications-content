@@ -3,7 +3,7 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.model.Record
 import com.gu.crier.model.event.v1.Event
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Try
 
 object CapiEventProcessor extends Logging {
@@ -31,6 +31,6 @@ object CapiEventProcessor extends Logging {
 
   private def eventFromRecord(record: Record): Try[Event] = {
     val buffer = record.getData
-    Try(ThriftDeserializer.fromByteBuffer(buffer)(Event.decoder))
+    Try(ThriftDeserializer.fromByteBuffer(buffer, Event))
   }
 }
