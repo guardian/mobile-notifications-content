@@ -2,14 +2,14 @@ package com.gu.mobile.content.notifications.lib
 
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.mobile.content.notifications.Configuration
-import com.gu.mobile.content.notifications.metrics.{MetricDataPoint, Metrics}
+import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
-import com.gu.mobile.notifications.client.{ApiClient, ApiHttpError}
+import com.gu.mobile.notifications.client.{ ApiClient, ApiHttpError }
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers}
+import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
