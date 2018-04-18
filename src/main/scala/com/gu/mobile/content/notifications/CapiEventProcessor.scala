@@ -3,7 +3,7 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.model.Record
 import com.gu.crier.model.event.v1.Event
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Try
 
 object CapiEventProcessor extends Logging {

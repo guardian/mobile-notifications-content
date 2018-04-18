@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications
 
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 trait Logging {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)

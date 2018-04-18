@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications.lib
 
-import com.gu.contentapi.client.model.v1.{Asset, Content, Tag, TagType}
+import com.gu.contentapi.client.model.v1.{ Asset, Content, Tag, TagType }
 import org.joda.time.DateTime
 import org.jsoup.Jsoup
 

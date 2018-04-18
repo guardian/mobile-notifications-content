@@ -1,11 +1,11 @@
 package com.gu.mobile.content.notifications
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{AWSCredentialsProvider, AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider}
-import com.gu.conf.{ConfigurationLoader, SSMConfigurationLocation}
-import com.gu.{AppIdentity, AwsIdentity}
+import com.amazonaws.auth.{ AWSCredentialsProvider, AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
+import com.gu.conf.{ ConfigurationLoader, SSMConfigurationLocation }
+import com.gu.{ AppIdentity, AwsIdentity }
 
-case class Configuration (
+case class Configuration(
   guardianNotificationsEnabled: Boolean,
   notificationsHost: String,
   notificationsKey: String,
@@ -22,7 +22,7 @@ object Configuration extends Logging {
   val stage = Option(System.getenv("Stage")).getOrElse(sys.error("Stage app name set. Lambda will not rum"))
   val crossAccountSsmReadingRole = Option(System.getenv("CrossAccountSsmReadingRole")).getOrElse(sys.error("No role to get configuration with. Lambda will not run"))
 
-  logger.info(s"Cross account role: $crossAccountSsmReadingRole, Stack: $stack, Stage: $stage, App: $appName" )
+  logger.info(s"Cross account role: $crossAccountSsmReadingRole, Stack: $stack, Stage: $stage, App: $appName")
 
   def credentialsProvider: AWSCredentialsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider(),
