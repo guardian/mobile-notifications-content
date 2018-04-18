@@ -6,7 +6,7 @@ description:= "lambda to replace the content-notifications-service"
 
 version := "1.0"
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.12.5"
 
 scalacOptions ++= Seq(
   "-deprecation",
