@@ -2,7 +2,7 @@ package com.gu.mobile.content.notifications
 
 import java.nio.ByteBuffer
 
-import com.twitter.scrooge.ThriftStruct
+import com.twitter.scrooge.{ ThriftStruct, ThriftStructCodec }
 import org.apache.thrift.TBaseHelper
 import org.apache.thrift.protocol.{ TCompactProtocol, TProtocol }
 import org.apache.thrift.transport.TMemoryInputTransport
@@ -17,6 +17,6 @@ object ThriftDeserializer {
   def inputProtocolFrom(bytes: Array[Byte]): TProtocol =
     protocolFactory.getProtocol(new TMemoryInputTransport(bytes))
 
-  def fromByteBuffer[T <: ThriftStruct](byteBuffer: ByteBuffer)(decoder: TProtocol => T): T =
-    decoder(inputProtocolFrom(byteBuffer))
+  def fromByteBuffer[T <: ThriftStruct](byteBuffer: ByteBuffer, codec: ThriftStructCodec[T]): T =
+    codec.decode(inputProtocolFrom(byteBuffer))
 }

@@ -31,6 +31,6 @@ object CapiEventProcessor extends Logging {
 
   private def eventFromRecord(record: Record): Try[Event] = {
     val buffer = record.getData
-    Try(ThriftDeserializer.fromByteBuffer(buffer)(Event.decoder))
+    Try(ThriftDeserializer.fromByteBuffer(buffer, Event))
   }
 }
