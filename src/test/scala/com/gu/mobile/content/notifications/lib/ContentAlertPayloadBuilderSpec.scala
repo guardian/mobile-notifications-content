@@ -31,7 +31,6 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
   val contributorTopic = Topic(TagContributor, "idContributor")
   val contributorTopic2 = Topic(TagContributor, "idContributor2")
-  val keywordTopic = Topic(TagKeyword, "idKeyword")
   val seriesTopic = Topic(TagSeries, "idSeries")
   val seriesTopic2 = Topic(TagSeries, "idSeries2")
   val blogTopic = Topic(TagBlog, "idBlog")
@@ -50,7 +49,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     ))
   ))
 
-  val allTopics = Set(contributorTopic, contributorTopic2, keywordTopic, blogTopic, blogTopic1, seriesTopic, seriesTopic2)
+  val allTopics = List(contributorTopic, contributorTopic2, blogTopic, blogTopic1, seriesTopic, seriesTopic2)
   val link = GuardianLinkDetails("newId", Some("http://gu.com/p/1234"), "webTitle", Some(thumb), GITContent)
 
   private val contentFields = ContentFields(shortUrl = Some("http://gu.com/p/1234"), thumbnail = Some("thumb.jpg"), headline = Some("headline"))
@@ -76,7 +75,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     sender = "mobile-notifications-content",
     link = link,
     importance = Importance.Major,
-    topic = Set(seriesTopic),
+    topic = List(seriesTopic),
     debug = false
   )
 
@@ -84,7 +83,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
   val expectedBlogContentAlert = expectedPayloadForItem.copy(
     title = "Liveblog update: blogPostTitle",
-    topic = Set(Topic(TopicTypes.Content, "newId")),
+    topic = List(Topic(TopicTypes.Content, "newId")),
     link = link.copy(blockId = Some("blockId"))
   )
 
@@ -102,11 +101,11 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     }
 
     "series tag should take precedence over the rest of the tags if there is only one" in {
-      verifyContentAlert(tags = List(contributorTag, seriesTag, keywordTag, blogTag), expectedReason = seriesTag.webTitle)
+      verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag), expectedReason = seriesTag.webTitle)
     }
 
     "not use series tags in web title if there is more than one" in {
-      verifyContentAlert(tags = List(contributorTag, seriesTag, keywordTag, seriesTag2, blogTag), expectedReason = blogTag.webTitle)
+      verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag, seriesTag2), expectedReason = blogTag.webTitle)
     }
 
     "content tag should take precedence over contributor when generating web title" in {
@@ -138,7 +137,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("membership/series/weekend-round-up", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "membership/series/weekend-round-up")
       val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = Set(topic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = List(topic))
       builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
     }
 
@@ -146,7 +145,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("membership/series/weekend-reading", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "membership/series/weekend-reading")
       val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = Set(topic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = List(topic))
       builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
     }
 
@@ -154,7 +153,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("world/series/guardian-morning-briefing", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "world/series/guardian-morning-briefing")
       val contentItem = item.copy(tags = List(tag))
-      val expectedPayload = expectedPayloadForItem.copy(title = "headline", topic = Set(topic))
+      val expectedPayload = expectedPayloadForItem.copy(title = "headline", topic = List(topic))
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
 
@@ -163,15 +162,15 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
       val expectedTitle = "Got a minute? headline"
       val contentItem = item.copy(tags = List(briefingTag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = expectedTitle, topic = Set(briefingTopic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = expectedTitle, topic = List(briefingTopic))
       builder.buildPayLoad(contentItem) mustBe expectedMinutePayload
 
     }
 
-    "should have a maximum of 20 topics" in {
-      val manyTags = (1 to 25).toList.map(index => Tag(s"idKeyword_$index", TagType.Keyword, None, None, s"World_$index", "", ""))
+    "should have a maximum of 3 topics" in {
+      val manyTags = (1 to 25).toList.map(index => Tag(s"idKeyword_$index", TagType.Contributor, None, None, s"World_$index", "", ""))
       val contentItem = item.copy(tags = manyTags)
-      val expectedTopics = manyTags.map(tag => Topic(TagKeyword, tag.id)).take(20).toSet
+      val expectedTopics = manyTags.map(tag => Topic(TagContributor, tag.id)).take(3)
       val expectedPayload = expectedPayloadForItem.copy(topic = expectedTopics)
 
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
@@ -189,7 +188,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
   }
 
   def verifyContentAlert(tags: List[Tag], expectedReason: String) = {
-    val expectedTopics = allTopics.filter { topic => tags.map(_.id).contains(topic.name) }
+    val expectedTopics = allTopics.filter { topic => tags.map(_.id).contains(topic.name) }.take(3)
     val expectedTitle = expectedPayloadForItem.title.replace("Following", expectedReason)
     val expectedPayload = expectedPayloadForItem.copy(title = expectedTitle, topic = expectedTopics)
 

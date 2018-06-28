@@ -28,12 +28,18 @@ trait ContentAlertPayloadBuilder extends Logging {
 
   private val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
 
+  private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
+
   def buildPayLoad(content: Content): ContentAlertPayload = {
     val followableTag: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
       .orElse(content.tags.findOne(_.`type` == TagType.Blog))
       .orElse(content.tags.findOne(_.`type` == TagType.Contributor))
 
-    val topics = content.tags.flatMap(tagToTopic).take(20).toSet
+    val topics = content.tags
+      .filter(tag => followableTopicTypes.contains(tag.`type`))
+      .flatMap(tagToTopic)
+      .take(3)
+      .toList
 
     ContentAlertPayload(
       title = contentTitle(content, followableTag, topics),
@@ -56,7 +62,7 @@ trait ContentAlertPayloadBuilder extends Logging {
       sender = Sender,
       link = getGuardianLink(content, Some(keyEvent)),
       importance = Importance.Major,
-      topic = Set(Topic(TopicTypes.Content, content.id)),
+      topic = List(Topic(TopicTypes.Content, content.id)),
       debug = false
     )
   }
@@ -70,16 +76,16 @@ trait ContentAlertPayloadBuilder extends Logging {
   }
 
   private def tagToTopic(tag: Tag): Option[Topic] = {
-    getTopicType(tag.`type`) map { maybeTagType => Topic(maybeTagType, tag.id) }
+    getTopicType(tag.`type`) map { tagType => Topic(tagType, tag.id) }
   }
 
-  private def contentTitle(content: Content, followableTag: Option[Tag], topics: Set[Topic]): String = {
+  private def contentTitle(content: Content, followableTag: Option[Tag], topics: List[Topic]): String = {
     def title = content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)
     def reason = followableTag.map { ft => ft.webTitle }.getOrElse("Following")
 
     if (topics.contains(briefingTopic)) {
       s"Got a minute? $title"
-    } else if (topics.intersect(topicsWithoutPrefix).nonEmpty) {
+    } else if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
       title
     } else {
       s"$reason: $title"
