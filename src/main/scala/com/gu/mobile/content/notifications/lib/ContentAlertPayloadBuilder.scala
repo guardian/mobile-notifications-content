@@ -23,10 +23,9 @@ trait ContentAlertPayloadBuilder extends Logging {
     Topic(TagSeries, "membership/series/weekend-reading"),
     Topic(TagSeries, "membership/series/weekend-round-up"),
     Topic(TagSeries, "world/series/guardian-morning-briefing"),
-    Topic(TagSeries, "politics/series/the-snap")
+    Topic(TagSeries, "politics/series/the-snap"),
+    Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
   )
-
-  private val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
 
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
 
@@ -83,9 +82,7 @@ trait ContentAlertPayloadBuilder extends Logging {
     def title = content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)
     def reason = followableTag.map { ft => ft.webTitle }.getOrElse("Following")
 
-    if (topics.contains(briefingTopic)) {
-      s"Got a minute? $title"
-    } else if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
+    if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
       title
     } else {
       s"$reason: $title"
