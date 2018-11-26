@@ -38,6 +38,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
   "com.gu" %% "content-api-client" % "11.55",
   "com.gu" %% "mobile-notifications-client" % "1.2",
+  "com.gu" %% "thrift-serializer" % "2.1.1",
   "org.apache.thrift" % "libthrift" % "0.9.1",
   "org.joda" % "joda-convert" % "1.8.1",
   "org.jsoup" % "jsoup" % "1.8.3",
