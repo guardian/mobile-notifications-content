@@ -41,7 +41,6 @@ trait Lambda extends Logging {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent) {
-    logger.info("Hello")
     val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
     val userRecords = UserRecord.deaggregate(rawRecord.asJava)
 
