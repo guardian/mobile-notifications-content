@@ -41,8 +41,11 @@ trait Lambda extends Logging {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent) {
+    logger.info("Hello")
     val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
+    logger.info(s"Got ${rawRecord.length} records")
     val userRecords = UserRecord.deaggregate(rawRecord.asJava)
+    logger.info(s"${userRecords.size} records to process")
 
     CapiEventProcessor.process(userRecords.asScala) { event =>
       event.eventType match {
@@ -63,7 +66,7 @@ trait Lambda extends Logging {
           logger.info("Received non-updatable event type")
           Future.successful(false)
       }
-    }
+    }.failed.foreach { error => logger.error(s"Ho ho ho, something's wrong", error) }
   }
 
   def processContent(content: Content): Boolean
