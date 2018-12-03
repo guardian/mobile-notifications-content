@@ -43,9 +43,7 @@ trait Lambda extends Logging {
   def handler(event: KinesisEvent) {
     logger.info("Hello")
     val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
-    logger.info(s"Got ${rawRecord.length} records")
     val userRecords = UserRecord.deaggregate(rawRecord.asJava)
-    logger.info(s"${userRecords.size} records to process")
 
     CapiEventProcessor.process(userRecords.asScala) { event =>
       event.eventType match {

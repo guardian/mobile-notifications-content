@@ -14,6 +14,7 @@ object CapiEventProcessor extends Logging with ThriftDeserializer[Event] {
 
   def process(records: Seq[Record])(sendNotification: Event => Future[Boolean]) = {
     val maybeNotificationsSent = records.map { record =>
+      logger.info("Reading record")
       eventFromRecord(record).flatMap(sendNotification).recover {
         case error =>
           logger.error(s"Failed to deserialize Kinesis record: ${error.getMessage}", error)
@@ -30,6 +31,16 @@ object CapiEventProcessor extends Logging with ThriftDeserializer[Event] {
 
   private def eventFromRecord(record: Record): Future[Event] = {
     val buffer = record.getData.array
-    deserialize(buffer, false) fallbackTo deserialize(buffer, true)
+    deserialize(buffer, false).map { x =>
+      logger.info("Success compressed!")
+      x
+    } recoverWith {
+      case t: Throwable =>
+        logger.error("Did not work", t)
+        deserialize(buffer, true).map { x =>
+          logger.info("Success uncompressed!")
+          x
+        }
+    }
   }
 }
