@@ -53,6 +53,8 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-matcher-extra" % "3.9.1" % "test"
 )
 
+dependencyOverrides += "org.apache.thrift" % "libthrift" % "0.9.1"
+
 enablePlugins(RiffRaffArtifact)
 
 assemblyJarName := s"${name.value}.jar"
