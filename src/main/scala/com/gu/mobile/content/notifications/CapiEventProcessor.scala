@@ -4,20 +4,17 @@ import com.amazonaws.services.kinesis.model.Record
 import com.gu.crier.model.event.v1.Event
 import com.gu.thrift.serializer.ThriftDeserializer
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.Try
+import scala.util.{ Try, Success, Failure }
 
-object CapiEventProcessor extends Logging with ThriftDeserializer[Event] {
+object CapiEventProcessor extends Logging {
 
-  val codec = Event
-
-  implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-
-  def process(records: Seq[Record])(sendNotification: Event => Future[Boolean]) = {
+  def process(records: Seq[Record])(sendNotification: Event => Future[Boolean])(implicit ec: ExecutionContext): Future[Int] = {
     val maybeNotificationsSent = records.map { record =>
-      eventFromRecord(record).flatMap(sendNotification).recover {
-        case error =>
+      ThriftDeserializer.deserialize(record.getData.array)(Event) match {
+        case Success(event) => sendNotification(event)
+        case Failure(error) =>
           logger.error(s"Failed to deserialize Kinesis record: ${error.getMessage}", error)
-          false
+          Future.successful(false)
       }
     }
 
@@ -25,23 +22,8 @@ object CapiEventProcessor extends Logging with ThriftDeserializer[Event] {
       notificationsSent =>
         val notificationCount = notificationsSent.count(_ == true)
         logger.info(s"Sent $notificationCount notifications")
+        notificationCount
     }
   }
 
-  private def eventFromRecord(record: Record): Future[Event] = {
-    val buffer1 = record.getData.array
-    val buffer2 = Array.ofDim[Byte](buffer1.length)
-    System.arraycopy(buffer1, 0, buffer2, 0, buffer1.length)
-    deserialize(buffer1, false).map { x =>
-      logger.info("Success compressed!")
-      x
-    } recoverWith {
-      case t: Throwable =>
-        logger.error("Did not work", t)
-        deserialize(buffer2, true).map { x =>
-          logger.info("Success uncompressed!")
-          x
-        }
-    }
-  }
 }
