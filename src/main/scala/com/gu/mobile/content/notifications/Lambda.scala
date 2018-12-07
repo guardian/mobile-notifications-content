@@ -58,6 +58,9 @@ trait Lambda extends Logging {
             case UnknownUnionField(e) =>
               logger.error(s"Unknown event payload $e. Consider updating capi models")
               Future.successful(false)
+            case _ =>
+              logger.warn(s"Unknown event payload ${event.payload}. Consider updating capi models")
+              Future.successful(false)
           }.getOrElse(Future.successful(false))
         case _ =>
           logger.info("Received non-updatable event type")
