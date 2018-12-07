@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications.lib
 
-import com.gu.contentapi.client.model.v1.Content
+import com.gu.contentapi.client.model.v1.{ CapiDateTime, Content, ContentFields }
 import com.gu.mobile.content.notifications.Configuration
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
@@ -19,6 +19,10 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
   val config = new Configuration(true, "", "", "", "", "", "", "")
   val apiClient = mock[ApiClient]
   val content = mock[Content]
+  val contentFields = mock[ContentFields]
+  val dateTime = CapiDateTime(1544178777001L, "")
+  when(contentFields.firstPublicationDate) thenReturn (Some(dateTime))
+  when(content.fields) thenReturn Some(contentFields)
   val mockPayload = mock[ContentAlertPayload]
   val payloadBuilder = mock[ContentAlertPayloadBuilder]
   val metrics = mock[Metrics]
