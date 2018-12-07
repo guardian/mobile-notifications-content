@@ -125,7 +125,7 @@ Resources:
           Stage: !Sub ${Stage}
       Description: Lambda to send notification when new content is published
       Handler: com.gu.mobile.content.notifications.ContentLambda::handler
-      MemorySize: 384
+      MemorySize: 1024
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
       Timeout: 60
@@ -154,7 +154,7 @@ Resources:
           Stage: !Sub ${Stage}
       Description: Lambda that sends push notifications when new key events are published on a liveblog
       Handler: com.gu.mobile.content.notifications.LiveBlogLambda::handler
-      MemorySize: 384
+      MemorySize: 1024
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
       Timeout: 60
