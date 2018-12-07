@@ -22,7 +22,8 @@ class MessageSender(config: Configuration, apiClient: ApiClient, payloadBuilder:
       case _ =>
         payloadBuilder.buildPayLoad(content)
     }
-    sendNotification(payLoad)
+    // sendNotification(payLoad)
+    ()
   }
 
   private def sendNotification(notification: ContentAlertPayload) {
