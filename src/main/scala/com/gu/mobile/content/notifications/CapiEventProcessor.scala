@@ -9,8 +9,6 @@ import scala.util.{ Try, Success, Failure }
 
 object CapiEventProcessor extends Logging {
 
-  implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-
   def process(records: Seq[Record])(sendNotification: Event => Future[Boolean])(implicit ec: ExecutionContext): Future[Int] = {
     val maybeNotificationsSent = records.map { record =>
       ThriftDeserializer.deserialize(record.getData.array)(Event) match {
