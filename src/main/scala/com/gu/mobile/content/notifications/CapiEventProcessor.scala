@@ -14,7 +14,8 @@ object CapiEventProcessor extends Logging {
     val maybeNotificationsSent = records.flatMap { record =>
       val event = eventFromRecord(record)
       event.map {
-        e => sendNotification(e)
+        e => // sendNotification(e)
+          Future.successful(true)
       }.recover {
         case error =>
           logger.error(s"Failed to deserialize Kinesis record: ${error.getMessage}", error)
