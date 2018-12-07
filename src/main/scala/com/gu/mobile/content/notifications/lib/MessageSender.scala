@@ -15,6 +15,8 @@ class MessageSender(config: Configuration, apiClient: ApiClient, payloadBuilder:
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
+  val recoveryDate: Long = 1544178777000L
+
   def send(content: Content, maybeKeyEvent: Option[KeyEvent] = None): Unit = {
     val payLoad = maybeKeyEvent match {
       case Some(keyEvent) =>
@@ -22,7 +24,11 @@ class MessageSender(config: Configuration, apiClient: ApiClient, payloadBuilder:
       case _ =>
         payloadBuilder.buildPayLoad(content)
     }
-    sendNotification(payLoad)
+
+    if (content.fields.flatMap(_.firstPublicationDate).map(_.dateTime).exists(_ > recoveryDate))
+      sendNotification(payLoad)
+    else
+      ()
   }
 
   private def sendNotification(notification: ContentAlertPayload) {
