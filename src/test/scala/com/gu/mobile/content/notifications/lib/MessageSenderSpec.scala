@@ -1,7 +1,7 @@
 package com.gu.mobile.content.notifications.lib
 
 import com.amazonaws.services.kinesis.model.Record
-import com.gu.contentapi.client.model.v1.Content
+import com.gu.contentapi.client.model.v1.{ Content, ContentFields, CapiDateTime }
 import com.gu.crier.model.event.v1.{ Event, EventPayload, EventType, ItemType, RetrievableContent }
 import com.gu.mobile.content.notifications.{ Configuration, CapiEventProcessor }
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
