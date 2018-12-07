@@ -1,24 +1,20 @@
 package com.gu.mobile.content.notifications.lib
 
-import com.amazonaws.services.kinesis.model.Record
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.crier.model.event.v1.{ Event, EventPayload, EventType, ItemType, RetrievableContent }
-import com.gu.mobile.content.notifications.{ Configuration, CapiEventProcessor }
+import com.gu.mobile.content.notifications.Configuration
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
 import com.gu.mobile.notifications.client.{ ApiClient, ApiHttpError }
-import com.gu.thrift.serializer._
-import java.nio.ByteBuffer
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
-import org.scalatest.concurrent.ScalaFutures
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers with OneInstancePerTest with BeforeAndAfterEach with ScalaFutures {
+class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers with OneInstancePerTest with BeforeAndAfterEach {
 
   val config = new Configuration(true, "", "", "", "", "", "", "")
   val apiClient = mock[ApiClient]
@@ -65,31 +61,6 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
         verify(metrics).send(captor.capture())
         captor.getValue.name mustEqual "SendNotificationFailureLatency"
       }
-    }
-
-    val event = Event(
-      payloadId = "1234567890",
-      eventType = EventType.Update,
-      itemType = ItemType.Tag,
-      dateTime = 100000000L,
-      payload = Some(EventPayload.RetrievableContent(RetrievableContent(
-        id = "0987654321",
-        capiUrl = "http://www.theguardian.com/",
-        lastModifiedDate = Some(8888888888L),
-        internalRevision = Some(444444)
-      )))
-    )
-
-    "properly deserialize a compressed event" in {
-      val bytes = ThriftSerializer.serializeToBytes(event, Some(ZstdType), None)
-      val record = new Record().withData(ByteBuffer.wrap(bytes))
-      CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
-    }
-
-    "properly deserialize a non-compressed event" in {
-      val bytes = ThriftSerializer.serializeToBytes(event, None, None)
-      val record = new Record().withData(ByteBuffer.wrap(bytes))
-      CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
     }
   }
 }

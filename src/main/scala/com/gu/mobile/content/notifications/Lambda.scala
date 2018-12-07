@@ -63,7 +63,7 @@ trait Lambda extends Logging {
           logger.info("Received non-updatable event type")
           Future.successful(false)
       }
-    }.failed.foreach { error => logger.error(s"Ho ho ho, something's wrong", error) }
+    }
   }
 
   def processContent(content: Content): Boolean
