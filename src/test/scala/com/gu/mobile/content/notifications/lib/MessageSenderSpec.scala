@@ -23,10 +23,6 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
   val config = new Configuration(true, "", "", "", "", "", "", "")
   val apiClient = mock[ApiClient]
   val content = mock[Content]
-  val contentFields = mock[ContentFields]
-  val dateTime = CapiDateTime(1544178777001L, "")
-  when(contentFields.firstPublicationDate) thenReturn (Some(dateTime))
-  when(content.fields) thenReturn Some(contentFields)
   val mockPayload = mock[ContentAlertPayload]
   val payloadBuilder = mock[ContentAlertPayloadBuilder]
   val metrics = mock[Metrics]
