@@ -7,14 +7,14 @@ deployments:
     parameters:
       bucket: content-api-dist
       #TODO update these after updating the stack
-      functionNames: [mobile-content-notifications-lambda-liveblogs-, mobile-content-notifications-lambda-]
+      functionNames: [mobile-notifications-content-liveblogs-, mobile-notifications-content-]
       fileName: mobile-notifications-content.jar
       prefixStack: false
     dependencies: [mobile-notifications-content-cfn]
   mobile-notifications-content-cfn:
     type: cloud-formation
     # TODO update this after updating stack
-    app: mobile-content-notifications-lambda
+    app: mobile-notifications-content
     parameters:
       prependStackToCloudFormationStackName: true
       # TODD update after renaming stack

@@ -8,7 +8,7 @@ Parameters:
   App:
     Description: Application name
     Type: String
-    Default: mobile-content-notifications-lambda
+    Default: mobile-notifications-content
   Stage:
     Description: Stage name
     Type: String
