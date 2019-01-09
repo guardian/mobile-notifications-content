@@ -10,7 +10,7 @@ deployments:
       functionNames: [mobile-notifications-content-liveblogs-, mobile-notifications-content-]
       fileName: mobile-notifications-content.jar
       prefixStack: false
-    dependencies: [mobile-notifications-content-cfn]
+    dependencies: [mobile-notifications-content-lambda-cfn]
   mobile-content-notifications-lambda-cfn:
     type: cloud-formation
     # TODO update this after updating stack
