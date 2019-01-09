@@ -11,7 +11,7 @@ deployments:
       fileName: mobile-notifications-content.jar
       prefixStack: false
     dependencies: [mobile-notifications-content-cfn]
-  mobile-notifications-content-cfn:
+  mobile-content-notifications-lambda-cfn:
     type: cloud-formation
     # TODO update this after updating stack
     app: mobile-notifications-content
