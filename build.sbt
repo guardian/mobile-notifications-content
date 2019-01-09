@@ -1,4 +1,4 @@
-name := "mobile-content-notifications"
+name := "mobile-notifications-content"
 
 organization := "com.gu"
 
