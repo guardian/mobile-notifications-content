@@ -4,7 +4,7 @@ Parameters:
   Stack:
     Description: Stack name
     Type: String
-    Default: content-api.mobile-notifications
+    Default: content-api
   App:
     Description: Application name
     Type: String
