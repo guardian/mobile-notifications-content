@@ -62,5 +62,4 @@ riffRaffPackageType := assembly.value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestProjectName := s"Mobile::${name.value}"
-// riffRaffArtifactResources += (file("cfn.yaml"), s"${name.value}-cfn/cfn.yaml")
-riffRaffArtifactResources += (file("cfn.yaml"), "mobile-content-notifications-lambda-cfn/cfn.yaml")
+riffRaffArtifactResources += (file("cfn.yaml"), s"${name.value}-cfn/cfn.yaml")
