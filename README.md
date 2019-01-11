@@ -6,7 +6,7 @@ The lambda consumes the CAPI [Firehose](http://docs.aws.amazon.com/firehose/late
 
 ## Deployment
 
-Deploy the latest build of **mobile-content-notifications-lambda** in [RiffRaff](https://riffraff.gutools.co.uk)  this redeploys the Lambda in the CAPI account. If you need to redeploy the whole stack you'll need to get access to the CAPI account via [janus](https://janus.gutools.co.uk) go to Cloudformation console and rebuild or create the stack using the cloudformation script in this repo. 
+Deploy the latest build of **Mobile::mobile-notifications-content** in [RiffRaff](https://riffraff.gutools.co.uk)  this redeploys the Lambda in the CAPI account. If you need to redeploy the whole stack you'll need to get access to the CAPI account via [janus](https://janus.gutools.co.uk) go to Cloudformation console and rebuild or create the stack using the cloudformation script in this repo. 
  
 ## Cross account resources
 
