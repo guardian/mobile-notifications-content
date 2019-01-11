@@ -3,9 +3,9 @@ package com.gu.mobile.content.notifications.metrics
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest
 import org.mockito.Mockito._
-import org.mockito.{ArgumentCaptor, Matchers}
+import org.mockito.{ ArgumentCaptor, Matchers }
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{MustMatchers, WordSpecLike}
+import org.scalatest.{ MustMatchers, WordSpecLike }
 import org.specs2.specification.Scope
 
 class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers {
