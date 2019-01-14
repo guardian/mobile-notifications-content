@@ -32,10 +32,6 @@ Parameters:
     Description: S3 Bucket containing app configuration
     Type: String
     Default: mobile-notifications-dist
-  ConfigurationFileName:
-    Description: Name of file containing the application configuration
-    Type: String
-    Default: mobile-content-notifications-lambda.properties
   KinesisStreamName:
         Description: Capi kinesis stream
         Type: String
