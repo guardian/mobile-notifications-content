@@ -2,18 +2,18 @@ stacks: [content-api-mobile-notifications]
 regions: [eu-west-1]
 
 deployments:
-  mobile-content-notifications-lambda:
+  mobile-notifications-content:
     type: aws-lambda
     parameters:
       bucket: content-api-dist
-      functionNames: [mobile-content-notifications-lambda-liveblogs-, mobile-content-notifications-lambda-]
-      fileName: mobile-content-notifications-lambda.jar
+      functionNames: [mobile-notifications-content-liveblogs-, mobile-notifications-content-]
+      fileName: mobile-notifications-content.jar
       prefixStack: false
-    dependencies: [mobile-content-notifications-lambda-cfn]
-  mobile-content-notifications-lambda-cfn:
+    dependencies: [mobile-notifications-content-cfn]
+  mobile-notifications-content-cfn:
     type: cloud-formation
-    app: mobile-content-notifications-lambda
+    app: mobile-notifications-content
     parameters:
       prependStackToCloudFormationStackName: true
-      cloudFormationStackName: mobile-content-notifications-lambda
+      cloudFormationStackName: mobile-notifications-content
       templatePath: cfn.yaml
