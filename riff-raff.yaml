@@ -15,5 +15,5 @@ deployments:
     app: mobile-notifications-content
     parameters:
       prependStackToCloudFormationStackName: true
-      cloudFormationStackName: mobile-content-notifications-lambda
+      cloudFormationStackName: mobile-notifications-content
       templatePath: cfn.yaml
