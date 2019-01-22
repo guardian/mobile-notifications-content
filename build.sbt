@@ -17,6 +17,7 @@ scalacOptions ++= Seq(
 
 resolvers ++= Seq(
    Resolver.sonatypeRepo("releases"),
+  "Guardian Mobile Bintray" at "https://dl.bintray.com/guardian/mobile",
   "Guardian Platform Bintray" at "https://dl.bintray.com/guardian/platforms"
 )
 
@@ -37,7 +38,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
   "com.gu" %% "content-api-client" % "11.55",
-  "com.gu" %% "mobile-notifications-client" % "1.2",
+  "com.gu" %% "mobile-notifications-client" % "1.5",
   "com.gu" %% "thrift-serializer" % "3.0.0",
   "org.apache.thrift" % "libthrift" % "0.9.1",
   "org.joda" % "joda-convert" % "1.8.1",
