@@ -15,7 +15,7 @@ object NotificationsHttpProvider extends HttpProvider {
 
   def post(postUrl: String, apiKey: String, contentType: ContentType, body: Array[Byte]): Future[HttpResponse] = {
     val mediaType = MediaType.parse(s"${contentType.mediaType}; charset=${contentType.charset}")
-    val authHeader = s"Bearer: $apiKey"
+    val authHeader = s"Bearer $apiKey"
     val tbody = RequestBody.create(mediaType, body)
     val request = new Request.Builder()
       .url(postUrl)
