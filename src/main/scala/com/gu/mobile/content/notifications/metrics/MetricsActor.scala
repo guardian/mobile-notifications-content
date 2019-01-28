@@ -5,7 +5,7 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model._
 import com.gu.mobile.content.notifications.{ Configuration, Logging }
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 class MetricsActor(val cloudWatch: AmazonCloudWatch, config: Configuration) extends Actor with MetricActorLogic {
 
@@ -92,7 +92,7 @@ trait MetricActorLogic extends Logging {
           case (namespace, awsMetricsBatch) =>
             val metricRequest = new PutMetricDataRequest()
             metricRequest.setNamespace(s"$stage/$namespace")
-            metricRequest.setMetricData(awsMetricsBatch)
+            metricRequest.setMetricData(awsMetricsBatch.asJavaCollection)
             cloudWatch.putMetricData(metricRequest)
         }
         logger.info(s"Sent metrics to cloudwatch. " +
