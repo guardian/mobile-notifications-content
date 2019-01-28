@@ -40,25 +40,25 @@ object Configuration extends Logging {
   def load(): Configuration = {
 
     val notificationsHost = getMandatoryProperty("notifications.host")
-    logger.info(s"notifications.host: **$notificationsHost**")
+    logger.info(s"notifications.host: $notificationsHost")
 
     val notificationsKey = getMandatoryProperty("notifications.key")
-    logger.info(s"notifications.key: **$notificationsKey**")
+    logger.info(s"notifications.key: $notificationsKey")
 
     val guardianNotificationsEnabled = getMandatoryProperty("notifications.enabled").toBoolean
-    logger.info(s"notifications.enable **$guardianNotificationsEnabled**")
+    logger.info(s"notifications.enable $guardianNotificationsEnabled")
 
     val contentDynamoTableName = getMandatoryProperty("content.notifications.table")
-    logger.info(s"content.notifications.table: **$contentDynamoTableName**")
+    logger.info(s"content.notifications.table: $contentDynamoTableName")
 
     val crossAccountDynamoRole = getMandatoryProperty("content.notifications.crossAccountDynamoRole")
-    logger.info(s"content.notifications.crossAccountDynamoRole: **$crossAccountDynamoRole**")
+    logger.info(s"content.notifications.crossAccountDynamoRole: $crossAccountDynamoRole")
 
     val contentApiKey = getMandatoryProperty("content.api.key")
-    logger.info(s"content.api.key **$contentApiKey**")
+    logger.info(s"content.api.key $contentApiKey")
 
     val contentLiveBlogDynamoTableName = getMandatoryProperty("content.liveblog-notifications.table")
-    logger.info(s"mobile-liveblog-content-notifications **$contentLiveBlogDynamoTableName**")
+    logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
 
     Configuration(
       guardianNotificationsEnabled,
