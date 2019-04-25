@@ -3,9 +3,9 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
-import com.gu.contentapi.client.model.ItemQuery
+import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.contentapi.client.{ GuardianContentApiError, GuardianContentClient }
+import com.gu.contentapi.client.GuardianContentClient
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
 import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
 import com.gu.mobile.content.notifications.lib.http.NotificationsHttpProvider
@@ -93,7 +93,7 @@ trait Lambda extends Logging {
         case _ => CapiResponseFailure(s"Retrievable Content: No content found for $contentId")
       }
     } recover {
-      case GuardianContentApiError(status, message, _) =>
+      case ContentApiError(status, message, _) =>
         CapiResponseFailure(s"Retrievable Contenr: Recieved response from CAPI: $status with message: $message")
     }
   }

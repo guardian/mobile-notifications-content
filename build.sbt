@@ -6,7 +6,7 @@ description:= "lambda to replace the content-notifications-service"
 
 version := "1.0"
 
-scalaVersion := "2.12.7"
+scalaVersion := "2.12.8"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -37,10 +37,9 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-lambda-java-events" % "1.3.0",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
-  "com.gu" %% "content-api-client" % "11.55",
+  "com.gu" %% "content-api-client-default" % "14.2",
   "com.gu" %% "mobile-notifications-client" % "1.5",
-  "com.gu" %% "thrift-serializer" % "3.0.0",
-  "org.apache.thrift" % "libthrift" % "0.9.1",
+  "com.gu" %% "thrift-serializer" % "4.0.0",
   "org.joda" % "joda-convert" % "1.8.1",
   "org.jsoup" % "jsoup" % "1.8.3",
   "com.typesafe.play" %% "play-json" % "2.6.9",
@@ -53,8 +52,6 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "3.9.1" % "test",
   "org.specs2" %% "specs2-matcher-extra" % "3.9.1" % "test"
 )
-
-dependencyOverrides += "org.apache.thrift" % "libthrift" % "0.9.1"
 
 enablePlugins(RiffRaffArtifact)
 
