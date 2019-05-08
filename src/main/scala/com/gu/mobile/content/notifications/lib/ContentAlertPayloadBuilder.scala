@@ -24,7 +24,9 @@ trait ContentAlertPayloadBuilder extends Logging {
     Topic(TagSeries, "membership/series/weekend-round-up"),
     Topic(TagSeries, "world/series/guardian-morning-briefing"),
     Topic(TagSeries, "politics/series/the-snap"),
-    Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
+    Topic(TagSeries, "us-news/series/the-campaign-minute-2016"),
+    Topic(TagSeries, "australia-news/series/guardian-australia-s-morning-mail"),
+    Topic(TagSeries, "us-news/series/guardian-us-briefing")
   )
 
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
