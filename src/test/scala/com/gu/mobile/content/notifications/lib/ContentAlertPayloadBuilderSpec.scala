@@ -70,7 +70,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
   val expectedPayloadForItem = ContentAlertPayload(
     title = "Following: headline",
-    message = "webTitle",
+    message = Some("webTitle"),
     thumbnailUrl = Some(new URI(thumb)),
     sender = "mobile-notifications-content",
     link = link,
@@ -97,7 +97,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     "create content alert payload for content with standfirst" in {
       val fieldsWithStandfirst = contentFields.copy(standfirst = Some("<b>some standfirst</b>"))
       val itemWithStandfirst = item.copy(fields = Some(fieldsWithStandfirst))
-      val payloadWithStandFirst = expectedPayloadForItem.copy(message = "some standfirst", title = "Rugby World Cup: headline")
+      val payloadWithStandFirst = expectedPayloadForItem.copy(message = Some("some standfirst"), title = "Rugby World Cup: headline")
       builder.buildPayLoad(itemWithStandfirst) mustEqual payloadWithStandFirst
     }
 
@@ -184,7 +184,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
   "create content alert for content & blogPost without title" in {
     val keyEventWithoutTitle = keyEvent.copy(title = None)
-    val expectedContentAlertBlogWithoutTitle = expectedBlogContentAlert.copy(title = "Liveblog update: webTitle", message = "")
+    val expectedContentAlertBlogWithoutTitle = expectedBlogContentAlert.copy(title = "Liveblog update: webTitle", message = None)
     builder.buildPayLoad(item, keyEventWithoutTitle) mustEqual expectedContentAlertBlogWithoutTitle
   }
 
