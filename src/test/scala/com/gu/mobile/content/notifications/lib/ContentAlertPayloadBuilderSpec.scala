@@ -76,7 +76,8 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     link = link,
     importance = Importance.Major,
     topic = List(seriesTopic),
-    debug = false
+    debug = false,
+    dryRun = None
   )
 
   val keyEvent = KeyEvent("blockId", Some("blogPostTitle"), "body", Option(DateTime.now()), Option(DateTime.now()))

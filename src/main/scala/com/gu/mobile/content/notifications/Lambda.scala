@@ -8,10 +8,8 @@ import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
 import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
-import com.gu.mobile.content.notifications.lib.http.NotificationsHttpProvider
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsDynamoDb }
+import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
-import com.gu.mobile.notifications.client.{ ApiClient => NotificiationsApiClient }
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -27,11 +25,7 @@ trait Lambda extends Logging {
     override val config: Configuration = configuration
   }
 
-  val apiClient = NotificiationsApiClient(
-    host = configuration.notificationsHost,
-    apiKey = configuration.notificationsKey,
-    httpProvider = NotificationsHttpProvider
-  )
+  val apiClient = new NotificationsApiClient(configuration)
 
   val metrics = new CloudWatchMetrics(configuration)
   val messageSender = new MessageSender(configuration, apiClient, payLoadBuilder, metrics)

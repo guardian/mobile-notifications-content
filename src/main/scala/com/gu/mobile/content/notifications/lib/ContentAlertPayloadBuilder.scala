@@ -51,7 +51,8 @@ trait ContentAlertPayloadBuilder extends Logging {
       link = getGuardianLink(content),
       importance = Importance.Major,
       topic = topics,
-      debug = false
+      debug = false,
+      dryRun = None
     )
   }
 
@@ -64,7 +65,8 @@ trait ContentAlertPayloadBuilder extends Logging {
       link = getGuardianLink(content, Some(keyEvent)),
       importance = Importance.Major,
       topic = List(Topic(TopicTypes.Content, content.id)),
-      debug = false
+      debug = false,
+      dryRun = None
     )
   }
 
