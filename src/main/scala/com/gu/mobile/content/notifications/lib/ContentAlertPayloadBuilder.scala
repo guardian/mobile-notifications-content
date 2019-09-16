@@ -44,27 +44,29 @@ trait ContentAlertPayloadBuilder extends Logging {
 
     ContentAlertPayload(
       title = contentTitle(content, followableTag, topics),
-      message = content.textStandFirst getOrElse content.webTitle,
+      message = content.textStandFirst.orElse(Some(content.webTitle)),
       imageUrl = selectMainImage(content, minWidth = 750).map(new URI(_)),
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
       link = getGuardianLink(content),
       importance = Importance.Major,
       topic = topics,
-      debug = false
+      debug = false,
+      dryRun = None
     )
   }
 
   def buildPayLoad(content: Content, keyEvent: KeyEvent): ContentAlertPayload = {
     ContentAlertPayload(
       title = s"Liveblog update: ${keyEvent.title.getOrElse(content.webTitle)}",
-      message = if (keyEvent.title.isDefined) content.webTitle else "",
+      message = if (keyEvent.title.isDefined) Some(content.webTitle) else None,
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
       link = getGuardianLink(content, Some(keyEvent)),
       importance = Importance.Major,
       topic = List(Topic(TopicTypes.Content, content.id)),
-      debug = false
+      debug = false,
+      dryRun = None
     )
   }
 

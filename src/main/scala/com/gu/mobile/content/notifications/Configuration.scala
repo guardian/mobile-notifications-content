@@ -43,7 +43,6 @@ object Configuration extends Logging {
     logger.info(s"notifications.host: $notificationsHost")
 
     val notificationsKey = getMandatoryProperty("notifications.key")
-    logger.info(s"notifications.key: $notificationsKey")
 
     val guardianNotificationsEnabled = getMandatoryProperty("notifications.enabled").toBoolean
     logger.info(s"notifications.enable $guardianNotificationsEnabled")
@@ -55,7 +54,6 @@ object Configuration extends Logging {
     logger.info(s"content.notifications.crossAccountDynamoRole: $crossAccountDynamoRole")
 
     val contentApiKey = getMandatoryProperty("content.api.key")
-    logger.info(s"content.api.key $contentApiKey")
 
     val contentLiveBlogDynamoTableName = getMandatoryProperty("content.liveblog-notifications.table")
     logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")

@@ -1,35 +1,36 @@
 package com.gu.mobile.content.notifications.lib
 
 import com.amazonaws.services.kinesis.model.Record
-import com.gu.contentapi.client.model.v1.{ Content, ContentFields, CapiDateTime }
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.crier.model.event.v1.{ Event, EventPayload, EventType, ItemType, RetrievableContent }
-import com.gu.mobile.content.notifications.{ Configuration, CapiEventProcessor }
+import com.gu.mobile.content.notifications.{ CapiEventProcessor, Configuration }
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
-import com.gu.mobile.notifications.client.{ ApiClient, ApiHttpError }
 import com.gu.thrift.serializer._
 import java.nio.ByteBuffer
+import java.util.UUID
+
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
 import org.scalatest.concurrent.ScalaFutures
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers with OneInstancePerTest with BeforeAndAfterEach with ScalaFutures {
 
   val config = new Configuration(true, "", "", "", "", "", "", "")
-  val apiClient = mock[ApiClient]
+  val apiClient = mock[NotificationsApiClient]
   val content = mock[Content]
   val mockPayload = mock[ContentAlertPayload]
   val payloadBuilder = mock[ContentAlertPayloadBuilder]
   val metrics = mock[Metrics]
 
-  val succesfulRight = Future.successful(Right(()))
-  val successfulError = Future.successful(Left(ApiHttpError(400)))
-  val messageFailure = Future.failed(new IllegalStateException())
+  val succesfulRight = Right(UUID.randomUUID())
+  val successfulError = Left("")
 
   val captor = ArgumentCaptor.forClass(classOf[MetricDataPoint])
 
@@ -53,17 +54,6 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
       eventually {
         verify(metrics).send(captor.capture())
         captor.getValue.name mustEqual "SendNotificationErrorLatency"
-      }
-    }
-
-    "record message failure" in {
-      val messageSender = new MessageSender(config, apiClient, payloadBuilder, metrics)
-      when(payloadBuilder.buildPayLoad(content)) thenReturn mockPayload
-      when(apiClient.send(mockPayload)) thenReturn messageFailure
-      messageSender.send(content)
-      eventually {
-        verify(metrics).send(captor.capture())
-        captor.getValue.name mustEqual "SendNotificationFailureLatency"
       }
     }
 
