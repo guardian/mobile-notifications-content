@@ -41,6 +41,7 @@ trait ContentAlertPayloadBuilder extends Logging {
       .flatMap(tagToTopic)
       .take(3)
       .toList
+    logger.info(s"Tags: ${content.tags}, Followable tag: ${followableTag}")
 
     ContentAlertPayload(
       title = contentTitle(content, followableTag, topics),

@@ -6,7 +6,7 @@ import com.gu.mobile.content.notifications.lib.ContentApi._
 object ContentLambda extends Lambda {
 
   def processContent(content: Content): Boolean = {
-    logger.info(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate} Tags: ${content.tags}")
+    logger.info(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
     if (content.isRecent && content.followableTags.nonEmpty) {
       val haveSeen = false//dynamo.haveSeenContentItem(content.id)
       if (haveSeen) {
