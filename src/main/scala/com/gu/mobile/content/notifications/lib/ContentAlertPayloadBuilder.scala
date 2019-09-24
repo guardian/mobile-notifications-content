@@ -45,6 +45,7 @@ trait ContentAlertPayloadBuilder extends Logging {
     logger.info(s"Tags: ${content.tags}, Followable tag: ${followableTag}")
     logger.info(s"Series:  by name ${content.tags.findOne(_.`type`.name == TagType.Series.name)}, by type: ${content.tags.findOne(_.`type` == TagType.Series)} ")
     logger.info(s"Blog:  by name ${content.tags.findOne(_.`type`.name == TagType.Blog.name)}, by type: ${content.tags.findOne(_.`type` == TagType.Blog)} ")
+    logger.info(s"Contributor:  by name ${content.tags.findOne(_.`type`.name == TagType.Contributor.name)}, by type: ${content.tags.findOne(_.`type` == TagType.Contributor)} ")
     content.tags.map {
       tag =>
          logger.info(s"Tag: ${tag}")
