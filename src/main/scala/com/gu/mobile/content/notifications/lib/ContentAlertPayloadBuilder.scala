@@ -32,9 +32,9 @@ trait ContentAlertPayloadBuilder extends Logging {
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
 
   def buildPayLoad(content: Content): ContentAlertPayload = {
-    val followableTag: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
-      .orElse(content.tags.findOne(_.`type` == TagType.Blog))
-      .orElse(content.tags.findOne(_.`type` == TagType.Contributor))
+    val followableTag: Option[Tag] = content.tags.findOne(_.`type`.name == TagType.Series.name)
+      .orElse(content.tags.findOne(_.`type`.name == TagType.Blog.name))
+      .orElse(content.tags.findOne(_.`type`.name == TagType.Contributor.name))
 
     val topics = content.tags
       .filter(tag => followableTopicTypes.contains(tag.`type`))
