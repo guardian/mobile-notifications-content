@@ -32,9 +32,9 @@ trait ContentAlertPayloadBuilder extends Logging {
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
 
   def buildPayLoad(content: Content): ContentAlertPayload = {
-    val followableTag: Option[Tag] = content.tags.findOne(_.`type`.name == TagType.Series.name)
-      .orElse(content.tags.findOne(_.`type`.name == TagType.Blog.name))
-      .orElse(content.tags.findOne(_.`type`.name == TagType.Contributor.name))
+    val followableTag: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
+      .orElse(content.tags.findOne(_.`type` == TagType.Blog))
+      .orElse(content.tags.findOne(_.`type` == TagType.Contributor))
 
     val topics = content.tags
       .filter(tag => followableTopicTypes.contains(tag.`type`))
@@ -42,22 +42,9 @@ trait ContentAlertPayloadBuilder extends Logging {
       .take(3)
       .toList
 
-    logger.info(s"**Tags**: ${content.tags}, Followable tag: ${followableTag}")
-    logger.info(s"Series:  by name ${content.tags.findOne(_.`type`.name == TagType.Series.name)}, by type: ${content.tags.findOne(_.`type` == TagType.Series)} ")
-    logger.info(s"Blog:  by name ${content.tags.findOne(_.`type`.name == TagType.Blog.name)}, by type: ${content.tags.findOne(_.`type` == TagType.Blog)} ")
-    logger.info(s"Contributor:  by name ${content.tags.findOne(_.`type`.name == TagType.Contributor.name)}, by type: ${content.tags.findOne(_.`type` == TagType.Contributor)} ")
-    content.tags.map {
-      tag =>
-         logger.info(s"Tag: ${tag}")
-         logger.info(s"Series. name: ${tag.`type`.name == TagType.Series.name}, Type: ${tag.`type` == TagType.Series}")
-         logger.info(s"Blog. name: ${tag.`type`.name == TagType.Blog.name}, Type: ${tag.`type` == TagType.Blog}")
-         logger.info(s"Contributer. name: ${tag.`type`.name == TagType.Contributor.name}, Type: ${tag.`type` == TagType.Contributor}")
-    }
-
-
     ContentAlertPayload(
       title = contentTitle(content, followableTag, topics),
-      message = content.textStandFirst.orElse(Some(content.webTitle)),
+      message = Some(content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)),
       imageUrl = selectMainImage(content, minWidth = 750).map(new URI(_)),
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
@@ -95,16 +82,12 @@ trait ContentAlertPayloadBuilder extends Logging {
     getTopicType(tag.`type`) map { tagType => Topic(tagType, tag.id) }
   }
 
-  private def contentTitle(content: Content, followableTag: Option[Tag], topics: List[Topic]): String = {
-    def title = content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)
-    def reason = followableTag.map { ft => ft.webTitle }.getOrElse("Following")
-
+  private def contentTitle(content: Content, followableTag: Option[Tag], topics: List[Topic]): String =
     if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
-      title
+      ""
     } else {
-      s"$reason: $title"
+      followableTag.map { ft => ft.webTitle }.getOrElse("Following")
     }
-  }
 
   private def selectMainImage(content: Content, minWidth: Int): Option[String] = {
     def width(asset: Asset): Int = asset.assetWidth.flatMap { aw => Try(aw.toInt).toOption }.getOrElse(0)
