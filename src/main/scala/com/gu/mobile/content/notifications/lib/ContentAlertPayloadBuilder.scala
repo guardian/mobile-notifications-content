@@ -43,7 +43,7 @@ trait ContentAlertPayloadBuilder extends Logging {
       .toList
 
     ContentAlertPayload(
-      title = contentTitle(content, followableTag, topics),
+      title = Some(contentTitle(content, followableTag, topics)),
       message = Some(content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)),
       imageUrl = selectMainImage(content, minWidth = 750).map(new URI(_)),
       thumbnailUrl = content.thumbNail.map(new URI(_)),
@@ -58,7 +58,7 @@ trait ContentAlertPayloadBuilder extends Logging {
 
   def buildPayLoad(content: Content, keyEvent: KeyEvent): ContentAlertPayload = {
     ContentAlertPayload(
-      title = s"Liveblog update: ${keyEvent.title.getOrElse(content.webTitle)}",
+      title = Some(s"Liveblog update: ${keyEvent.title.getOrElse(content.webTitle)}"),
       message = if (keyEvent.title.isDefined) Some(content.webTitle) else None,
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
