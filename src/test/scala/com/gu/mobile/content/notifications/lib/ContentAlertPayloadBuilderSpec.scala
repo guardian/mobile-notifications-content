@@ -132,7 +132,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("membership/series/weekend-round-up", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "membership/series/weekend-round-up")
       val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = Some(""), topic = List(topic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
       builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
     }
 
@@ -140,7 +140,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("membership/series/weekend-reading", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "membership/series/weekend-reading")
       val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = Some(""), topic = List(topic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
       builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
     }
 
@@ -157,7 +157,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
       val expectedTitle = "headline"
       val contentItem = item.copy(tags = List(briefingTag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = Some(""), topic = List(briefingTopic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(briefingTopic))
       builder.buildPayLoad(contentItem) mustBe expectedMinutePayload
 
     }
