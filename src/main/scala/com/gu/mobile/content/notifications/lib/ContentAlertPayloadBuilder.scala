@@ -43,7 +43,7 @@ trait ContentAlertPayloadBuilder extends Logging {
       .toList
 
     ContentAlertPayload(
-      title = Some(contentTitle(content, followableTag, topics)),
+      title = contentTitle(followableTag, topics),
       message = Some(content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)),
       imageUrl = selectMainImage(content, minWidth = 750).map(new URI(_)),
       thumbnailUrl = content.thumbNail.map(new URI(_)),
@@ -82,11 +82,11 @@ trait ContentAlertPayloadBuilder extends Logging {
     getTopicType(tag.`type`) map { tagType => Topic(tagType, tag.id) }
   }
 
-  private def contentTitle(content: Content, followableTag: Option[Tag], topics: List[Topic]): String =
+  private def contentTitle(followableTag: Option[Tag], topics: List[Topic]): Option[String] =
     if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
-      ""
+      None
     } else {
-      followableTag.map { ft => ft.webTitle }.getOrElse("Following")
+      followableTag.map { ft => ft.webTitle }.orElse(Some("Following"))
     }
 
   private def selectMainImage(content: Content, minWidth: Int): Option[String] = {
