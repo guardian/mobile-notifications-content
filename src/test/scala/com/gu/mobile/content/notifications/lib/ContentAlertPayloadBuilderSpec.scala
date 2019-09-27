@@ -148,7 +148,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("world/series/guardian-morning-briefing", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "world/series/guardian-morning-briefing")
       val contentItem = item.copy(tags = List(tag))
-      val expectedPayload = expectedPayloadForItem.copy(title = Some(""), topic = List(topic))
+      val expectedPayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
 
