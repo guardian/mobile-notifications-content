@@ -69,8 +69,8 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
   )
 
   val expectedPayloadForItem = ContentAlertPayload(
-    title = "Following: headline",
-    message = Some("webTitle"),
+    title = Some("Following"),
+    message = Some("headline"),
     thumbnailUrl = Some(new URI(thumb)),
     sender = "mobile-notifications-content",
     link = link,
@@ -83,8 +83,9 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
   val keyEvent = KeyEvent("blockId", Some("blogPostTitle"), "body", Option(DateTime.now()), Option(DateTime.now()))
 
   val expectedBlogContentAlert = expectedPayloadForItem.copy(
-    title = "Liveblog update: blogPostTitle",
+    title = Some("Liveblog update: blogPostTitle"),
     topic = List(Topic(TopicTypes.Content, "newId")),
+    message = Some("webTitle"),
     link = link.copy(blockId = Some("blockId"))
   )
 
@@ -92,13 +93,6 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
     "create content alert for payload" in {
       verifyContentAlert(tags = List(seriesTag), expectedReason = seriesTag.webTitle)
-    }
-
-    "create content alert payload for content with standfirst" in {
-      val fieldsWithStandfirst = contentFields.copy(standfirst = Some("<b>some standfirst</b>"))
-      val itemWithStandfirst = item.copy(fields = Some(fieldsWithStandfirst))
-      val payloadWithStandFirst = expectedPayloadForItem.copy(message = Some("some standfirst"), title = "Rugby World Cup: headline")
-      builder.buildPayLoad(itemWithStandfirst) mustEqual payloadWithStandFirst
     }
 
     "series tag should take precedence over the rest of the tags if there is only one" in {
@@ -123,13 +117,13 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
     "use no imageUri if no image is found" in {
       val itemWithoutImages = item.copy(elements = None)
-      val expectedPayloadWithoutImages = expectedPayloadForItem.copy(imageUrl = None, title = "Rugby World Cup: headline")
+      val expectedPayloadWithoutImages = expectedPayloadForItem.copy(imageUrl = None, title = Some("Rugby World Cup"))
       builder.buildPayLoad(itemWithoutImages) mustEqual expectedPayloadWithoutImages
     }
 
     "use imageUri when a valid main image is found" in {
       val itemWithImages = item.copy(elements = contentElements)
-      val expectedPayloadWithImages = expectedPayloadForItem.copy(imageUrl = Some(new URI("https://some.url/image1000.jpg")), title = "Rugby World Cup: headline")
+      val expectedPayloadWithImages = expectedPayloadForItem.copy(imageUrl = Some(new URI("https://some.url/image1000.jpg")), title = Some("Rugby World Cup"))
       val load = builder.buildPayLoad(itemWithImages)
       load mustEqual expectedPayloadWithImages
     }
@@ -138,7 +132,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("membership/series/weekend-round-up", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "membership/series/weekend-round-up")
       val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = List(topic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
       builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
     }
 
@@ -146,7 +140,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("membership/series/weekend-reading", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "membership/series/weekend-reading")
       val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = "headline", topic = List(topic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
       builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
     }
 
@@ -154,7 +148,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val tag = Tag("world/series/guardian-morning-briefing", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "world/series/guardian-morning-briefing")
       val contentItem = item.copy(tags = List(tag))
-      val expectedPayload = expectedPayloadForItem.copy(title = "headline", topic = List(topic))
+      val expectedPayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
 
@@ -163,7 +157,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
       val expectedTitle = "headline"
       val contentItem = item.copy(tags = List(briefingTag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = expectedTitle, topic = List(briefingTopic))
+      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(briefingTopic))
       builder.buildPayLoad(contentItem) mustBe expectedMinutePayload
 
     }
@@ -172,7 +166,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val manyTags = (1 to 25).toList.map(index => Tag(s"idKeyword_$index", TagType.Contributor, None, None, s"World_$index", "", ""))
       val contentItem = item.copy(tags = manyTags)
       val expectedTopics = manyTags.map(tag => Topic(TagContributor, tag.id)).take(3)
-      val expectedPayload = expectedPayloadForItem.copy(topic = expectedTopics)
+      val expectedPayload = expectedPayloadForItem.copy(title = Some("Following"), message = Some("headline"), topic = expectedTopics)
 
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
@@ -184,14 +178,13 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
   "create content alert for content & blogPost without title" in {
     val keyEventWithoutTitle = keyEvent.copy(title = None)
-    val expectedContentAlertBlogWithoutTitle = expectedBlogContentAlert.copy(title = "Liveblog update: webTitle", message = None)
+    val expectedContentAlertBlogWithoutTitle = expectedBlogContentAlert.copy(title = Some("Liveblog update: webTitle"), message = None)
     builder.buildPayLoad(item, keyEventWithoutTitle) mustEqual expectedContentAlertBlogWithoutTitle
   }
 
   def verifyContentAlert(tags: List[Tag], expectedReason: String) = {
     val expectedTopics = allTopics.filter { topic => tags.map(_.id).contains(topic.name) }.take(3)
-    val expectedTitle = expectedPayloadForItem.title.replace("Following", expectedReason)
-    val expectedPayload = expectedPayloadForItem.copy(title = expectedTitle, topic = expectedTopics)
+    val expectedPayload = expectedPayloadForItem.copy(title = Some(expectedReason), topic = expectedTopics)
 
     val content = item.copy(tags = tags)
     val payLoad = builder.buildPayLoad(content)

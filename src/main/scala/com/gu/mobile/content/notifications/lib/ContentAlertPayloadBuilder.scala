@@ -43,8 +43,8 @@ trait ContentAlertPayloadBuilder extends Logging {
       .toList
 
     ContentAlertPayload(
-      title = contentTitle(content, followableTag, topics),
-      message = content.textStandFirst.orElse(Some(content.webTitle)),
+      title = contentTitle(followableTag, topics),
+      message = Some(content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)),
       imageUrl = selectMainImage(content, minWidth = 750).map(new URI(_)),
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
@@ -58,7 +58,7 @@ trait ContentAlertPayloadBuilder extends Logging {
 
   def buildPayLoad(content: Content, keyEvent: KeyEvent): ContentAlertPayload = {
     ContentAlertPayload(
-      title = s"Liveblog update: ${keyEvent.title.getOrElse(content.webTitle)}",
+      title = Some(s"Liveblog update: ${keyEvent.title.getOrElse(content.webTitle)}"),
       message = if (keyEvent.title.isDefined) Some(content.webTitle) else None,
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
@@ -82,16 +82,12 @@ trait ContentAlertPayloadBuilder extends Logging {
     getTopicType(tag.`type`) map { tagType => Topic(tagType, tag.id) }
   }
 
-  private def contentTitle(content: Content, followableTag: Option[Tag], topics: List[Topic]): String = {
-    def title = content.fields.flatMap { cf => cf.headline }.getOrElse(content.webTitle)
-    def reason = followableTag.map { ft => ft.webTitle }.getOrElse("Following")
-
+  private def contentTitle(followableTag: Option[Tag], topics: List[Topic]): Option[String] =
     if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
-      title
+      None
     } else {
-      s"$reason: $title"
+      followableTag.map { ft => ft.webTitle }.orElse(Some("Following"))
     }
-  }
 
   private def selectMainImage(content: Content, minWidth: Int): Option[String] = {
     def width(asset: Asset): Int = asset.assetWidth.flatMap { aw => Try(aw.toInt).toOption }.getOrElse(0)
