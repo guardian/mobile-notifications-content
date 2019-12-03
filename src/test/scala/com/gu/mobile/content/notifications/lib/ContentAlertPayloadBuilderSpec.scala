@@ -128,22 +128,6 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       load mustEqual expectedPayloadWithImages
     }
 
-    "do not prefix title for weekend round up" in {
-      val tag = Tag("membership/series/weekend-round-up", TagType.Series, None, None, "Steve", "", "")
-      val topic = Topic(TagSeries, "membership/series/weekend-round-up")
-      val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
-      builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
-    }
-
-    "do not prefix title for weekend reading" in {
-      val tag = Tag("membership/series/weekend-reading", TagType.Series, None, None, "Steve", "", "")
-      val topic = Topic(TagSeries, "membership/series/weekend-reading")
-      val minuteItem = item.copy(tags = List(tag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
-      builder.buildPayLoad(minuteItem) mustEqual expectedMinutePayload
-    }
-
     "do not prefix title for guardian-morning-briefing" in {
       val tag = Tag("world/series/guardian-morning-briefing", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "world/series/guardian-morning-briefing")
@@ -151,15 +135,29 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val expectedPayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
-
-    "use a specific title for the minute notification" in {
-      val briefingTag = Tag("us-news/series/the-campaign-minute-2016", TagType.Series, None, None, "Steve", "", "")
-      val briefingTopic = Topic(TagSeries, "us-news/series/the-campaign-minute-2016")
-      val expectedTitle = "headline"
-      val contentItem = item.copy(tags = List(briefingTag))
-      val expectedMinutePayload = expectedPayloadForItem.copy(title = None, topic = List(briefingTopic))
-      builder.buildPayLoad(contentItem) mustBe expectedMinutePayload
-
+    
+    "do not prefix title for andrew-sparrows-election-briefing" in {
+      val tag = Tag("politics/series/andrew-sparrows-election-briefing", TagType.Series, None, None, "Steve", "", "")
+      val topic = Topic(TagSeries, "politics/series/andrew-sparrows-election-briefing")
+      val contentItem = item.copy(tags = List(tag))
+      val expectedPayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
+      builder.buildPayLoad(contentItem) mustEqual expectedPayload
+    }
+    
+    "do not prefix title for guardian-australia-s-morning-mail" in {
+      val tag = Tag("australia-news/series/guardian-australia-s-morning-mail", TagType.Series, None, None, "Steve", "", "")
+      val topic = Topic(TagSeries, "australia-news/series/guardian-australia-s-morning-mail")
+      val contentItem = item.copy(tags = List(tag))
+      val expectedPayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
+      builder.buildPayLoad(contentItem) mustEqual expectedPayload
+    }
+    
+    "do not prefix title for guardian-us-briefing" in {
+      val tag = Tag("us-news/series/guardian-us-briefing", TagType.Series, None, None, "Steve", "", "")
+      val topic = Topic(TagSeries, "politics/series/andrew-sparrows-election-briefing")
+      val contentItem = item.copy(tags = List(tag))
+      val expectedPayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
+      builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
 
     "should have a maximum of 3 topics" in {
