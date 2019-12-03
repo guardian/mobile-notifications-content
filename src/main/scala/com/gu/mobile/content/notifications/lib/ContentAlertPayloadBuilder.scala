@@ -18,15 +18,10 @@ trait ContentAlertPayloadBuilder extends Logging {
   val config: Configuration
 
   private val topicsWithoutPrefix = Set(
-    Topic(TagSeries, "football/series/the-uefa-euro-minute-2016"),
-    Topic(TagSeries, "sport/series/the-olympic-games-minute-2016"),
-    Topic(TagSeries, "membership/series/weekend-reading"),
-    Topic(TagSeries, "membership/series/weekend-round-up"),
     Topic(TagSeries, "world/series/guardian-morning-briefing"),
-    Topic(TagSeries, "politics/series/the-snap"),
-    Topic(TagSeries, "us-news/series/the-campaign-minute-2016"),
     Topic(TagSeries, "australia-news/series/guardian-australia-s-morning-mail"),
-    Topic(TagSeries, "us-news/series/guardian-us-briefing")
+    Topic(TagSeries, "us-news/series/guardian-us-briefing"),
+    Topic(TagSeries, "politics/series/andrew-sparrows-election-briefing")
   )
 
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
