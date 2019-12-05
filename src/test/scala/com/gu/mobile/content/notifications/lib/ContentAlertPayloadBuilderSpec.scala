@@ -83,9 +83,9 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
   val keyEvent = KeyEvent("blockId", Some("blogPostTitle"), "body", Option(DateTime.now()), Option(DateTime.now()))
 
   val expectedBlogContentAlert = expectedPayloadForItem.copy(
-    title = Some("Liveblog update: blogPostTitle"),
+    title = Some("Liveblog update"),
     topic = List(Topic(TopicTypes.Content, "newId")),
-    message = Some("webTitle"),
+    message = Some("blogPostTitle"),
     link = link.copy(blockId = Some("blockId"))
   )
 
@@ -176,7 +176,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
 
   "create content alert for content & blogPost without title" in {
     val keyEventWithoutTitle = keyEvent.copy(title = None)
-    val expectedContentAlertBlogWithoutTitle = expectedBlogContentAlert.copy(title = Some("Liveblog update: webTitle"), message = None)
+    val expectedContentAlertBlogWithoutTitle = expectedBlogContentAlert.copy(title = Some("Liveblog update"), message = None)
     builder.buildPayLoad(item, keyEventWithoutTitle) mustEqual expectedContentAlertBlogWithoutTitle
   }
 

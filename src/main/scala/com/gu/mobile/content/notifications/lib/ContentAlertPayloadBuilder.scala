@@ -53,8 +53,8 @@ trait ContentAlertPayloadBuilder extends Logging {
 
   def buildPayLoad(content: Content, keyEvent: KeyEvent): ContentAlertPayload = {
     ContentAlertPayload(
-      title = Some(s"Liveblog update: ${keyEvent.title.getOrElse(content.webTitle)}"),
-      message = if (keyEvent.title.isDefined) Some(content.webTitle) else None,
+      title = Some(s"Liveblog update"),
+      message = if (keyEvent.title.isDefined) Some(s"${keyEvent.title.getOrElse(content.webTitle)}") else None,
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
       link = getGuardianLink(content, Some(keyEvent)),
