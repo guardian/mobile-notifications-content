@@ -87,7 +87,7 @@ trait ContentAlertPayloadBuilder extends Logging {
     if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
       None
     } else {
-      Some(followableTag.map { ft => ft.webTitle }.mkString(","))
+      Some(followableTag.map { ft => ft.webTitle }.mkString(", "))
     }
 
   private def selectMainImage(content: Content, minWidth: Int): Option[String] = {

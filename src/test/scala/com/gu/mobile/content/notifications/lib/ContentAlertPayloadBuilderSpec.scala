@@ -112,7 +112,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     }
 
     "should use multiple contributor tags in web title if there is more than one" in {
-      verifyContentAlert(tags = List(contributorTag, keywordTag, contributorTag2), expectedReason = contributorTag.webTitle ++ "," ++ contributorTag2.webTitle)
+      verifyContentAlert(tags = List(contributorTag, keywordTag, contributorTag2), expectedReason = contributorTag.webTitle ++ ", " ++ contributorTag2.webTitle)
     }
 
     "use no imageUri if no image is found" in {
@@ -164,7 +164,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       val manyTags = (1 to 25).toList.map(index => Tag(s"idKeyword_$index", TagType.Contributor, None, None, s"World_$index", "", ""))
       val contentItem = item.copy(tags = manyTags)
       val expectedTopics = manyTags.map(tag => Topic(TagContributor, tag.id)).take(3)
-      val expectedPayload = expectedPayloadForItem.copy(title = Some(s"World_1,World_2,World_3"), message = Some("headline"), topic = expectedTopics)
+      val expectedPayload = expectedPayloadForItem.copy(title = Some(s"World_1, World_2, World_3"), message = Some("headline"), topic = expectedTopics)
 
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
