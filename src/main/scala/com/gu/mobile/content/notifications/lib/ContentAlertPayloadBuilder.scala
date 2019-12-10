@@ -56,7 +56,7 @@ trait ContentAlertPayloadBuilder extends Logging {
     val title: String = seriesTag.map(tag => s"Update: ${tag.webTitle}").getOrElse("Liveblog Update")
     ContentAlertPayload(
       title = Some(title),
-      message = if (keyEvent.title.isDefined) Some(s"${keyEvent.title.getOrElse(content.webTitle)}") else None,
+      message = keyEvent.title,
       thumbnailUrl = content.thumbNail.map(new URI(_)),
       sender = Sender,
       link = getGuardianLink(content, Some(keyEvent)),
