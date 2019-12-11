@@ -27,9 +27,15 @@ trait ContentAlertPayloadBuilder extends Logging {
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
 
   def buildPayLoad(content: Content): ContentAlertPayload = {
-    val followableTag: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
-      .orElse(content.tags.findOne(_.`type` == TagType.Blog))
-      .orElse(content.tags.findOne(_.`type` == TagType.Contributor))
+    val tagTypeSeries: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
+    val tagTypeBlog: Option[Tag] = content.tags.findOne(_.`type` == TagType.Blog)
+    val tagTypeContributor: List[Tag] = content.tags.filter(_.`type` == TagType.Contributor).toList
+
+    val followableTag: List[Tag] = (tagTypeSeries, tagTypeBlog, tagTypeContributor) match {
+      case (Some(tagSeries), _, _) => List(tagSeries)
+      case (None, Some(tagBlog), _) => List(tagBlog)
+      case (None, None, tagContributor) => tagContributor.take(3)
+    }
 
     val topics = content.tags
       .filter(tag => followableTopicTypes.contains(tag.`type`))
@@ -77,11 +83,11 @@ trait ContentAlertPayloadBuilder extends Logging {
     getTopicType(tag.`type`) map { tagType => Topic(tagType, tag.id) }
   }
 
-  private def contentTitle(followableTag: Option[Tag], topics: List[Topic]): Option[String] =
+  private def contentTitle(followableTag: List[Tag], topics: List[Topic]): Option[String] =
     if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
       None
     } else {
-      followableTag.map { ft => ft.webTitle }.orElse(Some("Following"))
+      Some(followableTag.map { ft => ft.webTitle }.mkString(", "))
     }
 
   private def selectMainImage(content: Content, minWidth: Int): Option[String] = {
