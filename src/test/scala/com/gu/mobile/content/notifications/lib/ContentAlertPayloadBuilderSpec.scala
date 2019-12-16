@@ -92,27 +92,31 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
   "Content Alert Payload Builder" must {
 
     "create content alert for payload" in {
-      verifyContentAlert(tags = List(seriesTag), expectedReason = seriesTag.webTitle)
+      verifyContentAlert(tags = List(seriesTag), expectedReason = Some(seriesTag.webTitle))
     }
 
     "series tag should take precedence over the rest of the tags if there is only one" in {
-      verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag), expectedReason = seriesTag.webTitle)
+      verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag), expectedReason = Some(seriesTag.webTitle))
     }
 
     "not use series tags in web title if there is more than one" in {
-      verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag, seriesTag2), expectedReason = blogTag.webTitle)
+      verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag, seriesTag2), expectedReason = Some(blogTag.webTitle))
     }
 
     "content tag should take precedence over contributor when generating web title" in {
-      verifyContentAlert(tags = List(contributorTag, keywordTag, blogTag), expectedReason = blogTag.webTitle)
+      verifyContentAlert(tags = List(contributorTag, keywordTag, blogTag), expectedReason = Some(blogTag.webTitle))
     }
 
     "use contributor for webtitle if there are no other relevant tags" in {
-      verifyContentAlert(tags = List(contributorTag, keywordTag), expectedReason = contributorTag.webTitle)
+      verifyContentAlert(tags = List(contributorTag, keywordTag), expectedReason = Some(contributorTag.webTitle))
     }
 
     "should use multiple contributor tags in web title if there is more than one" in {
-      verifyContentAlert(tags = List(contributorTag, keywordTag, contributorTag2), expectedReason = contributorTag.webTitle ++ ", " ++ contributorTag2.webTitle)
+      verifyContentAlert(tags = List(contributorTag, keywordTag, contributorTag2), expectedReason = Some(contributorTag.webTitle ++ ", " ++ contributorTag2.webTitle))
+    }
+
+    "should have no title if there are no followable tags" in {
+      verifyContentAlert(tags = List(keywordTag), expectedReason = None)
     }
 
     "use no imageUri if no image is found" in {
@@ -180,9 +184,9 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     builder.buildPayLoad(item, keyEventWithoutTitle) mustEqual expectedContentAlertBlogWithoutTitle
   }
 
-  def verifyContentAlert(tags: List[Tag], expectedReason: String) = {
+  def verifyContentAlert(tags: List[Tag], expectedReason: Option[String]) = {
     val expectedTopics = allTopics.filter { topic => tags.map(_.id).contains(topic.name) }.take(3)
-    val expectedPayload = expectedPayloadForItem.copy(title = Some(expectedReason), topic = expectedTopics)
+    val expectedPayload = expectedPayloadForItem.copy(title = expectedReason, topic = expectedTopics)
 
     val content = item.copy(tags = tags)
     val payLoad = builder.buildPayLoad(content)

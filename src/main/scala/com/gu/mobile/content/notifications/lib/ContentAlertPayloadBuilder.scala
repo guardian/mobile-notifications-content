@@ -86,7 +86,7 @@ trait ContentAlertPayloadBuilder extends Logging {
   }
 
   private def contentTitle(followableTag: List[Tag], topics: List[Topic]): Option[String] =
-    if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty) {
+    if (topics.toSet.intersect(topicsWithoutPrefix).nonEmpty || followableTag.isEmpty) {
       None
     } else {
       Some(followableTag.map { ft => ft.webTitle }.mkString(", "))
