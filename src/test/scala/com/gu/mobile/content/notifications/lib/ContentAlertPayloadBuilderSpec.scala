@@ -27,6 +27,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
   val seriesTag = Tag("idSeries", TagType.Series, None, None, "Rugby World Cup", "", "")
   val seriesTag2 = Tag("idSeries2", TagType.Series, None, None, "Tetris World Cup", "", "")
   val blogTag = Tag("idBlog", TagType.Blog, None, None, "blogTag", "", "")
+  val blogTagOpinion = Tag("idBlog", TagType.Blog, Some("commentisfree"), None, "blogTag", "", "")
   val blogTag2 = Tag("idBlog2", TagType.Blog, None, None, "blogTag2", "", "")
 
   val contributorTopic = Topic(TagContributor, "idContributor")
@@ -99,8 +100,8 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag), expectedReason = Some(seriesTag.webTitle))
     }
 
-    "not use series tags in web title if there is more than one" in {
-      verifyContentAlert(tags = List(contributorTag, blogTag, seriesTag, keywordTag, seriesTag2), expectedReason = Some(blogTag.webTitle))
+    "use contributor name when a blog tag has the commentisfree id" in {
+      verifyContentAlert(tags = List(contributorTag, blogTagOpinion), expectedReason = Some(contributorTag.webTitle))
     }
 
     "content tag should take precedence over contributor when generating web title" in {
