@@ -22,10 +22,7 @@ resolvers ++= Seq(
 )
 
 assemblyMergeStrategy in assembly := {
-  case "shared.thrift" => MergeStrategy.first
-  case x =>
-    val oldStrategy = (assemblyMergeStrategy in assembly).value
-    oldStrategy(x)
+  case _ => MergeStrategy.first
 }
 
 val awsSdkVersion = "1.11.772"
