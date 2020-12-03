@@ -121,7 +121,7 @@ Resources:
           Stage: !Sub ${Stage}
       Description: Lambda to send notification when new content is published
       Handler: com.gu.mobile.content.notifications.ContentLambda::handler
-      MemorySize: 1024
+      MemorySize: 4096
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
       Timeout: 60
@@ -133,6 +133,7 @@ Resources:
       Enabled: true
       EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
       StartingPosition: LATEST
+      BisectBatchOnFunctionError: true
 
   LiveBlogLambda:
     Type: AWS::Lambda::Function
@@ -150,7 +151,7 @@ Resources:
           Stage: !Sub ${Stage}
       Description: Lambda that sends push notifications when new key events are published on a liveblog
       Handler: com.gu.mobile.content.notifications.LiveBlogLambda::handler
-      MemorySize: 1024
+      MemorySize: 4096
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
       Timeout: 60
@@ -162,3 +163,4 @@ Resources:
       Enabled: true
       EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
       StartingPosition: LATEST
+      BisectBatchOnFunctionError: true
