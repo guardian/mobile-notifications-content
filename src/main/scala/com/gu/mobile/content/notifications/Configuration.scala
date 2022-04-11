@@ -1,9 +1,11 @@
 package com.gu.mobile.content.notifications
 
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{ AWSCredentialsProvider, AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider }
 import com.gu.conf.{ ConfigurationLoader, SSMConfigurationLocation }
 import com.gu.{ AppIdentity, AwsIdentity }
+import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProvider, AwsCredentialsProviderChain => AwsCredentialsProviderChainV2, ProfileCredentialsProvider => ProfileCredentialsProviderV2 }
+import software.amazon.awssdk.services.sts.StsClient
+import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
+import software.amazon.awssdk.services.sts.model.AssumeRoleRequest
 
 case class Configuration(
   guardianNotificationsEnabled: Boolean,
@@ -24,9 +26,18 @@ object Configuration extends Logging {
 
   logger.info(s"Cross account role: $crossAccountSsmReadingRole, Stack: $stack, Stage: $stage, App: $appName")
 
-  def credentialsProvider: AWSCredentialsProvider = new AWSCredentialsProviderChain(
-    new ProfileCredentialsProvider(),
-    new STSAssumeRoleSessionCredentialsProvider.Builder(crossAccountSsmReadingRole, "mobile-ssm").build()
+  val req: AssumeRoleRequest = AssumeRoleRequest.builder
+    .roleSessionName("mobile-ssm")
+    .roleArn(crossAccountSsmReadingRole)
+    .build()
+
+  def credentialsProvider: AwsCredentialsProvider = AwsCredentialsProviderChainV2.of(
+    ProfileCredentialsProviderV2.builder.profileName("mobile").build,
+    StsAssumeRoleCredentialsProvider.builder
+      .stsClient(StsClient.create)
+      .refreshRequest(req)
+      .build()
+
   )
 
   val conf = {

@@ -16,9 +16,8 @@ scalacOptions ++= Seq(
 )
 
 resolvers ++= Seq(
-   Resolver.sonatypeRepo("releases"),
-  "Guardian Mobile Bintray" at "https://dl.bintray.com/guardian/mobile",
-  "Guardian Platform Bintray" at "https://dl.bintray.com/guardian/platforms"
+  "Guardian GitHub Releases" at "https://guardian.github.com/maven/repo-releases",
+  "Guardian GitHub Snapshots" at "https://guardian.github.com/maven/repo-snapshots"
 )
 
 assemblyMergeStrategy in assembly := {
@@ -29,6 +28,7 @@ assemblyMergeStrategy in assembly := {
 val awsSdkVersion = "1.11.772"
 
 libraryDependencies ++= Seq(
+  "software.amazon.awssdk" % "sts" % "2.17.109",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "amazon-kinesis-client" % "1.7.6",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.1",
@@ -44,7 +44,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.7.25",
   "com.typesafe.akka" %% "akka-actor" % "2.5.2",
   "com.squareup.okhttp3" % "okhttp" % "3.14.8",
-  "com.gu" %% "simple-configuration-ssm" % "1.5.2",
+  "com.gu" %% "simple-configuration-ssm" % "1.5.6",
   "org.scalatest" %% "scalatest" % "3.0.0" % "test",
   "org.mockito" % "mockito-all" % "1.9.0" % "test",
   "org.specs2" %% "specs2-core" % "4.5.1" % "test",
