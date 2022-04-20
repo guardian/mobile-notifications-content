@@ -27,10 +27,10 @@ trait ContentAlertPayloadBuilder extends Logging {
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
 
   def buildPayLoad(content: Content): ContentAlertPayload = {
-    val tagTypeSeries: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
+    val tagTypeSeries: Option[Tag] = content.tags.find(_.`type` == TagType.Series)
     val tagTypeBlog: Option[Tag] = content.tags
       .filterNot(tag => tag.id.contains("commentisfree/commentisfree"))
-      .findOne(_.`type` == TagType.Blog)
+      .find(_.`type` == TagType.Blog)
     val tagTypeContributor: List[Tag] = content.tags.filter(_.`type` == TagType.Contributor).toList
 
     val followableTag: List[Tag] = (tagTypeSeries, tagTypeBlog, tagTypeContributor) match {
@@ -60,7 +60,7 @@ trait ContentAlertPayloadBuilder extends Logging {
   }
 
   def buildPayLoad(content: Content, keyEvent: KeyEvent): ContentAlertPayload = {
-    val seriesTag: Option[Tag] = content.tags.findOne(_.`type` == TagType.Series)
+    val seriesTag: Option[Tag] = content.tags.find(_.`type` == TagType.Series)
     val title: String = seriesTag.map(tag => s"Update: ${tag.webTitle}").getOrElse("Liveblog Update")
     ContentAlertPayload(
       title = Some(title),
