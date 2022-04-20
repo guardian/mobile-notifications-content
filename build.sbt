@@ -45,10 +45,11 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.8",
   "com.gu" %% "simple-configuration-ssm" % "1.5.6",
-  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
-  "org.mockito" % "mockito-all" % "1.9.0" % "test",
-  "org.specs2" %% "specs2-core" % "4.5.1" % "test",
-  "org.specs2" %% "specs2-matcher-extra" % "4.5.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test,
+  "org.mockito" % "mockito-all" % "1.9.0" % Test,
+  "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
+  "org.specs2" %% "specs2-core" % "4.5.1" % Test,
+  "org.specs2" %% "specs2-matcher-extra" % "4.5.1" % Test
 )
 
 enablePlugins(RiffRaffArtifact)

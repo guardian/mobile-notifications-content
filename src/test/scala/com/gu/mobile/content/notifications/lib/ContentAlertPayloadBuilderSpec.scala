@@ -1,15 +1,14 @@
 package com.gu.mobile.content.notifications.lib
 
 import java.net.URI
-
 import com.gu.contentapi.client.model.v1._
 import com.gu.mobile.content.notifications.Configuration
 import com.gu.mobile.content.notifications.model.KeyEvent
 import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
 import org.joda.time.{ DateTime, LocalDate }
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{ MustMatchers, WordSpecLike }
+import org.scalatestplus.mockito.MockitoSugar
 
 class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with MustMatchers {
 
