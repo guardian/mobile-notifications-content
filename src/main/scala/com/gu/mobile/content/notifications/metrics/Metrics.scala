@@ -9,7 +9,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 trait Metrics {
-  def send(mdp: MetricDataPoint)
+  def send(mdp: MetricDataPoint): Unit
   def executionContext: ExecutionContext
 }
 

@@ -25,7 +25,7 @@ class MessageSender(config: Configuration, apiClient: NotificationsApiClient, pa
 
   }
 
-  private def sendNotification(notification: ContentAlertPayload) {
+  private def sendNotification(notification: ContentAlertPayload): Unit = {
 
     val start = System.currentTimeMillis()
     lazy val duration = System.currentTimeMillis() - start
