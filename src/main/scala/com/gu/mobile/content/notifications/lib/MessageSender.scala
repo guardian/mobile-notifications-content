@@ -35,10 +35,10 @@ class MessageSender(config: Configuration, apiClient: NotificationsApiClient, pa
       apiClient.send(notification) match {
         case Right(id) =>
           logger.info(s"Successfully sent notification $id for : ${notification.title}")
-          metrics.send(MetricDataPoint(name = "SendNotificationLatency", value = duration, unit = StandardUnit.Milliseconds))
+          metrics.send(MetricDataPoint(name = "SendNotificationLatency", value = duration.toDouble, unit = StandardUnit.Milliseconds))
         case Left(error) =>
           logger.error(s"Error sending notification: $notification. error: $error")
-          metrics.send(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration, unit = StandardUnit.Milliseconds))
+          metrics.send(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration.toDouble, unit = StandardUnit.Milliseconds))
       }
     }
   }

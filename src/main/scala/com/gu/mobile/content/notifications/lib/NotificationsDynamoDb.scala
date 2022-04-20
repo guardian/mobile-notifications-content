@@ -16,7 +16,7 @@ class NotificationsDynamoDb(dynamoDB: DynamoDB, config: Configuration) {
 
   def saveContentItem(contentId: String): Unit = {
     val expiry = DateTime.now().plusDays(1).getMillis / 1000 //Expiry should be an epoch value: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-how-to.html
-    contentTable.putItem(new Item().withPrimaryKey("contentId", contentId).withDouble("expiry", expiry))
+    contentTable.putItem(new Item().withPrimaryKey("contentId", contentId).withDouble("expiry", expiry.toDouble))
   }
 
   def haveSeenContentItem(contentId: String): Boolean = {
@@ -31,7 +31,7 @@ class NotificationsDynamoDb(dynamoDB: DynamoDB, config: Configuration) {
 
   def saveLiveBlogEvent(contentId: String, blockId: String) = {
     val expiry = DateTime.now().plusDays(1).getMillis / 1000
-    liveBlogTable.putItem(new Item().withPrimaryKey("contentId", contentId, "blockId", blockId).withDouble("expiry", expiry))
+    liveBlogTable.putItem(new Item().withPrimaryKey("contentId", contentId, "blockId", blockId).withDouble("expiry", expiry.toDouble))
   }
 }
 
