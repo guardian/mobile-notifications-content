@@ -30,7 +30,7 @@ val awsSdkVersion = "1.11.772"
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % "2.17.109",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
-  "com.amazonaws" % "amazon-kinesis-client" % "1.7.6",
+  "com.amazonaws" % "amazon-kinesis-client" % "1.14.8",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.1",
   "com.amazonaws" % "aws-lambda-java-events" % "2.2.8",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
