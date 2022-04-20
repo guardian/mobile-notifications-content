@@ -96,7 +96,7 @@ trait ContentAlertPayloadBuilder extends Logging {
 
   private def selectMainImage(content: Content, minWidth: Int): Option[String] = {
     def width(asset: Asset): Int = asset.assetWidth.flatMap { aw => Try(aw.toInt).toOption }.getOrElse(0)
-    def sortedAssets(element: Element): Seq[Asset] = element.assets.sortBy(width)
+    def sortedAssets(element: Element): Seq[Asset] = element.assets.sortBy(width).toSeq
 
     val elements = content.elements.getOrElse(Nil)
     val mainImage = elements.find {

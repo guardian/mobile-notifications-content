@@ -25,7 +25,7 @@ object ContentApi {
     }
 
     private val followableTagTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
-    def followableTags: Seq[Tag] = content.tags.filter(tag => followableTagTypes.contains(tag.`type`))
+    def followableTags: Seq[Tag] = content.tags.filter(tag => followableTagTypes.contains(tag.`type`)).toSeq
     def isLive: Boolean = content.fields.flatMap(f => f.liveBloggingNow).getOrElse(false) && content.tags.map(_.id).toList.exists(_ == "tone/minutebyminute")
 
     def getLoggablePublicationDate: String = {
