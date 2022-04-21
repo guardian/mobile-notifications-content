@@ -4,8 +4,8 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest
 import org.mockito.Mockito._
 import org.mockito.{ ArgumentCaptor, Matchers }
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{ MustMatchers, WordSpecLike }
+import org.scalatestplus.mockito.MockitoSugar
 import org.specs2.specification.Scope
 
 class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers {
@@ -31,7 +31,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       metricData.get(0).getStatisticValues.getSampleCount mustEqual 3d
 
     }
-    "call cloudwatch once but not aggregate if two metrics are recieved " in new MetricActorScope {
+    "call cloudwatch once but not aggregate if two metrics are received " in new MetricActorScope {
       val metrics = List(
         new MetricDataPoint("test", "m1", 0d),
         new MetricDataPoint("test", "m1", 1d),
@@ -47,8 +47,8 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       val metricData = requestCaptor.getValue.getMetricData
 
       metricData must have size 2
-      metricData.get(0).getStatisticValues.getSampleCount mustEqual 3d
-      metricData.get(1).getStatisticValues.getSampleCount mustEqual 2d
+      metricData.get(1).getStatisticValues.getSampleCount mustEqual 3d
+      metricData.get(0).getStatisticValues.getSampleCount mustEqual 2d
     }
     "call cloudwatch once if there's more than one metric" in new MetricActorScope {
       val metrics = List(

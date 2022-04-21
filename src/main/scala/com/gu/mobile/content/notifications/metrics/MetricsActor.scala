@@ -5,7 +5,7 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model._
 import com.gu.mobile.content.notifications.{ Configuration, Logging }
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class MetricsActor(val cloudWatch: AmazonCloudWatch, config: Configuration) extends Actor with MetricActorLogic {
 

@@ -11,7 +11,7 @@ import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
 import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.{ ExecutionContext, Future }
 
 sealed trait CapiResponse
@@ -34,11 +34,11 @@ trait Lambda extends Logging {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  def handler(event: KinesisEvent) {
+  def handler(event: KinesisEvent): Unit = {
     val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
-    val userRecords = UserRecord.deaggregate(rawRecord.asJava)
+    val userRecords: List[UserRecord] = UserRecord.deaggregate(rawRecord.asJava).asScala.toList
 
-    CapiEventProcessor.process(userRecords.asScala) { event =>
+    CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
         case EventType.Update =>
           event.payload.map {
