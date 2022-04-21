@@ -2,21 +2,20 @@ package com.gu.mobile.content.notifications.lib
 
 import com.amazonaws.services.kinesis.model.Record
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.crier.model.event.v1.{ Event, EventPayload, EventType, ItemType, RetrievableContent }
-import com.gu.mobile.content.notifications.{ CapiEventProcessor, Configuration }
+import com.gu.crier.model.event.v1._
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
+import com.gu.mobile.content.notifications.{ CapiEventProcessor, Configuration }
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
 import com.gu.thrift.serializer._
-import java.nio.ByteBuffer
-import java.util.UUID
-
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
-import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
+import org.scalatestplus.mockito.MockitoSugar
 
+import java.nio.ByteBuffer
+import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
