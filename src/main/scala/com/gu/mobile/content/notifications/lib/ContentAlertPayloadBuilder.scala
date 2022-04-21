@@ -19,6 +19,7 @@ trait ContentAlertPayloadBuilder extends Logging {
 
   private val topicsWithoutPrefix = Set(
     Topic(TagSeries, "world/series/guardian-morning-briefing"),
+    Topic(TagSeries, "world/series/first-edition"),
     Topic(TagSeries, "australia-news/series/guardian-australia-s-morning-mail"),
     Topic(TagSeries, "us-news/series/guardian-us-briefing"),
     Topic(TagSeries, "politics/series/andrew-sparrows-election-briefing")

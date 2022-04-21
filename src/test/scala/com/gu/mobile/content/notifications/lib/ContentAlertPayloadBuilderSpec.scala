@@ -141,6 +141,14 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       builder.buildPayLoad(contentItem) mustEqual expectedPayload
     }
 
+    "do not prefix title for first-edition" in {
+      val tag = Tag("world/series/first-edition", TagType.Series, None, None, "Steve", "", "")
+      val topic = Topic(TagSeries, "world/series/first-edition")
+      val contentItem = item.copy(tags = List(tag))
+      val expectedPayload = expectedPayloadForItem.copy(title = None, topic = List(topic))
+      builder.buildPayLoad(contentItem) mustEqual expectedPayload
+    }
+
     "do not prefix title for andrew-sparrows-election-briefing" in {
       val tag = Tag("politics/series/andrew-sparrows-election-briefing", TagType.Series, None, None, "Steve", "", "")
       val topic = Topic(TagSeries, "politics/series/andrew-sparrows-election-briefing")
