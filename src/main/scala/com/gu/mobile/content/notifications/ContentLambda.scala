@@ -41,9 +41,9 @@ object ContentLambda extends Lambda {
                  .postData(brazeRequest.toString)
                  .asString
             if(response.code == 201) {
-              logger.info("Braze call was successful")
+              logger.info(s"Braze call was successful: ${response.code}, body: ${response.body}")
             } else {
-              logger.info("Braze call failed")
+              logger.info(s"Braze call failed: ${response.code}, body: ${response.body}")
             }
           }
 
