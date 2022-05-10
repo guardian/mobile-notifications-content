@@ -5,11 +5,18 @@ import com.gu.mobile.content.notifications.lib.ContentApi._
 import play.api.libs.json.{Format, Json}
 import scalaj.http.Http
 
-case class ExternalUserId (external_user_id: String)
-case class BrazeRequestBody (campaign_id: String, recipients: List[ExternalUserId])
+case class ExternalUserId (
+  external_user_id: String
+)
+
+case class BrazeRequestBody (
+  campaign_id: String,
+  recipients: List[ExternalUserId]
+)
 
 object BrazeRequestBody {
  implicit val externalUserIdFormatJf: Format[ExternalUserId] = Json.format[ExternalUserId]
+  implicit val brazeRequestBodyJF: Format[BrazeRequestBody] =Json.format[BrazeRequestBody]
 }
 object ContentLambda extends Lambda {
 
@@ -28,12 +35,18 @@ object ContentLambda extends Lambda {
               val recipients = configuration.brazeExternalUserIdList.map(id => ExternalUserId(id))
               val brazeRequest = Json.toJson(BrazeRequestBody(configuration.brazeCampaignKey, recipients))
 
-               Http("https://rest.fra-01.braze.eu/campaigns/trigger/send")
+               val response = Http("https://rest.fra-01.braze.eu/campaigns/trigger/send")
                  .header("content-type", "application/json")
                  .header("authorization", s"Bearer ${configuration.brazeApiKey}")
-                 .postData(brazeRequest)
-
+                 .postData(brazeRequest.toString)
+                 .asString
+            if(response.code == 201) {
+              logger.info("Braze call was successful")
+            } else {
+              logger.info("Braze call failed")
+            }
           }
+
         } catch {
           case e: Exception =>
             logger.error(s"Unable to send notification for ${content.id}", e)
