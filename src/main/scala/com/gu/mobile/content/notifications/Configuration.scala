@@ -15,6 +15,9 @@ case class Configuration(
   crossAccountDynamoRole: String,
   contentDynamoTableName: String,
   liveBlogContentDynamoTableName: String,
+  brazeApiKey: String,
+  brazeCampaignKey: String,
+  brazeExternalUserIdList: List[String],
   stage: String
 )
 
@@ -69,6 +72,13 @@ object Configuration extends Logging {
     val contentLiveBlogDynamoTableName = getMandatoryProperty("content.liveblog-notifications.table")
     logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
 
+
+    val brazeApiKey = getMandatoryProperty("braze.api.key")
+
+    val brazeCampaignKey = getMandatoryProperty("braze.campaign.key")
+
+    val brazeExternalUserIdList = getMandatoryProperty("braze.external-users.key").split(",").toList
+
     Configuration(
       guardianNotificationsEnabled,
       notificationsHost,
@@ -77,6 +87,9 @@ object Configuration extends Logging {
       crossAccountDynamoRole,
       contentDynamoTableName,
       contentLiveBlogDynamoTableName,
+      brazeApiKey,
+      brazeCampaignKey,
+      brazeExternalUserIdList,
       stage
     )
   }
