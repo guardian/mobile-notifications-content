@@ -34,7 +34,7 @@ object ContentLambda extends Lambda {
           if (content.tags.exists(tag => tag.`type` == TagType.Contributor && tag.id == "profile/jayrayner" )) {
               val recipients = configuration.brazeExternalUserIdList.map(id => ExternalUserId(id))
               val brazeRequest = Json.toJson(BrazeRequestBody(configuration.brazeCampaignKey, recipients))
-
+              logger.info(s"Braze request: ${brazeRequest.toString}")
                val response = Http("https://rest.fra-01.braze.eu/campaigns/trigger/send")
                  .header("content-type", "application/json")
                  .header("authorization", s"Bearer ${configuration.brazeApiKey}")
