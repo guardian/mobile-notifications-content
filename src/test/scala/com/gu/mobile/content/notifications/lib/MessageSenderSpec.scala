@@ -3,15 +3,15 @@ package com.gu.mobile.content.notifications.lib
 import com.amazonaws.services.kinesis.model.Record
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.crier.model.event.v1._
-import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
-import com.gu.mobile.content.notifications.{ CapiEventProcessor, Configuration }
+import com.gu.mobile.content.notifications.metrics.{MetricDataPoint, Metrics}
+import com.gu.mobile.content.notifications.{CapiEventProcessor, Configuration}
 import com.gu.mobile.notifications.client.models.ContentAlertPayload
 import com.gu.thrift.serializer._
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
+import org.scalatest.{BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers}
 import org.scalatestplus.mockito.MockitoSugar
 
 import java.nio.ByteBuffer
@@ -21,7 +21,7 @@ import scala.concurrent.Future
 
 class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers with OneInstancePerTest with BeforeAndAfterEach with ScalaFutures {
 
-  val config = new Configuration(true, "", "", "", "", "", "", "")
+  val config = new Configuration(true, "", "", "", "", "", "", "", "", List.empty, "")
   val apiClient = mock[NotificationsApiClient]
   val content = mock[Content]
   val mockPayload = mock[ContentAlertPayload]
