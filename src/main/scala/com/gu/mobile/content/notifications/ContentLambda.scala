@@ -9,9 +9,14 @@ case class ExternalUserId (
   external_user_id: String
 )
 
+case class TriggerProperties (
+  articleId: String
+)
+
 case class BrazeRequestBody (
   campaign_id: String,
-  recipients: List[ExternalUserId]
+  recipients: List[ExternalUserId],
+  trigger_properties: TriggerProperties
 )
 
 object BrazeRequestBody {
@@ -33,7 +38,7 @@ object ContentLambda extends Lambda {
 
           if (content.tags.exists(tag => tag.`type` == TagType.Contributor && tag.id == "profile/jayrayner" )) {
               val recipients = configuration.brazeExternalUserIdList.map(id => ExternalUserId(id))
-              val brazeRequest = Json.toJson(BrazeRequestBody(configuration.brazeCampaignKey, recipients))
+              val brazeRequest = Json.toJson(BrazeRequestBody(configuration.brazeCampaignKey, recipients, TriggerProperties(s"${content.id}/email")))
               logger.info(s"Braze request: ${brazeRequest.toString}")
                val response = Http("https://rest.fra-01.braze.eu/campaigns/trigger/send")
                  .header("content-type", "application/json")
