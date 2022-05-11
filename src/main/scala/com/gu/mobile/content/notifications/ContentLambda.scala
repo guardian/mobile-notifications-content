@@ -20,7 +20,8 @@ case class BrazeRequestBody (
 )
 
 object BrazeRequestBody {
- implicit val externalUserIdFormatJf: Format[ExternalUserId] = Json.format[ExternalUserId]
+  implicit val externalUserIdFormatJF: Format[ExternalUserId] = Json.format[ExternalUserId]
+  implicit val triggerPropertiesFormatJF: Format[TriggerProperties] = Json.format[TriggerProperties]
   implicit val brazeRequestBodyJF: Format[BrazeRequestBody] =Json.format[BrazeRequestBody]
 }
 object ContentLambda extends Lambda {
