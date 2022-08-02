@@ -43,8 +43,7 @@ object NotificationsDynamoDb extends Logging {
 
     val dynamoCredentialsProvider = new AWSCredentialsProviderChain(
       new ProfileCredentialsProvider(),
-      new STSAssumeRoleSessionCredentialsProvider.Builder(config.crossAccountDynamoRole, "mobile-db").build()
-    )
+      new STSAssumeRoleSessionCredentialsProvider.Builder(config.crossAccountDynamoRole, "mobile-db").build())
 
     val client = AmazonDynamoDBClientBuilder.standard()
       .withRegion(Regions.EU_WEST_1)

@@ -30,8 +30,7 @@ class CloudWatchMetrics(config: Configuration) extends Metrics with Logging {
     initialDelay = 0.second,
     interval = 1.minute,
     receiver = metricsActor,
-    message = MetricsActor.Aggregate
-  )
+    message = MetricsActor.Aggregate)
 
   logger.debug("Actor scheduled")
 
@@ -43,11 +42,10 @@ class CloudWatchMetrics(config: Configuration) extends Metrics with Logging {
 }
 
 case class MetricDataPoint(
-    namespage: String = "mobile-notifications-lambda",
-    name: String,
-    value: Double,
-    unit: StandardUnit = StandardUnit.None
-) {
+  namespage: String = "mobile-notifications-lambda",
+  name: String,
+  value: Double,
+  unit: StandardUnit = StandardUnit.None) {
   override def toString = s"Namespace: $namespage Name: $name value: $value"
 }
 

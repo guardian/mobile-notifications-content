@@ -19,8 +19,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       val metrics = List(
         new MetricDataPoint("test", "m1", 0d),
         new MetricDataPoint("test", "m1", 1d),
-        new MetricDataPoint("test", "m1", 2d)
-      )
+        new MetricDataPoint("test", "m1", 2d))
 
       actorLogic.aggregatePoint(metrics)
       val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
@@ -37,8 +36,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
         new MetricDataPoint("test", "m1", 1d),
         new MetricDataPoint("test", "m1", 2d),
         new MetricDataPoint("test", "m2", 5d),
-        new MetricDataPoint("test", "m2", 6d)
-      )
+        new MetricDataPoint("test", "m2", 6d))
 
       actorLogic.aggregatePoint(metrics)
       val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
@@ -54,8 +52,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       val metrics = List(
         MetricDataPoint("test", "m1", 0d),
         MetricDataPoint("test", "m2", 1d),
-        MetricDataPoint("test", "m3", 2d)
-      )
+        MetricDataPoint("test", "m3", 2d))
       actorLogic.aggregatePoint(metrics)
       verify(mockCloudWatch, times(1)).putMetricData(Matchers.any[PutMetricDataRequest])
     }
@@ -63,8 +60,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       val metrics = List(
         MetricDataPoint("namespace1", "m1", 0d),
         MetricDataPoint("namespace2", "m2", 1d),
-        MetricDataPoint("namespace2", "m1", 2d)
-      )
+        MetricDataPoint("namespace2", "m1", 2d))
       actorLogic.aggregatePoint(metrics)
       verify(mockCloudWatch, times(2)).putMetricData(Matchers.any[PutMetricDataRequest])
     }
@@ -72,8 +68,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       val metrics = List(
         MetricDataPoint("namespace1", "m1", 0d),
         MetricDataPoint("namespace1", "m1", 1d),
-        MetricDataPoint("namespace1", "m1", 2d)
-      )
+        MetricDataPoint("namespace1", "m1", 2d))
       actorLogic.aggregatePoint(metrics)
       val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
       verify(mockCloudWatch, times(1)).putMetricData(requestCaptor.capture())

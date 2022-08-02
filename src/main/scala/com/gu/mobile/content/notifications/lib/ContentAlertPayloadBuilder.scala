@@ -22,8 +22,7 @@ trait ContentAlertPayloadBuilder extends Logging {
     Topic(TagSeries, "world/series/first-edition"),
     Topic(TagSeries, "australia-news/series/guardian-australia-s-morning-mail"),
     Topic(TagSeries, "us-news/series/guardian-us-briefing"),
-    Topic(TagSeries, "politics/series/andrew-sparrows-election-briefing")
-  )
+    Topic(TagSeries, "politics/series/andrew-sparrows-election-briefing"))
 
   private val followableTopicTypes: Set[TagType] = Set(TagType.Series, TagType.Blog, TagType.Contributor)
 
@@ -56,8 +55,7 @@ trait ContentAlertPayloadBuilder extends Logging {
       importance = Importance.Major,
       topic = topics,
       debug = false,
-      dryRun = None
-    )
+      dryRun = None)
   }
 
   def buildPayLoad(content: Content, keyEvent: KeyEvent): ContentAlertPayload = {
@@ -72,8 +70,7 @@ trait ContentAlertPayloadBuilder extends Logging {
       importance = Importance.Major,
       topic = List(Topic(TopicTypes.Content, content.id)),
       debug = false,
-      dryRun = None
-    )
+      dryRun = None)
   }
 
   private def getTopicType(tagType: TagType): Option[TopicType] = tagType match {
@@ -113,7 +110,6 @@ trait ContentAlertPayloadBuilder extends Logging {
     title = content.webTitle,
     thumbnail = content.thumbNail,
     git = GITContent,
-    blockId = keyEvent.map { b => b.blockId }
-  )
+    blockId = keyEvent.map { b => b.blockId })
 }
 

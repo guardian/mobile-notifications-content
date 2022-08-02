@@ -65,9 +65,7 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
         id = "0987654321",
         capiUrl = "http://www.theguardian.com/",
         lastModifiedDate = Some(8888888888L),
-        internalRevision = Some(444444)
-      )))
-    )
+        internalRevision = Some(444444)))))
 
     "properly deserialize a compressed event" in {
       val bytes = ThriftSerializer.serializeToBytes(event, Some(ZstdType), None)

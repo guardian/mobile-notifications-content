@@ -15,8 +15,7 @@ case class Configuration(
   crossAccountDynamoRole: String,
   contentDynamoTableName: String,
   liveBlogContentDynamoTableName: String,
-  stage: String
-)
+  stage: String)
 
 object Configuration extends Logging {
   val appName = Option(System.getenv("App")).getOrElse(sys.error("No app name set. Lambda will not rum"))
@@ -36,9 +35,7 @@ object Configuration extends Logging {
     StsAssumeRoleCredentialsProvider.builder
       .stsClient(StsClient.create)
       .refreshRequest(req)
-      .build()
-
-  )
+      .build())
 
   val conf = {
     val identity = AppIdentity.whoAmI(defaultAppName = appName)
@@ -77,8 +74,7 @@ object Configuration extends Logging {
       crossAccountDynamoRole,
       contentDynamoTableName,
       contentLiveBlogDynamoTableName,
-      stage
-    )
+      stage)
   }
 
   private def getMandatoryProperty(key: String) =
