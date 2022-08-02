@@ -46,9 +46,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
       Asset(`type` = AssetType.Image, mimeType = None, file = Some("https://some.url/image500000.jpg"), typeData = Some(AssetFields(width = Some(500000)))),
       Asset(`type` = AssetType.Image, mimeType = None, file = Some("https://some.url/image1000.jpg"), typeData = Some(AssetFields(width = Some(1000)))),
       Asset(`type` = AssetType.Image, mimeType = None, file = Some("https://some.url/image749.jpg"), typeData = Some(AssetFields(width = Some(749)))),
-      Asset(`type` = AssetType.Image, mimeType = None, file = Some("https://some.url/image100.jpg"), typeData = Some(AssetFields(width = Some(100))))
-    ))
-  ))
+      Asset(`type` = AssetType.Image, mimeType = None, file = Some("https://some.url/image100.jpg"), typeData = Some(AssetFields(width = Some(100))))))))
 
   val allTopics = List(contributorTopic, contributorTopic2, blogTopicOpinion, blogTopic, blogTopic1, seriesTopic, seriesTopic2)
   val link = GuardianLinkDetails("newId", Some("http://gu.com/p/1234"), "webTitle", Some(thumb), GITContent)
@@ -66,8 +64,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     tags = List(seriesTag),
     elements = None,
     references = Nil,
-    isExpired = None
-  )
+    isExpired = None)
 
   val expectedPayloadForItem = ContentAlertPayload(
     title = Some(TagContributor.toString),
@@ -78,8 +75,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     importance = Importance.Major,
     topic = List(seriesTopic),
     debug = false,
-    dryRun = None
-  )
+    dryRun = None)
 
   val keyEvent = KeyEvent("blockId", Some("blogPostTitle"), "body", Option(DateTime.now()), Option(DateTime.now()))
 
@@ -87,8 +83,7 @@ class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with
     title = Some(s"Update: ${seriesTag.webTitle}"),
     topic = List(Topic(TopicTypes.Content, "newId")),
     message = Some("blogPostTitle"),
-    link = link.copy(blockId = Some("blockId"))
-  )
+    link = link.copy(blockId = Some("blockId")))
 
   "Content Alert Payload Builder" must {
 
