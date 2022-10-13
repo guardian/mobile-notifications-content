@@ -20,7 +20,7 @@ resolvers ++= Seq(
   "Guardian GitHub Snapshots" at "https://guardian.github.com/maven/repo-snapshots"
 )
 
-assemblyMergeStrategy in assembly := {
+assembly / assemblyMergeStrategy := {
   case "META-INF/MANIFEST.MF" => MergeStrategy.discard
   case _ => MergeStrategy.first
 }
@@ -28,24 +28,25 @@ assemblyMergeStrategy in assembly := {
 val awsSdkVersion = "1.11.772"
 
 libraryDependencies ++= Seq(
-  "software.amazon.awssdk" % "sts" % "2.17.109",
+  "software.amazon.awssdk" % "sts" % "2.17.207",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "amazon-kinesis-client" % "1.14.8",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.1",
   "com.amazonaws" % "aws-lambda-java-events" % "2.2.8",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
-  "com.gu" %% "content-api-client-default" % "17.21",
-  "com.gu" %% "mobile-notifications-api-models" % "1.0.14",
-  "com.gu" %% "thrift-serializer" % "4.0.2",
+  "com.gu" %% "content-api-client-default" % "19.0.4",
+  "com.gu" %% "mobile-notifications-api-models" % "1.0.15",
+  "com.gu" %% "thrift-serializer" % "4.0.3",
   "org.joda" % "joda-convert" % "1.8.1",
-  "org.jsoup" % "jsoup" % "1.8.3",
+  "org.jsoup" % "jsoup" % "1.15.3",
   "com.typesafe.play" %% "play-json" % "2.8.1",
   "org.slf4j" % "slf4j-simple" % "1.7.25",
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.8",
   "com.gu" %% "simple-configuration-ssm" % "1.5.6",
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.12.6.1",
+  "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.4",
+  "com.squareup.okhttp3" % "okhttp" % "4.10.0",
   "org.scalatest" %% "scalatest" % "3.0.8" % Test,
   "org.mockito" % "mockito-all" % "1.9.0" % Test,
   "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
