@@ -13,6 +13,7 @@ jobs:
     permissions: # required by aws-actions/configure-aws-credentials
       id-token: write
       contents: read
+      checks: write
 
     steps:
     - uses: actions/checkout@v3
@@ -49,7 +50,7 @@ jobs:
       with:
         configPath: riff-raff.yaml
         projectName: Mobile::mobile-notifications-content
-        buildNumberOffset: 468
+        buildNumberOffset: 467
         contentDirectories: |
           mobile-notifications-content:
           - mobile-notifications-content.jar
