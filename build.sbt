@@ -54,6 +54,7 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "4.5.1" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.5.1" % Test
 )
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
 
 enablePlugins(RiffRaffArtifact)
 
