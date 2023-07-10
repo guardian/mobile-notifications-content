@@ -50,9 +50,9 @@ jobs:
       with:
         configPath: riff-raff.yaml
         projectName: Mobile::mobile-notifications-content
-        buildNumberOffset: 467
+        buildNumberOffset: 466
         contentDirectories: |
           mobile-notifications-content:
           - mobile-notifications-content.jar
-          mobile-notifications-content:
+          mobile-notifications-content-cfn:
           - cfn.yaml
