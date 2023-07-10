@@ -28,6 +28,16 @@ jobs:
         sbt compile test assembly
         cp target/scala*/mobile-notifications-content.jar .
 
+    - name: Test Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    # run this step even if previous step failed
+      with:
+        name: Tests
+        path: target/test-reports/TEST-*.xml
+        reporter: java-junit
+        only-summary: 'false'
+        fail-on-error: 'true'
+
     - name: AWS Auth
       uses: aws-actions/configure-aws-credentials@v2
       with:
