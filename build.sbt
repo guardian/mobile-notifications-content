@@ -54,12 +54,6 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "4.5.1" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.5.1" % Test
 )
-
-enablePlugins(RiffRaffArtifact)
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
 
 assemblyJarName := s"${name.value}.jar"
-riffRaffPackageType := assembly.value
-riffRaffUploadArtifactBucket := Option("riffraff-artifact")
-riffRaffUploadManifestBucket := Option("riffraff-builds")
-riffRaffManifestProjectName := s"Mobile::${name.value}"
-riffRaffArtifactResources += (file("cfn.yaml"), s"${name.value}-cfn/cfn.yaml")
