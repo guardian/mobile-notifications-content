@@ -123,7 +123,7 @@ Resources:
       Handler: com.gu.mobile.content.notifications.ContentLambda::handler
       MemorySize: 4096
       Role: !GetAtt ExecutionRole.Arn
-      Runtime: java8
+      Runtime: java11
       Timeout: 60
 
   ContentEventSource:
@@ -153,7 +153,7 @@ Resources:
       Handler: com.gu.mobile.content.notifications.LiveBlogLambda::handler
       MemorySize: 4096
       Role: !GetAtt ExecutionRole.Arn
-      Runtime: java8
+      Runtime: java11
       Timeout: 60
 
   LiveBlogEventSource:
