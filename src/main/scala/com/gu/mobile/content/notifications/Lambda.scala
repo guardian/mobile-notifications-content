@@ -3,16 +3,18 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
-import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
+import com.gu.contentapi.client.model.{ContentApiError, ItemQuery}
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
-import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
+import com.gu.crier.model.event.v1.{EventPayload, RetrievableContent, _}
+import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb}
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
+import com.amazonaws.services.sqs.{AmazonSQS, AmazonSQSClientBuilder, model}
+import com.amazonaws.services.sqs.model.SendMessageRequest
 
 import scala.jdk.CollectionConverters._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait CapiResponse
 case class CapiResponseSuccess(content: Content) extends CapiResponse
@@ -37,6 +39,15 @@ trait Lambda extends Logging {
   def handler(event: KinesisEvent): Unit = {
     val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
     val userRecords: List[UserRecord] = UserRecord.deaggregate(rawRecord.asJava).asScala.toList
+
+    val sqs = AmazonSQSClientBuilder.defaultClient()
+    val queueUrl = sqs.getQueueUrl("mobile-CODE-mobile-audio-generator-capiFirehoseEvents89AEA846-qnv7gNSYqGby").getQueueUrl
+    logger.debug(s"Retrieved queue url $queueUrl")
+    val msg = new SendMessageRequest()
+      .withQueueUrl(queueUrl)
+      .withMessageBody("test")
+    logger.debug(s"About to send message ${msg.toString}")
+    sqs.sendMessage(msg)
 
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
