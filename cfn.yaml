@@ -61,6 +61,12 @@ Resources:
               Effect: Allow
               Action: sts:AssumeRole
               Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-dynamo-${Stage}
+        - PolicyName: assume-mobile-sqs-role
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action: sts:AssumeRole
+              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-sqs-${Stage}
         - PolicyName: logs
           PolicyDocument:
             Statement:
