@@ -1,5 +1,8 @@
 package com.gu.mobile.content.notifications
 
+import com.amazonaws.auth.{AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider}
+import com.amazonaws.auth.profile.ProfileCredentialsProvider
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
@@ -40,7 +43,13 @@ trait Lambda extends Logging {
     val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
     val userRecords: List[UserRecord] = UserRecord.deaggregate(rawRecord.asJava).asScala.toList
 
-    val sqs = AmazonSQSClientBuilder.defaultClient()
+    val credentialsProvider = new AWSCredentialsProviderChain(
+      new ProfileCredentialsProvider(),
+      new STSAssumeRoleSessionCredentialsProvider.Builder("arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-sqs-CODE", "mobile-sqs").build())
+    val sqs = AmazonSQSClientBuilder.standard()
+      .withRegion(Regions.EU_WEST_1)
+      .withCredentials(credentialsProvider)
+      .build()
     val queueUrl = sqs.getQueueUrl("mobile-CODE-mobile-audio-generator-capiFirehoseEvents89AEA846-qnv7gNSYqGby").getQueueUrl
     logger.debug(s"Retrieved queue url $queueUrl")
     val msg = new SendMessageRequest()
