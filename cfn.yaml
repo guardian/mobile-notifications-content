@@ -39,8 +39,8 @@ Parameters:
 Resources:
   ExecutionRole:
     Type: AWS::IAM::Role
-    RoleName: !Sub mobile-notifications-content-lambdas-role-${Stage}
     Properties:
+      RoleName: !Sub mobile-notifications-content-lambdas-role-${Stage}
       AssumeRolePolicyDocument:
         Statement:
           - Effect: Allow
