@@ -45,7 +45,7 @@ trait Lambda extends Logging {
 
     val credentialsProvider = new AWSCredentialsProviderChain(
       new ProfileCredentialsProvider(),
-      new STSAssumeRoleSessionCredentialsProvider.Builder("arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-sqs-CODE", "mobile-sqs").build())
+      new STSAssumeRoleSessionCredentialsProvider.Builder("arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account2-sqs-CODE", "mobile-sqs").build())
     val sqs = AmazonSQSClientBuilder.standard()
       .withRegion(Regions.EU_WEST_1)
       .withCredentials(credentialsProvider)
