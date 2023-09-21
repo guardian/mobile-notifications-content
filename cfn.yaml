@@ -67,7 +67,7 @@ Resources:
             Statement:
               Effect: Allow
               Action: sts:AssumeRole
-              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}2-sqs-${Stage}
+              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-sqs-${Stage}
         - PolicyName: logs
           PolicyDocument:
             Statement:
