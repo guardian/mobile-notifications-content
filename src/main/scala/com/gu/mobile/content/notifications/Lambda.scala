@@ -46,11 +46,12 @@ trait Lambda extends Logging {
     val credentialsProvider = new AWSCredentialsProviderChain(
       new ProfileCredentialsProvider(),
       new STSAssumeRoleSessionCredentialsProvider.Builder(configuration.crossAccountSqsRole, "mobile-sqs").build())
+    logger.info(s"credentials provider ${credentialsProvider.toString}")
     val sqs = AmazonSQSClientBuilder.standard()
       .withRegion(Regions.EU_WEST_1)
       .withCredentials(credentialsProvider)
       .build()
-    logger.info(s"created sqs client")
+    logger.info(s"created sqs client ${sqs.toString}")
 
     val queueUrl = configuration.sqsQueue
     logger.info(s"Retrieved queue url")
