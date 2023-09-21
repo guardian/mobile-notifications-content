@@ -50,8 +50,10 @@ trait Lambda extends Logging {
       .withRegion(Regions.EU_WEST_1)
       .withCredentials(credentialsProvider)
       .build()
-    val queueUrl = sqs.getQueueUrl(configuration.sqsQueue).getQueueUrl
-    logger.info(s"Retrieved queue url $queueUrl")
+    logger.info(s"created sqs client")
+
+    val queueUrl = configuration.sqsQueue
+    logger.info(s"Retrieved queue url")
     val msg = new SendMessageRequest()
       .withQueueUrl(queueUrl)
       .withMessageBody("test")
