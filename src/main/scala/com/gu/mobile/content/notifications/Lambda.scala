@@ -1,8 +1,5 @@
 package com.gu.mobile.content.notifications
 
-import com.amazonaws.auth.{AWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider}
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.regions.Regions
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
@@ -11,10 +8,8 @@ import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
 import com.gu.crier.model.event.v1.{EventPayload, RetrievableContent, _}
-import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb}
+import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb, MobileSqs}
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
-import com.amazonaws.services.sqs.{AmazonSQS, AmazonSQSClientBuilder, model}
-import com.amazonaws.services.sqs.model.SendMessageRequest
 
 import scala.jdk.CollectionConverters._
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,30 +31,13 @@ trait Lambda extends Logging {
   val messageSender = new MessageSender(configuration, apiClient, payLoadBuilder, metrics)
   val dynamo = NotificationsDynamoDb(configuration)
   val capiClient = new GuardianContentClient(apiKey = configuration.contentApiKey)
+  val sqs = MobileSqs(configuration)
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent): Unit = {
     val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
     val userRecords: List[UserRecord] = UserRecord.deaggregate(rawRecord.asJava).asScala.toList
-
-    val credentialsProvider = new AWSCredentialsProviderChain(
-      new ProfileCredentialsProvider(),
-      new STSAssumeRoleSessionCredentialsProvider.Builder(configuration.crossAccountSqsRole, "mobile-sqs").build())
-    logger.info(s"credentials provider ${credentialsProvider.toString}")
-    val sqs = AmazonSQSClientBuilder.standard()
-      .withRegion(Regions.EU_WEST_1)
-      .withCredentials(credentialsProvider)
-      .build()
-    logger.info(s"created sqs client ${sqs.toString}")
-
-    val queueUrl = configuration.sqsQueue
-    logger.info(s"Retrieved queue url")
-    val msg = new SendMessageRequest()
-      .withQueueUrl(queueUrl)
-      .withMessageBody("test")
-    logger.info(s"About to send message ${msg.toString}")
-    sqs.sendMessage(msg)
 
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
