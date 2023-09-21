@@ -45,17 +45,17 @@ trait Lambda extends Logging {
 
     val credentialsProvider = new AWSCredentialsProviderChain(
       new ProfileCredentialsProvider(),
-      new STSAssumeRoleSessionCredentialsProvider.Builder("arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account2-sqs-CODE", "mobile-sqs").build())
+      new STSAssumeRoleSessionCredentialsProvider.Builder(configuration.crossAccountSqsRole, "mobile-sqs").build())
     val sqs = AmazonSQSClientBuilder.standard()
       .withRegion(Regions.EU_WEST_1)
       .withCredentials(credentialsProvider)
       .build()
-    val queueUrl = sqs.getQueueUrl("mobile-CODE-mobile-audio-generator-capiFirehoseEvents89AEA846-qnv7gNSYqGby").getQueueUrl
-    logger.debug(s"Retrieved queue url $queueUrl")
+    val queueUrl = sqs.getQueueUrl(configuration.sqsQueue).getQueueUrl
+    logger.info(s"Retrieved queue url $queueUrl")
     val msg = new SendMessageRequest()
       .withQueueUrl(queueUrl)
       .withMessageBody("test")
-    logger.debug(s"About to send message ${msg.toString}")
+    logger.info(s"About to send message ${msg.toString}")
     sqs.sendMessage(msg)
 
     CapiEventProcessor.process(userRecords) { event =>
