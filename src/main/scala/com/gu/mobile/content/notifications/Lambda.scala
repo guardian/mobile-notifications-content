@@ -3,16 +3,16 @@ package com.gu.mobile.content.notifications
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
-import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
+import com.gu.contentapi.client.model.{ContentApiError, ItemQuery}
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
-import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
+import com.gu.crier.model.event.v1.{EventPayload, RetrievableContent, _}
+import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb, MobileSqs}
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
 
 import scala.jdk.CollectionConverters._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait CapiResponse
 case class CapiResponseSuccess(content: Content) extends CapiResponse
@@ -31,6 +31,7 @@ trait Lambda extends Logging {
   val messageSender = new MessageSender(configuration, apiClient, payLoadBuilder, metrics)
   val dynamo = NotificationsDynamoDb(configuration)
   val capiClient = new GuardianContentClient(apiKey = configuration.contentApiKey)
+  val sqs = MobileSqs(configuration)
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 

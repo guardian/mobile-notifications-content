@@ -7,8 +7,13 @@ object ContentLambda extends Lambda {
 
   def processContent(content: Content): Boolean = {
     logger.info(s"Processing ContendId: ${content.id} Published at: ${content.getLoggablePublicationDate}")
+
+    // Temporary: this is to support the mobile text-to-speech experiment
+    sqs.sendMessage(content.id)
+
     if (content.isRecent && content.followableTags.nonEmpty) {
       val haveSeen = dynamo.haveSeenContentItem(content.id)
+
       if (haveSeen) {
         logger.info(s"Ignoring duplicate content ${content.id}")
       } else {
