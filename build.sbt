@@ -25,9 +25,13 @@ assembly / assemblyMergeStrategy := {
 }
 
 val awsSdkVersion = "1.11.772"
+val awsSdk2Version = "2.21.21"
 
 libraryDependencies ++= Seq(
-  "software.amazon.awssdk" % "sts" % "2.20.162",
+  "software.amazon.awssdk" % "sts" % awsSdk2Version,
+  "software.amazon.awssdk" % "autoscaling" % awsSdk2Version,
+  "software.amazon.awssdk" % "ec2" % awsSdk2Version,
+  "software.amazon.awssdk" % "ssm" % awsSdk2Version,
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "amazon-kinesis-client" % "1.14.8",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.1",
