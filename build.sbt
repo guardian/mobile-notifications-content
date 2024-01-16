@@ -47,7 +47,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.7.25",
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.8",
-  "com.gu" %% "simple-configuration-ssm" % "1.5.6",
+  "com.gu" %% "simple-configuration-ssm" % "1.5.8",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.5",
   "com.squareup.okhttp3" % "okhttp" % "4.10.0",
   "com.google.protobuf" % "protobuf-java" % "3.25.2",
