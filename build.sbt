@@ -48,7 +48,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.8",
   "com.gu" %% "simple-configuration-ssm" % "1.5.6",
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.4",
+  "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.5",
   "com.squareup.okhttp3" % "okhttp" % "4.10.0",
   "com.google.protobuf" % "protobuf-java" % "3.19.6",
   "org.scalatest" %% "scalatest" % "3.0.8" % Test,
