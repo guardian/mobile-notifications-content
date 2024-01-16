@@ -49,7 +49,7 @@ libraryDependencies ++= Seq(
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
   "com.gu" %% "simple-configuration-ssm" % "1.5.8",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.5",
-  "com.squareup.okhttp3" % "okhttp" % "4.10.0",
+  "com.squareup.okhttp3" % "okhttp" % "4.12.0",
   "com.google.protobuf" % "protobuf-java" % "3.25.2",
   "org.scalatest" %% "scalatest" % "3.0.8" % Test,
   "org.mockito" % "mockito-all" % "1.9.0" % Test,
