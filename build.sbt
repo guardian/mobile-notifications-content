@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-lambda-java-events" % "2.2.8",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
-  "com.gu" %% "content-api-client-default" % "19.0.4",
+  "com.gu" %% "content-api-client-default" % "19.0.5",
   "com.gu" %% "mobile-notifications-api-models" % "1.0.15",
   "com.gu" %% "thrift-serializer" % "4.0.3",
   "org.joda" % "joda-convert" % "1.8.1",
