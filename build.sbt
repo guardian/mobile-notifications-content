@@ -24,8 +24,8 @@ assembly / assemblyMergeStrategy := {
   case _ => MergeStrategy.first
 }
 
-val awsSdkVersion = "1.11.772"
-val awsSdk2Version = "2.21.21"
+val awsSdkVersion = "1.11.1034"
+val awsSdk2Version = "2.21.46"
 
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
@@ -33,9 +33,9 @@ libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "ec2" % awsSdk2Version,
   "software.amazon.awssdk" % "ssm" % awsSdk2Version,
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
-  "com.amazonaws" % "amazon-kinesis-client" % "1.14.8",
-  "com.amazonaws" % "aws-lambda-java-core" % "1.2.1",
-  "com.amazonaws" % "aws-lambda-java-events" % "2.2.8",
+  "com.amazonaws" % "amazon-kinesis-client" % "1.14.10",
+  "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
+  "com.amazonaws" % "aws-lambda-java-events" % "2.2.9",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
   "com.gu" %% "content-api-client-default" % "19.0.4",
