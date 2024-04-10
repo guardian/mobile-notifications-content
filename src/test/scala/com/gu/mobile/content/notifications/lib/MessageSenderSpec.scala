@@ -1,6 +1,7 @@
 package com.gu.mobile.content.notifications.lib
 
 import com.amazonaws.services.kinesis.model.Record
+import com.amazonaws.services.lambda.runtime.events.KinesisEvent
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.crier.model.event.v1._
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
@@ -69,13 +70,13 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
 
     "properly deserialize a compressed event" in {
       val bytes = ThriftSerializer.serializeToBytes(event, Some(ZstdType), None)
-      val record = new Record().withData(ByteBuffer.wrap(bytes))
-      CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
+      val record = new KinesisEvent.Record().withData(ByteBuffer.wrap(bytes))
+      CapiEventProcessor.process(Seq(record))(event => Future.successful(true)).futureValue mustEqual 1
     }
 
     "properly deserialize a non-compressed event" in {
       val bytes = ThriftSerializer.serializeToBytes(event, None, None)
-      val record = new Record().withData(ByteBuffer.wrap(bytes))
+      val record = new KinesisEvent.Record().withData(ByteBuffer.wrap(bytes))
       CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
     }
   }

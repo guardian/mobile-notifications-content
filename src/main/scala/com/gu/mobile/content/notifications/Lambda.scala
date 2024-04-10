@@ -1,6 +1,7 @@
 package com.gu.mobile.content.notifications
 
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
+import com.amazonaws.services.lambda.runtime.events.models.kinesis.Record
 import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.GuardianContentClient
@@ -33,7 +34,7 @@ trait Lambda extends Logging {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent): Unit = {
-    val records: List[KinesisEvent.Record] = event.getRecords.asScala.map(_.getKinesis).toList
+    val records: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
 
     CapiEventProcessor.process(records) { event =>
       event.eventType match {
