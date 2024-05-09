@@ -1,5 +1,6 @@
 package com.gu.mobile.content.notifications
 
+import com.amazonaws.kinesis.deagg.RecordDeaggregator
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
 import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
@@ -10,6 +11,7 @@ import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
 import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
 import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
+import com.amazonaws.services.lambda.runtime.events.KinesisEvent.KinesisEventRecord
 
 import scala.jdk.CollectionConverters._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -35,8 +37,7 @@ trait Lambda extends Logging {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent): Unit = {
-    val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
-    val userRecords: List[UserRecord] = UserRecord.deaggregate(rawRecord.asJava).asScala.toList
+    val userRecords: List[UserRecord] = RecordDeaggregator.deaggregate(event.getRecords).asScala.toList
 
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
