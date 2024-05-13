@@ -52,7 +52,7 @@ trait Lambda extends Logging {
       })
     } catch {
       case e: Exception =>
-        logger.error(s"Error  ${e.getMessage}")
+        logger.error(s"Error  ${e.printStackTrace()}")
     }
 
 //    CapiEventProcessor.process(userRecords) { event =>
