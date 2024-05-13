@@ -38,13 +38,13 @@ trait Lambda extends Logging {
 
   def handler(event: KinesisEvent): Unit = {
 
-    val records = event.getRecords()
+    val records = event.getRecords().asScala.toList
 
-    logger.info(String.format("Recieved %s Raw Records", records.size()))
+    logger.info(String.format("Recieved %s Raw Records", records.length))
 
     try {
       // now deaggregate the message contents
-      val deaggregated = RecordDeaggregator.deaggregate(records)
+      val deaggregated = RecordDeaggregator.deaggregate(records.asJava)
       logger.info(String.format("Received %s Deaggregated User Records", deaggregated.size))
       deaggregated.stream.forEachOrdered((rec) => {
         logger.info(rec.getPartitionKey)
@@ -52,7 +52,7 @@ trait Lambda extends Logging {
       })
     } catch {
       case e: Exception =>
-        logger.info(e.getMessage)
+        logger.error(s"Error  ${e.getMessage}")
     }
 
 //    CapiEventProcessor.process(userRecords) { event =>
