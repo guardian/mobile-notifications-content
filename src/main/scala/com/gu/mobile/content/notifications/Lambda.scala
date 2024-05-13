@@ -37,7 +37,7 @@ trait Lambda extends Logging {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent): Unit = {
-    val userRecords: List[UserRecord] = RecordDeaggregator.deaggregate(event.getRecords).asScala.toList
+    val userRecords: List[UserRecord] = RecordDeaggregator.deaggregate(event.getRecords()).asScala.toList
 
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
