@@ -2,7 +2,6 @@ package com.gu.mobile.content.notifications
 
 import com.amazonaws.kinesis.deagg.RecordDeaggregator
 import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
-import com.amazonaws.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
 import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
 import com.gu.contentapi.client.model.v1.Content
@@ -12,6 +11,7 @@ import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
 import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent.KinesisEventRecord
+
 
 import scala.jdk.CollectionConverters._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -37,31 +37,47 @@ trait Lambda extends Logging {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent): Unit = {
-    val userRecords: List[UserRecord] = RecordDeaggregator.deaggregate(event.getRecords()).asScala.toList
 
-    CapiEventProcessor.process(userRecords) { event =>
-      event.eventType match {
-        case EventType.Update =>
-          event.payload.map {
-            case EventPayload.Content(content) =>
-              logger.debug(s"Handle content update ${content.id}")
-              val send = processContent(content)
-              Future.successful(send)
-            case EventPayload.RetrievableContent(content) =>
-              logger.debug(s"Handle retrievable content or not: ${content.id}")
-              handleRetrievableContent(content)
-            case UnknownUnionField(e) =>
-              logger.error(s"Unknown event payload $e. Consider updating capi models")
-              Future.successful(false)
-            case _ =>
-              logger.warn(s"Unknown event payload ${event.payload}. Consider updating capi models")
-              Future.successful(false)
-          }.getOrElse(Future.successful(false))
-        case _ =>
-          logger.info("Received non-updatable event type")
-          Future.successful(false)
-      }
+    val records = event.getRecords()
+
+    logger.info(String.format("Recieved %s Raw Records", records.size()))
+
+    try {
+      // now deaggregate the message contents
+      val deaggregated = RecordDeaggregator.deaggregate(records)
+      logger.info(String.format("Received %s Deaggregated User Records", deaggregated.size))
+      deaggregated.stream.forEachOrdered((rec) => {
+        logger.info(rec.getPartitionKey)
+
+      })
+    } catch {
+      case e: Exception =>
+        logger.info(e.getMessage)
     }
+
+//    CapiEventProcessor.process(userRecords) { event =>
+//      event.eventType match {
+//        case EventType.Update =>
+//          event.payload.map {
+//            case EventPayload.Content(content) =>
+//              logger.debug(s"Handle content update ${content.id}")
+//              val send = processContent(content)
+//              Future.successful(send)
+//            case EventPayload.RetrievableContent(content) =>
+//              logger.debug(s"Handle retrievable content or not: ${content.id}")
+//              handleRetrievableContent(content)
+//            case UnknownUnionField(e) =>
+//              logger.error(s"Unknown event payload $e. Consider updating capi models")
+//              Future.successful(false)
+//            case _ =>
+//              logger.warn(s"Unknown event payload ${event.payload}. Consider updating capi models")
+//              Future.successful(false)
+//          }.getOrElse(Future.successful(false))
+//        case _ =>
+//          logger.info("Received non-updatable event type")
+//          Future.successful(false)
+//      }
+//    }
   }
 
   def processContent(content: Content): Boolean
