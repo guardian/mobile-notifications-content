@@ -2,7 +2,6 @@ package com.gu.mobile.content.notifications
 
 import com.amazonaws.kinesis.deagg.RecordDeaggregator
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
-import com.amazonaws.services.lambda.runtime.events.KinesisEvent.Record
 import com.gu.contentapi.client.model.{ContentApiError, ItemQuery}
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.GuardianContentClient
