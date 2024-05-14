@@ -32,7 +32,7 @@ libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "autoscaling" % awsSdk2Version,
   "software.amazon.awssdk" % "ec2" % awsSdk2Version,
   "software.amazon.awssdk" % "ssm" % awsSdk2Version,
-  "com.amazonaws" % "amazon-kinesis-client" % "1.8.8",
+  "com.amazonaws" % "amazon-kinesis-client" % "1.15.1",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
   "com.amazonaws" % "amazon-kinesis-deaggregator" % "1.0.3",
