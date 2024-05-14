@@ -4,8 +4,8 @@ import com.amazonaws.services.kinesis.model.Record
 import com.gu.crier.model.event.v1.Event
 import com.gu.thrift.serializer.ThriftDeserializer
 
-import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Try, Success, Failure }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 object CapiEventProcessor extends Logging {
 

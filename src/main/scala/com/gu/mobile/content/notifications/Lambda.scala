@@ -1,18 +1,19 @@
 package com.gu.mobile.content.notifications
 
-import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
-import com.amazonaws.services.kinesis.model.Record
+import com.amazonaws.kinesis.deagg.RecordDeaggregator
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
-import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
+import com.amazonaws.services.lambda.runtime.events.KinesisEvent.Record
+import com.gu.contentapi.client.model.{ContentApiError, ItemQuery}
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
-import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
-import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
+import com.gu.crier.model.event.v1.{EventPayload, RetrievableContent, _}
+import com.gu.mobile.content.notifications.lib.{ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb}
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
+import com.amazonaws.services.lambda.runtime.events.KinesisEvent.KinesisEventRecord
 
 import scala.jdk.CollectionConverters._
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait CapiResponse
 case class CapiResponseSuccess(content: Content) extends CapiResponse
@@ -35,9 +36,10 @@ trait Lambda extends Logging {
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   def handler(event: KinesisEvent): Unit = {
-    val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
-    val userRecords: List[UserRecord] = UserRecord.deaggregate(rawRecord.asJava).asScala.toList
-
+    val rawRecord: List[KinesisEventRecord] = event.getRecords.asScala.toList
+    logger.info(String.format("Recieved %s Raw Records", rawRecord.length))
+    val userRecords = RecordDeaggregator.deaggregate(rawRecord.asJava).asScala.toList
+    logger.info(String.format("Received %s Deaggregated User Records", userRecords.length))
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
         case EventType.Update =>
