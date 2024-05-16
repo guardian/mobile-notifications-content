@@ -1,7 +1,6 @@
 package com.gu.mobile.content.notifications
 
-import com.amazonaws.services.kinesis.clientlibrary.types.UserRecord
-import com.amazonaws.services.kinesis.model.Record
+import software.amazon.awssdk.services.kinesis.model.Record
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
 import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
 import com.gu.contentapi.client.model.v1.Content
@@ -10,6 +9,8 @@ import com.gu.crier.model.event.v1.EventPayload.UnknownUnionField
 import com.gu.crier.model.event.v1.{ EventPayload, RetrievableContent, _ }
 import com.gu.mobile.content.notifications.lib.{ ContentAlertPayloadBuilder, MessageSender, NotificationsApiClient, NotificationsDynamoDb }
 import com.gu.mobile.content.notifications.metrics.CloudWatchMetrics
+import software.amazon.awssdk.core.SdkBytes
+import software.amazon.kinesis.retrieval.{ AggregatorUtil, KinesisClientRecord }
 
 import scala.jdk.CollectionConverters._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -34,7 +35,7 @@ trait Lambda extends Logging {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  /***
+/***
     As of version 3.0.0 of aws-lambda-java-events: https://github.com/aws/aws-lambda-java-libs/blob/main/aws-lambda-java-events/RELEASE.CHANGELOG.md#may-18-2020
     reading records from the lambda event returns a different model to the one that the kinesis client library deaggregation
     method is expecting.
@@ -45,18 +46,22 @@ trait Lambda extends Logging {
 
     So, manually creating an object of the type that the KCL library is expecting feels like the least worst option
    ***/
-  def kinesisEventRecordToRecord(eventRecord: KinesisEvent.Record): Record = {
-    new Record()
-      .withSequenceNumber(eventRecord.getSequenceNumber)
-      .withApproximateArrivalTimestamp(eventRecord.getApproximateArrivalTimestamp)
-      .withData(eventRecord.getData)
-      .withPartitionKey(eventRecord.getPartitionKey)
-      .withEncryptionType(eventRecord.getEncryptionType)
+  def kinesisEventRecordToRecord(eventRecord: KinesisEvent.Record): KinesisClientRecord = {
+    val record = Record.builder()
+      .sequenceNumber(eventRecord.getSequenceNumber)
+      .approximateArrivalTimestamp(eventRecord.getApproximateArrivalTimestamp.toInstant)
+      .data(SdkBytes.fromByteBuffer(eventRecord.getData))
+      .partitionKey(eventRecord.getPartitionKey)
+      .encryptionType(eventRecord.getEncryptionType)
+      .build()
+    KinesisClientRecord.fromRecord(record)
+
   }
   def handler(event: KinesisEvent): Unit = {
     val eventRecords: List[KinesisEvent.Record] = event.getRecords.asScala.toList.map(_.getKinesis)
     val records = eventRecords.map(kinesisEventRecordToRecord)
-    val userRecords: List[UserRecord] = UserRecord.deaggregate(records.asJava).asScala.toList
+    val aggregatorUtil = new AggregatorUtil()
+    val userRecords: List[KinesisClientRecord] = aggregatorUtil.deaggregate(records.asJava).asScala.toList
 
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {

@@ -1,17 +1,17 @@
 package com.gu.mobile.content.notifications
 
-import com.amazonaws.services.kinesis.model.Record
 import com.gu.crier.model.event.v1.Event
 import com.gu.thrift.serializer.ThriftDeserializer
+import software.amazon.kinesis.retrieval.KinesisClientRecord
 
 import scala.concurrent.{ ExecutionContext, Future }
-import scala.util.{ Try, Success, Failure }
+import scala.util.{ Failure, Success, Try }
 
 object CapiEventProcessor extends Logging {
 
-  def process(records: Seq[Record])(sendNotification: Event => Future[Boolean])(implicit ec: ExecutionContext): Future[Int] = {
+  def process(records: Seq[KinesisClientRecord])(sendNotification: Event => Future[Boolean])(implicit ec: ExecutionContext): Future[Int] = {
     val maybeNotificationsSent = records.map { record =>
-      ThriftDeserializer.deserialize(record.getData.array)(Event) match {
+      ThriftDeserializer.deserialize(record.data().array())(Event) match {
         case Success(event) => sendNotification(event)
         case Failure(error) =>
           logger.error(s"Failed to deserialize Kinesis record: ${error.getMessage}", error)
