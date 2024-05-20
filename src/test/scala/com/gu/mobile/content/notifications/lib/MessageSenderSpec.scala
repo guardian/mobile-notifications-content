@@ -71,13 +71,13 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
 
     "properly deserialize a compressed event" in {
       val bytes = ThriftSerializer.serializeToBytes(event, Some(ZstdType), None)
-      val record = KinesisClientRecord.builder().data(ByteBuffer.wrap(bytes)).build()
+      val record = KinesisClientRecord.builder().data(bytes).build()
       CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
     }
 
     "properly deserialize a non-compressed event" in {
       val bytes = ThriftSerializer.serializeToBytes(event, None, None)
-      val record = KinesisClientRecord.builder().data(ByteBuffer.wrap(bytes)).build()
+      val record = KinesisClientRecord.builder().data(bytes).build()
       CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
     }
   }
