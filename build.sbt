@@ -29,9 +29,6 @@ val awsSdk2Version = "2.24.12"
 
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
-  "software.amazon.awssdk" % "autoscaling" % awsSdk2Version,
-  "software.amazon.awssdk" % "ec2" % awsSdk2Version,
-  "software.amazon.awssdk" % "ssm" % awsSdk2Version,
   "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
