@@ -30,7 +30,6 @@ val awsSdk2Version = "2.24.12"
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
   "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0",
-  "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
   "com.amazonaws" % "aws-lambda-java-events" % "3.11.4",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
@@ -47,7 +46,6 @@ libraryDependencies ++= Seq(
   "com.gu" %% "simple-configuration-ssm" % "1.5.8",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.5",
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
-  "com.google.protobuf" % "protobuf-java" % "3.25.2",
   "org.scalatest" %% "scalatest" % "3.0.9" % Test,
   "org.mockito" % "mockito-all" % "1.9.5" % Test,
   "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
@@ -55,5 +53,8 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-matcher-extra" % "4.20.4" % Test
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
+excludeDependencies ++= Seq(
+  ExclusionRule("software.amazon.awssdk", "ec2")
+)
 
 assemblyJarName := s"${name.value}.jar"
