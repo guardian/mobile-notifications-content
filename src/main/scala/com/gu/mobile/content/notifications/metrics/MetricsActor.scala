@@ -1,13 +1,13 @@
 package com.gu.mobile.content.notifications.metrics
 
 import akka.actor.Actor
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch
-import com.amazonaws.services.cloudwatch.model._
 import com.gu.mobile.content.notifications.{ Configuration, Logging }
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
+import software.amazon.awssdk.services.cloudwatch.model.{ MetricDatum, PutMetricDataRequest, StandardUnit, StatisticSet }
 
 import scala.jdk.CollectionConverters._
 
-class MetricsActor(val cloudWatch: AmazonCloudWatch, config: Configuration) extends Actor with MetricActorLogic {
+class MetricsActor(val cloudWatch: CloudWatchClient, config: Configuration) extends Actor with MetricActorLogic {
 
   override val stage = config.stage
 
@@ -31,7 +31,7 @@ object MetricsActor {
 trait MetricActorLogic extends Logging {
 
   val stage: String
-  def cloudWatch: AmazonCloudWatch
+  def cloudWatch: CloudWatchClient
 
   def aggregatePointsPerMetric(metricPoints: List[MetricDataPoint], metricName: String): MetricDatum = {
     val (sum, min, max) = metricPoints.foldLeft((0d, Double.MaxValue, Double.MinValue)) {
@@ -39,21 +39,10 @@ trait MetricActorLogic extends Logging {
         (aggSum + dataPoint.value, aggMin.min(dataPoint.value), aggMax.max(dataPoint.value))
     }
 
-    val statSet = new StatisticSet
-    statSet.setMaximum(max)
-    statSet.setMinimum(min)
-    statSet.setSum(sum)
-    statSet.setSampleCount(metricPoints.size.toDouble)
-
-    val unit = metricPoints.headOption.map(_.unit).getOrElse(StandardUnit.None)
-
-    val metric = new MetricDatum()
-    metric.setMetricName(metricName)
-    metric.setUnit(unit)
-    metric.setStatisticValues(statSet)
-
+    val statSet = StatisticSet.builder().sum(sum).maximum(max).minimum(min).sampleCount(metricPoints.size.toDouble).build()
+    val unit = metricPoints.headOption.map(_.unit).getOrElse(StandardUnit.NONE)
+    val metric = MetricDatum.builder().metricName(metricName).unit(unit).statisticValues(statSet).build()
     metric
-
   }
 
   def aggregatePointsPerNamespaceMatches(points: List[MetricDataPoint]): List[(String, List[MetricDatum])] = {
@@ -90,9 +79,10 @@ trait MetricActorLogic extends Logging {
       try {
         metricsPerNameSpaceMatches.foreach {
           case (namespace, awsMetricsBatch) =>
-            val metricRequest = new PutMetricDataRequest()
-            metricRequest.setNamespace(s"$stage/$namespace")
-            metricRequest.setMetricData(awsMetricsBatch.asJavaCollection)
+            val metricRequest = PutMetricDataRequest.builder()
+              .metricData(awsMetricsBatch.asJavaCollection)
+              .namespace(s"$stage/$namespace")
+              .build()
             cloudWatch.putMetricData(metricRequest)
         }
         logger.info(s"Sent metrics to cloudwatch. " +
