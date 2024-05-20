@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications
 
-import software.amazon.awssdk.services.kinesis.model.Record
+import software.amazon.awssdk.services.kinesis.model.{ EncryptionType, Record }
 import com.amazonaws.services.lambda.runtime.events.KinesisEvent
 import com.gu.contentapi.client.model.{ ContentApiError, ItemQuery }
 import com.gu.contentapi.client.model.v1.Content
@@ -47,15 +47,12 @@ trait Lambda extends Logging {
     So, manually creating an object of the type that the KCL library is expecting feels like the least worst option
    ***/
   def kinesisEventRecordToRecord(eventRecord: KinesisEvent.Record): KinesisClientRecord = {
-    val record = Record.builder()
+    KinesisClientRecord.builder()
       .sequenceNumber(eventRecord.getSequenceNumber)
       .approximateArrivalTimestamp(eventRecord.getApproximateArrivalTimestamp.toInstant)
-      .data(SdkBytes.fromByteBuffer(eventRecord.getData))
+      .data(eventRecord.getData())
       .partitionKey(eventRecord.getPartitionKey)
-      .encryptionType(eventRecord.getEncryptionType)
-      .build()
-    KinesisClientRecord.fromRecord(record)
-
+      .encryptionType(EncryptionType.fromValue(eventRecord.getEncryptionType)).build()
   }
   def handler(event: KinesisEvent): Unit = {
     val eventRecords: List[KinesisEvent.Record] = event.getRecords.asScala.toList.map(_.getKinesis)
