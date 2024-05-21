@@ -1,9 +1,9 @@
 package com.gu.mobile.content.notifications.metrics
 
-import com.amazonaws.services.cloudwatch.AmazonCloudWatch
-import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
+import software.amazon.awssdk.services.cloudwatch.model.PutMetricDataRequest
 import org.mockito.Mockito._
-import org.mockito.{ ArgumentCaptor, Matchers }
+import org.mockito.{ ArgumentCaptor, ArgumentMatchers }
 import org.scalatest.{ MustMatchers, WordSpecLike }
 import org.scalatestplus.mockito.MockitoSugar
 import org.specs2.specification.Scope
@@ -13,21 +13,21 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
   "The Metric Actor Logic" should {
     "not call cloudwatch if there is not data" in new MetricActorScope {
       actorLogic.aggregatePoint(Nil)
-      verify(mockCloudWatch, times(0)).putMetricData(Matchers.any[PutMetricDataRequest])
+      verify(mockCloudWatch, times(0)).putMetricData(PutMetricDataRequest.builder().build())
     }
     "call cloudwatch once if there's one namespace with less than 20 points" in new MetricActorScope {
       val metrics = List(
-        new MetricDataPoint("test", "m1", 0d),
-        new MetricDataPoint("test", "m1", 1d),
-        new MetricDataPoint("test", "m1", 2d))
+        MetricDataPoint("test", "m1", 0d),
+        MetricDataPoint("test", "m1", 1d),
+        MetricDataPoint("test", "m1", 2d))
 
       actorLogic.aggregatePoint(metrics)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
+      val requestCaptor: ArgumentCaptor[PutMetricDataRequest] = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
       verify(mockCloudWatch, times(1)).putMetricData(requestCaptor.capture())
 
-      val metricData = requestCaptor.getValue.getMetricData
+      val metricData = requestCaptor.getValue.metricData
       metricData must have size 1
-      metricData.get(0).getStatisticValues.getSampleCount mustEqual 3d
+      metricData.get(0).statisticValues.sampleCount mustEqual 3d
 
     }
     "call cloudwatch once but not aggregate if two metrics are received " in new MetricActorScope {
@@ -39,14 +39,14 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
         new MetricDataPoint("test", "m2", 6d))
 
       actorLogic.aggregatePoint(metrics)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
+      val requestCaptor: ArgumentCaptor[PutMetricDataRequest] = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
       verify(mockCloudWatch, times(1)).putMetricData(requestCaptor.capture())
 
-      val metricData = requestCaptor.getValue.getMetricData
+      val metricData = requestCaptor.getValue.metricData
 
       metricData must have size 2
-      metricData.get(1).getStatisticValues.getSampleCount mustEqual 3d
-      metricData.get(0).getStatisticValues.getSampleCount mustEqual 2d
+      metricData.get(1).statisticValues.sampleCount mustEqual 3d
+      metricData.get(0).statisticValues.sampleCount mustEqual 2d
     }
     "call cloudwatch once if there's more than one metric" in new MetricActorScope {
       val metrics = List(
@@ -54,7 +54,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
         MetricDataPoint("test", "m2", 1d),
         MetricDataPoint("test", "m3", 2d))
       actorLogic.aggregatePoint(metrics)
-      verify(mockCloudWatch, times(1)).putMetricData(Matchers.any[PutMetricDataRequest])
+      verify(mockCloudWatch, times(1)).putMetricData(ArgumentMatchers.any[PutMetricDataRequest])
     }
     "call cloudwatch as many times as we have namespaces" in new MetricActorScope {
       val metrics = List(
@@ -62,7 +62,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
         MetricDataPoint("namespace2", "m2", 1d),
         MetricDataPoint("namespace2", "m1", 2d))
       actorLogic.aggregatePoint(metrics)
-      verify(mockCloudWatch, times(2)).putMetricData(Matchers.any[PutMetricDataRequest])
+      verify(mockCloudWatch, times(2)).putMetricData(ArgumentMatchers.any[PutMetricDataRequest])
     }
     "aggregate points into a MetricDatum" in new MetricActorScope {
       val metrics = List(
@@ -70,19 +70,19 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
         MetricDataPoint("namespace1", "m1", 1d),
         MetricDataPoint("namespace1", "m1", 2d))
       actorLogic.aggregatePoint(metrics)
-      val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
+      val requestCaptor: ArgumentCaptor[PutMetricDataRequest] = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
       verify(mockCloudWatch, times(1)).putMetricData(requestCaptor.capture())
 
-      val metricDataList = requestCaptor.getValue.getMetricData
+      val metricDataList = requestCaptor.getValue.metricData
       metricDataList must have size 1
       val metricData = metricDataList.get(0)
-      metricData.getMetricName mustEqual "m1"
+      metricData.metricName mustEqual "m1"
 
-      val statisticValues = metricData.getStatisticValues
-      statisticValues.getSum mustEqual 3d
-      statisticValues.getMinimum mustEqual 0d
-      statisticValues.getMaximum mustEqual 2d
-      statisticValues.getSampleCount mustEqual 3d
+      val statisticValues = metricData.statisticValues
+      statisticValues.sum mustEqual 3d
+      statisticValues.minimum mustEqual 0d
+      statisticValues.maximum mustEqual 2d
+      statisticValues.sampleCount mustEqual 3d
     }
 
     "aggregate points into batches if there are more than 20 metrics per namespace" in new MetricActorScope {
@@ -91,7 +91,7 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       }
       actorLogic.aggregatePoint(metrics)
       val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
-      verify(mockCloudWatch, times(2)).putMetricData(Matchers.any[PutMetricDataRequest])
+      verify(mockCloudWatch, times(2)).putMetricData(ArgumentMatchers.any[PutMetricDataRequest])
     }
 
     "not aggregate points into multiple batches if there are 20 metrics or less per namespace" in new MetricActorScope {
@@ -100,14 +100,14 @@ class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers 
       }
       actorLogic.aggregatePoint(metrics)
       val requestCaptor = ArgumentCaptor.forClass(classOf[PutMetricDataRequest])
-      verify(mockCloudWatch, times(1)).putMetricData(Matchers.any[PutMetricDataRequest])
+      verify(mockCloudWatch, times(1)).putMetricData(ArgumentMatchers.any[PutMetricDataRequest])
     }
   }
 
   trait MetricActorScope extends Scope {
-    val mockCloudWatch = mock[AmazonCloudWatch]
+    val mockCloudWatch = mock[CloudWatchClient]
     val actorLogic = new MetricActorLogic {
-      override def cloudWatch: AmazonCloudWatch = mockCloudWatch
+      override def cloudWatch: CloudWatchClient = mockCloudWatch
       override val stage: String = "CODE"
     }
   }
