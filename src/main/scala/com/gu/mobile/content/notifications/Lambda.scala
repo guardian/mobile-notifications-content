@@ -55,21 +55,24 @@ trait Lambda extends Logging {
       .encryptionType(EncryptionType.fromValue(eventRecord.getEncryptionType)).build()
   }
   def handler(event: KinesisEvent): Unit = {
+    logger.info("Running lambda...")
     val eventRecords: List[KinesisEvent.Record] = event.getRecords.asScala.toList.map(_.getKinesis)
+    logger.info(s"Retrieving ${eventRecords.size} events")
     val records = eventRecords.map(kinesisEventRecordToRecord)
     val aggregatorUtil = new AggregatorUtil()
     val userRecords: List[KinesisClientRecord] = aggregatorUtil.deaggregate(records.asJava).asScala.toList
+    logger.info(s"After deaggregation: ${userRecords.size} events")
 
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
         case EventType.Update =>
           event.payload.map {
             case EventPayload.Content(content) =>
-              logger.debug(s"Handle content update ${content.id}")
+              logger.info(s"Handle content update ${content.id}")
               val send = processContent(content)
               Future.successful(send)
             case EventPayload.RetrievableContent(content) =>
-              logger.debug(s"Handle retrievable content or not: ${content.id}")
+              logger.info(s"Handle retrievable content or not: ${content.id}")
               handleRetrievableContent(content)
             case UnknownUnionField(e) =>
               logger.error(s"Unknown event payload $e. Consider updating capi models")
