@@ -37,7 +37,6 @@ libraryDependencies ++= Seq(
   "com.gu" %% "thrift-serializer" % "5.0.2",
   "org.joda" % "joda-convert" % "1.8.3",
   "org.jsoup" % "jsoup" % "1.15.4",
-  "com.typesafe.play" %% "play-json" % "2.8.2",
   "org.slf4j" % "slf4j-simple" % "1.7.36",
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
@@ -52,7 +51,9 @@ libraryDependencies ++= Seq(
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
 excludeDependencies ++= Seq(
-  ExclusionRule("software.amazon.awssdk", "ec2")
+  ExclusionRule("software.amazon.awssdk", "ec2"),
+  ExclusionRule("software.amazon.glue", "schema-registry-serde"),
+  ExclusionRule("software.amazon.glue", "schema-registry-common")
 )
 
 assemblyJarName := s"${name.value}.jar"
