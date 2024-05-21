@@ -29,6 +29,10 @@ val awsSdk2Version = "2.24.12"
 
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
+  "software.amazon.awssdk" % "autoscaling" % awsSdk2Version,
+  "software.amazon.awssdk" % "ssm" % awsSdk2Version,
+  "software.amazon.awssdk" % "dynamodb" % awsSdk2Version,
+  "software.amazon.awssdk" % "cloudwatch" % awsSdk2Version,
   "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
   "com.amazonaws" % "aws-lambda-java-events" % "3.11.4",
@@ -37,9 +41,11 @@ libraryDependencies ++= Seq(
   "com.gu" %% "thrift-serializer" % "5.0.2",
   "org.joda" % "joda-convert" % "1.8.3",
   "org.jsoup" % "jsoup" % "1.15.4",
+  "com.typesafe.play" %% "play-json" % "2.8.2",
   "org.slf4j" % "slf4j-simple" % "1.7.36",
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
+  "com.google.protobuf" % "protobuf-java" % "3.25.2",
   "com.gu" %% "simple-configuration-ssm" % "1.5.8",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.5",
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
