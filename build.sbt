@@ -30,8 +30,6 @@ val awsSdk2Version = "2.24.12"
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
   "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0",
-  "software.amazon.awssdk" % "dynamodb" % awsSdk2Version,
-  "software.amazon.awssdk" % "cloudwatch" % awsSdk2Version,
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
   "com.amazonaws" % "aws-lambda-java-events" % "3.11.4",
   "com.gu" %% "content-api-client-default" % "19.0.5",
