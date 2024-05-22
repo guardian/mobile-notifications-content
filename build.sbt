@@ -24,16 +24,15 @@ assembly / assemblyMergeStrategy := {
   case _ => MergeStrategy.first
 }
 
-val awsSdkVersion = "1.12.668"
 val awsSdk2Version = "2.24.12"
 
-libraryDependencies ++= Seq(
-  "software.amazon.awssdk" % "sts" % awsSdk2Version,
-  "software.amazon.awssdk" % "autoscaling" % awsSdk2Version,
-  "software.amazon.awssdk" % "ssm" % awsSdk2Version,
-  "software.amazon.awssdk" % "dynamodb" % awsSdk2Version,
-  "software.amazon.awssdk" % "cloudwatch" % awsSdk2Version,
-  "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0",
+// Reduce jar size, as these are provided: https://docs.aws.amazon.com/lambda/latest/operatorguide/sdks-functions.html
+val providedByAWSLambdaRuntime = ExclusionRule(organization = "software.amazon.awssdk")
+
+libraryDependencies ++=
+  Seq("sts", "autoscaling", "ssm", "dynamodb", "cloudwatch", "kinesis")
+    .map(artifact => "software.amazon.awssdk" % artifact % awsSdk2Version % Provided) ++ Seq(
+  "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0" excludeAll providedByAWSLambdaRuntime,
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
   "com.amazonaws" % "aws-lambda-java-events" % "3.11.4",
   "com.gu" %% "content-api-client-default" % "19.0.5",
@@ -46,19 +45,15 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
   "com.google.protobuf" % "protobuf-java" % "3.25.2",
-  "com.gu" %% "simple-configuration-ssm" % "1.5.8",
+  "com.gu" %% "simple-configuration-ssm" % "1.5.8" excludeAll providedByAWSLambdaRuntime,
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.5",
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
   "org.scalatest" %% "scalatest" % "3.0.9" % Test,
   "org.mockito" % "mockito-core" % "5.12.0" % Test,
   "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
   "org.specs2" %% "specs2-core" % "4.20.4" % Test,
-  "org.specs2" %% "specs2-matcher-extra" % "4.20.4" % Test
+  "org.specs2" %% "specs2-matcher-extra" % "4.20.4" % Test,
+  "com.github.luben" % "zstd-jni" % "1.5.5-3"
 )
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
-excludeDependencies ++= Seq(
-  ExclusionRule(organization = "software.amazon.awssdk")
-)
-
 
 assemblyJarName := s"${name.value}.jar"
