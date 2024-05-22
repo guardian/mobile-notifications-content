@@ -56,5 +56,9 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-matcher-extra" % "4.20.4" % Test
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
+excludeDependencies ++= Seq(
+  ExclusionRule("software.amazon.awssdk", "ec2")
+)
+
 
 assemblyJarName := s"${name.value}.jar"
