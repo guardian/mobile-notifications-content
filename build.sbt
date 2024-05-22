@@ -57,7 +57,7 @@ libraryDependencies ++= Seq(
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
 excludeDependencies ++= Seq(
-  ExclusionRule("software.amazon.awssdk", "ec2")
+  ExclusionRule(organization = "software.amazon.awssdk")
 )
 
 
