@@ -126,6 +126,25 @@ Resources:
       Runtime: java11
       Timeout: 60
 
+  ContentLambdaDocker:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${App}-${Stage}
+      Code:
+        ImageUri: 308506855511.dkr.ecr.eu-west-1.amazonaws.com/mobile-notifications-content:latest
+      Environment:
+        Variables:
+          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
+          App: !Sub ${App}
+          Stack: !Sub ${Stack}
+          Stage: !Sub ${Stage}
+      Description: Lambda to send notification when new content is published
+      Handler: com.gu.mobile.content.notifications.ContentLambda::handler
+      MemorySize: 4096
+      Role: !GetAtt ExecutionRole.Arn
+      Runtime: java11
+      Timeout: 60
+
   ContentEventSource:
     Type: AWS::Lambda::EventSourceMapping
     Properties:
