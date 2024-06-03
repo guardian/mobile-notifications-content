@@ -24,8 +24,8 @@ assembly / assemblyMergeStrategy := {
   case _ => MergeStrategy.first
 }
 
-val awsSdkVersion = "1.12.668"
-val awsSdk2Version = "2.24.12"
+val awsSdkVersion = "1.11.772"
+val awsSdk2Version = "2.21.21"
 
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
@@ -33,9 +33,9 @@ libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "ec2" % awsSdk2Version,
   "software.amazon.awssdk" % "ssm" % awsSdk2Version,
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
-  "com.amazonaws" % "amazon-kinesis-client" % "1.15.1",
-  "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
-  "com.amazonaws" % "aws-lambda-java-events" % "3.11.4",
+  "com.amazonaws" % "amazon-kinesis-client" % "1.14.8",
+  "com.amazonaws" % "aws-lambda-java-core" % "1.2.1",
+  "com.amazonaws" % "aws-lambda-java-events" % "2.2.8",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
   "com.gu" %% "content-api-client-default" % "19.0.5",
@@ -57,6 +57,6 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "4.20.4" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.4" % Test
 )
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-11"
 
 assemblyJarName := s"${name.value}.jar"

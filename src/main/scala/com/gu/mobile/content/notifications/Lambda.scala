@@ -34,29 +34,9 @@ trait Lambda extends Logging {
 
   implicit val executionContext: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  /***
-    As of version 3.0.0 of aws-lambda-java-events: https://github.com/aws/aws-lambda-java-libs/blob/main/aws-lambda-java-events/RELEASE.CHANGELOG.md#may-18-2020
-    reading records from the lambda event returns a different model to the one that the kinesis client library deaggregation
-    method is expecting.
-
-    According to the amazon docs: https://docs.aws.amazon.com/streams/latest/dev/lambda-consumer.html we should be
-    importing a custom deaggregation library for running in a lambda. However, the library is not officially
-    supported by AWS and the version we require is not available on maven. See https://github.com/awslabs/kinesis-aggregation/issues/120
-
-    So, manually creating an object of the type that the KCL library is expecting feels like the least worst option
-   ***/
-  def kinesisEventRecordToRecord(eventRecord: KinesisEvent.Record): Record = {
-    new Record()
-      .withSequenceNumber(eventRecord.getSequenceNumber)
-      .withApproximateArrivalTimestamp(eventRecord.getApproximateArrivalTimestamp)
-      .withData(eventRecord.getData)
-      .withPartitionKey(eventRecord.getPartitionKey)
-      .withEncryptionType(eventRecord.getEncryptionType)
-  }
   def handler(event: KinesisEvent): Unit = {
-    val eventRecords: List[KinesisEvent.Record] = event.getRecords.asScala.toList.map(_.getKinesis)
-    val records = eventRecords.map(kinesisEventRecordToRecord)
-    val userRecords: List[UserRecord] = UserRecord.deaggregate(records.asJava).asScala.toList
+    val rawRecord: List[Record] = event.getRecords.asScala.map(_.getKinesis).toList
+    val userRecords: List[UserRecord] = UserRecord.deaggregate(rawRecord.asJava).asScala.toList
 
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
