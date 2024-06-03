@@ -33,9 +33,13 @@ Parameters:
     Type: String
     Default: mobile-notifications-dist
   KinesisStreamName:
-        Description: Capi kinesis stream
-        Type: String
-        Default: content-api-firehose-v2
+    Description: Capi kinesis stream
+    Type: String
+    Default: content-api-firehose-v2
+  BuildId:
+    Description: Tag to be used for the image URL, e.g. riff raff build id
+    Type: String
+    Default: dev
 Resources:
   ExecutionRole:
     Type: AWS::IAM::Role
@@ -105,6 +109,49 @@ Resources:
                   - cloudwatch:PutMetricData
                Resource: "*"
 
+  LambdaContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: mobile-notifications-content
+
+  CIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - arn:aws:iam::308506855511:oidc-provider/token.actions.githubusercontent.com
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                 "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+              StringLike:
+                 "token.actions.githubusercontent.com:sub": "repo:guardian/mobile-notifications-content:*"
+      Path: /
+      Policies:
+        - PolicyName: ecr-token
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - ecr:GetAuthorizationToken
+              Resource: "*"
+        - PolicyName: ecr-upload
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - ecr:CompleteLayerUpload
+                - ecr:UploadLayerPart
+                - ecr:InitiateLayerUpload
+                - ecr:BatchCheckLayerAvailability
+                - ecr:PutImage
+              Resource: "*"
+
   ContentLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -126,10 +173,37 @@ Resources:
       Runtime: java11
       Timeout: 60
 
+  ContentLambdaV2:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${App}-${Stage}-v2
+      PackageType: Image
+      Code:
+        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, !Ref BuildId]]
+      Environment:
+        Variables:
+          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
+          App: !Sub ${App}
+          Stack: !Sub ${Stack}
+          Stage: !Sub ${Stage}
+      Description: Lambda to send notification when new content is published
+      MemorySize: 4096
+      Role: !GetAtt ExecutionRole.Arn
+      Timeout: 60
+
   ContentEventSource:
     Type: AWS::Lambda::EventSourceMapping
     Properties:
       FunctionName: !Ref ContentLambda
+      Enabled: true
+      EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
+      StartingPosition: LATEST
+      BisectBatchOnFunctionError: true
+
+  ContentEventV2Source:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      FunctionName: !Ref ContentLambdaV2
       Enabled: true
       EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
       StartingPosition: LATEST

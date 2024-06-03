@@ -46,7 +46,7 @@ object Configuration extends Logging {
   }
 
   def load(): Configuration = {
-
+    logger.info("loading config")
     val notificationsHost = getMandatoryProperty("notifications.host")
     logger.info(s"notifications.host: $notificationsHost")
 
