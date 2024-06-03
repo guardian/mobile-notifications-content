@@ -19,7 +19,7 @@ case class CapiResponseSuccess(content: Content) extends CapiResponse
 case class CapiResponseFailure(errorMsg: String) extends CapiResponse
 
 trait Lambda extends Logging {
-
+  logger.info("Creating the configuration calls")
   val configuration = Configuration.load()
   val payLoadBuilder = new ContentAlertPayloadBuilder {
     override val config: Configuration = configuration
@@ -54,6 +54,7 @@ trait Lambda extends Logging {
       .withEncryptionType(eventRecord.getEncryptionType)
   }
   def handler(event: KinesisEvent): Unit = {
+    logger.info("In the handler")
     val eventRecords: List[KinesisEvent.Record] = event.getRecords.asScala.toList.map(_.getKinesis)
     val records = eventRecords.map(kinesisEventRecordToRecord)
     val userRecords: List[UserRecord] = UserRecord.deaggregate(records.asJava).asScala.toList
