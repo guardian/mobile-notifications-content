@@ -105,6 +105,49 @@ Resources:
                   - cloudwatch:PutMetricData
                Resource: "*"
 
+  LambdaContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: mobile-notifications-content
+
+  CIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - arn:aws:iam::308506855511:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/64994ACAD082D282AD7DEF2CB6684137
+            Action:
+              - 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                - 'token.actions.githubusercontent.com:aud:sts.amazonaws.com'
+              StringLike:
+                - 'token.actions.githubusercontent.com:sub:repo:guardian/mobile-notifications-content:*'
+      Path: /
+      Policies:
+        - PolicyName: ecr token
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - ecr:GetAuthorizationToken
+              Resource: "*"
+        - PolicyName: ecr upload
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - ecr:CompleteLayerUpload
+                - ecr:UploadLayerPart
+                - ecr:InitiateLayerUpload
+                - ecr:BatchCheckLayerAvailability
+                - ecr:PutImage
+              Resource: !GetAtt ExecutionRole.Arn
+
   ContentLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -126,13 +169,13 @@ Resources:
       Runtime: java11
       Timeout: 60
 
-  ContentLambdaDocker:
+  ContentLambdaV2:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub ${App}-${Stage}-docker
+      FunctionName: !Sub ${App}-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: 308506855511.dkr.ecr.eu-west-1.amazonaws.com/mobile-notifications-content:latest
+        ImageUri: !GetAtt LambdaContainerRepository.RepositoryUri
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
@@ -153,10 +196,10 @@ Resources:
       StartingPosition: LATEST
       BisectBatchOnFunctionError: true
 
-  ContentEventDockerSource:
+  ContentEventV2Source:
     Type: AWS::Lambda::EventSourceMapping
     Properties:
-      FunctionName: !Ref ContentLambdaDocker
+      FunctionName: !Ref ContentLambdaV2
       Enabled: true
       EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
       StartingPosition: LATEST
