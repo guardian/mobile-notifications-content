@@ -1,15 +1,11 @@
 package com.gu.mobile.content.notifications
 
-import com.amazonaws.regions.Regions
 import com.gu.conf.{ ConfigurationLoader, SSMConfigurationLocation }
-import com.typesafe.config.Config
 import com.gu.{ AppIdentity, AwsIdentity }
 import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProvider, AwsCredentialsProviderChain => AwsCredentialsProviderChainV2, ProfileCredentialsProvider => ProfileCredentialsProviderV2 }
 import software.amazon.awssdk.services.sts.StsClient
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest
-
-import scala.util.{ Failure, Success }
 
 case class Configuration(
   guardianNotificationsEnabled: Boolean,
@@ -42,14 +38,10 @@ object Configuration extends Logging {
       .build())
 
   val conf = {
-    (for {
-      identity <- AppIdentity.whoAmI(defaultAppName = appName, credentials = credentialsProvider)
-    } yield ConfigurationLoader.load(identity = identity, credentials = credentialsProvider) {
+    val identity = AppIdentity.whoAmI(defaultAppName = appName)
+    ConfigurationLoader.load(identity = identity, credentials = credentialsProvider) {
       case AwsIdentity(app, stack, stage, _) =>
-        SSMConfigurationLocation(path = s"/$app/$stage/$stack", Regions.EU_WEST_1.getName)
-    }) match {
-      case Success(c) => c
-      case Failure(exception) => sys.error(s"Could not load config ${exception.getMessage}")
+        SSMConfigurationLocation(path = s"/$app/$stage/$stack")
     }
   }
 
