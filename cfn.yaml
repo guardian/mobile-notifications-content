@@ -129,14 +129,14 @@ Resources:
                 - 'token.actions.githubusercontent.com:sub:repo:guardian/mobile-notifications-content:*'
       Path: /
       Policies:
-        - PolicyName: ecr token
+        - PolicyName: ecr-token
           PolicyDocument:
             Statement:
               Effect: Allow
               Action:
                 - ecr:GetAuthorizationToken
               Resource: "*"
-        - PolicyName: ecr upload
+        - PolicyName: ecr-upload
           PolicyDocument:
             Statement:
               Effect: Allow
