@@ -146,7 +146,7 @@ Resources:
                 - ecr:InitiateLayerUpload
                 - ecr:BatchCheckLayerAvailability
                 - ecr:PutImage
-              Resource: !GetAtt ExecutionRole.Arn
+              Resource: !GetAtt LambdaContainerRepository.RepositoryUri
 
   ContentLambda:
     Type: AWS::Lambda::Function
