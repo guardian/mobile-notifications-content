@@ -119,7 +119,7 @@ Resources:
           - Effect: Allow
             Principal:
               Federated:
-                - arn:aws:iam::308506855511:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/64994ACAD082D282AD7DEF2CB6684137
+                - 'arn:aws:iam::308506855511:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/64994ACAD082D282AD7DEF2CB6684137'
             Action:
               - 'sts:AssumeRoleWithWebIdentity'
             Condition:
