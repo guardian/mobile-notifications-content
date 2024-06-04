@@ -28,10 +28,10 @@ Parameters:
     Description: Base constituent name of the mobile account roles to assume
     Type: String
     Default: mobile-content-notifications-lambda-cross-account
-  ConfigurationBucket:
-    Description: S3 Bucket containing app configuration
-    Type: String
-    Default: mobile-notifications-dist
+#  ConfigurationBucket:
+#    Description: S3 Bucket containing app configuration
+#    Type: String
+#    Default: mobile-notifications-dist
   KinesisStreamName:
         Description: Capi kinesis stream
         Type: String
@@ -119,14 +119,14 @@ Resources:
           - Effect: Allow
             Principal:
               Federated:
-                - 'arn:aws:iam::308506855511:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/64994ACAD082D282AD7DEF2CB6684137'
+                - arn:aws:iam::308506855511:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/64994ACAD082D282AD7DEF2CB6684137
             Action:
-              - 'sts:AssumeRoleWithWebIdentity'
-            Condition:
-              StringEquals:
-                - 'token.actions.githubusercontent.com:aud:sts.amazonaws.com'
-              StringLike:
-                - 'token.actions.githubusercontent.com:sub:repo:guardian/mobile-notifications-content:*'
+              - sts:AssumeRoleWithWebIdentity
+#            Condition:
+#              StringEquals:
+#                - 'token.actions.githubusercontent.com:aud:sts.amazonaws.com'
+#              StringLike:
+#                - 'token.actions.githubusercontent.com:sub:repo:guardian/mobile-notifications-content:*'
       Path: /
       Policies:
         - PolicyName: ecr-token
