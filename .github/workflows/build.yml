@@ -24,6 +24,11 @@ jobs:
         java-version: '11'
         cache: 'sbt'
 
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-west-1
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+
     - name: Build and Test project, Assemble jar, copy to root dir
       run: |
         sbt compile test assembly
