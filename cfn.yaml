@@ -169,23 +169,23 @@ Resources:
       Runtime: java11
       Timeout: 60
 
-  ContentLambdaV2:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub ${App}-${Stage}-v2
-      PackageType: Image
-      Code:
-        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, 'latest']]
-      Environment:
-        Variables:
-          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
-          App: !Sub ${App}
-          Stack: !Sub ${Stack}
-          Stage: !Sub ${Stage}
-      Description: Lambda to send notification when new content is published
-      MemorySize: 4096
-      Role: !GetAtt ExecutionRole.Arn
-      Timeout: 60
+#  ContentLambdaV2:
+#    Type: AWS::Lambda::Function
+#    Properties:
+#      FunctionName: !Sub ${App}-${Stage}-v2
+#      PackageType: Image
+#      Code:
+#        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, 'latest']]
+#      Environment:
+#        Variables:
+#          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
+#          App: !Sub ${App}
+#          Stack: !Sub ${Stack}
+#          Stage: !Sub ${Stage}
+#      Description: Lambda to send notification when new content is published
+#      MemorySize: 4096
+#      Role: !GetAtt ExecutionRole.Arn
+#      Timeout: 60
 
   ContentEventSource:
     Type: AWS::Lambda::EventSourceMapping
