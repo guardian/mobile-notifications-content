@@ -109,11 +109,6 @@ Resources:
                   - cloudwatch:PutMetricData
                Resource: "*"
 
-  ContentLambdaContainerRepository:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: mobile-notifications-content-container
-
   LambdaContainerRepository:
     Type: AWS::ECR::Repository
     Properties:
