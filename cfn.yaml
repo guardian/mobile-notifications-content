@@ -169,23 +169,23 @@ Resources:
       Runtime: java11
       Timeout: 60
 
-#  ContentLambdaV2:
-#    Type: AWS::Lambda::Function
-#    Properties:
-#      FunctionName: !Sub ${App}-${Stage}-v2
-#      PackageType: Image
-#      Code:
-#        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, 'latest']]
-#      Environment:
-#        Variables:
-#          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
-#          App: !Sub ${App}
-#          Stack: !Sub ${Stack}
-#          Stage: !Sub ${Stage}
-#      Description: Lambda to send notification when new content is published
-#      MemorySize: 4096
-#      Role: !GetAtt ExecutionRole.Arn
-#      Timeout: 60
+  ContentLambdaV2:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub ${App}-${Stage}-v2
+      PackageType: Image
+      Code:
+        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, 'latest']]
+      Environment:
+        Variables:
+          CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
+          App: !Sub ${App}
+          Stack: !Sub ${Stack}
+          Stage: !Sub ${Stage}
+      Description: Lambda to send notification when new content is published
+      MemorySize: 4096
+      Role: !GetAtt ExecutionRole.Arn
+      Timeout: 60
 
   ContentEventSource:
     Type: AWS::Lambda::EventSourceMapping
@@ -196,14 +196,14 @@ Resources:
       StartingPosition: LATEST
       BisectBatchOnFunctionError: true
 
-#  ContentEventV2Source:
-#    Type: AWS::Lambda::EventSourceMapping
-#    Properties:
-#      FunctionName: !Ref ContentLambdaV2
-#      Enabled: true
-#      EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
-#      StartingPosition: LATEST
-#      BisectBatchOnFunctionError: true
+  ContentEventV2Source:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      FunctionName: !Ref ContentLambdaV2
+      Enabled: true
+      EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
+      StartingPosition: LATEST
+      BisectBatchOnFunctionError: true
 
   LiveBlogLambda:
     Type: AWS::Lambda::Function
