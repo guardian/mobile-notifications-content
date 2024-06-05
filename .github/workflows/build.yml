@@ -42,7 +42,7 @@ jobs:
     - name: Build and publish docker image
       run: |
         BUILD_NUMBER_WITH_OFFSET=$(($BUILD_NUMBER+466))
-        docker build --platform linux/amd64 -t mobile-notifications-content:dev .
+        docker build -f mobile-notifications-content.Dockerfile --platform linux/amd64 -t mobile-notifications-content:dev .
         docker tag mobile-notifications-content:dev $NOTIFICATION_CONTENT_LAMBDA_REPOSITORY_URL:$BUILD_NUMBER_WITH_OFFSET
         docker push ${NOTIFICATION_CONTENT_LAMBDA_REPOSITORY_URL}:${BUILD_NUMBER_WITH_OFFSET}
       env:
