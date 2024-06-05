@@ -33,9 +33,13 @@ Parameters:
     Type: String
     Default: mobile-notifications-dist
   KinesisStreamName:
-        Description: Capi kinesis stream
-        Type: String
-        Default: content-api-firehose-v2
+    Description: Capi kinesis stream
+    Type: String
+    Default: content-api-firehose-v2
+  BuildId:
+    Description: Tag to be used for the image URL, e.g. riff raff build id
+    Type: String
+    Default: dev
 Resources:
   ExecutionRole:
     Type: AWS::IAM::Role
@@ -175,7 +179,7 @@ Resources:
       FunctionName: !Sub ${App}-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, 'latest']]
+        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, !Ref BuildId]]
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
