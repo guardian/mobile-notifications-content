@@ -24,6 +24,11 @@ jobs:
         java-version: '11'
         cache: 'sbt'
 
+    - name: Build and Test project, Assemble jar, copy to root dir
+      run: |
+        sbt compile test assembly
+        cp target/scala*/mobile-notifications-content.jar .
+
     - uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: eu-west-1
@@ -47,11 +52,6 @@ jobs:
       with:
         aws-region: eu-west-1
         role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
-
-    - name: Build and Test project, Assemble jar, copy to root dir
-      run: |
-        sbt compile test assembly
-        cp target/scala*/mobile-notifications-content.jar .
 
     - name: Test Report
       uses: dorny/test-reporter@v1
