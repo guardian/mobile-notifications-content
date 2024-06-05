@@ -125,8 +125,8 @@ Resources:
             Condition:
               StringEquals:
                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-              StringLike:
-                 "token.actions.githubusercontent.com:sub": "repo:guardian/mobile-notifications-content:*"
+#              StringLike:
+#                 "token.actions.githubusercontent.com:sub": "repo:guardian/mobile-notifications-content:*"
       Path: /
       Policies:
         - PolicyName: ecr-token
