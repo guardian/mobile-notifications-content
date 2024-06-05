@@ -122,11 +122,11 @@ Resources:
                 - arn:aws:iam::308506855511:oidc-provider/oidc.eks.eu-west-1.amazonaws.com/id/64994ACAD082D282AD7DEF2CB6684137
             Action:
               - sts:AssumeRoleWithWebIdentity
-            Condition:
-              StringEquals:
-                - token.actions.githubusercontent.com:aud:sts.amazonaws.com
-              StringLike:
-                - token.actions.githubusercontent.com:sub:repo:guardian/mobile-notifications-content:*
+#            Condition:
+#              StringEquals:
+#                - token.actions.githubusercontent.com:aud:sts.amazonaws.com
+#              StringLike:
+#                - token.actions.githubusercontent.com:sub:repo:guardian/mobile-notifications-content:*
       Path: /
       Policies:
         - PolicyName: ecr-token
