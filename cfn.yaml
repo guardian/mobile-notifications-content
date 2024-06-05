@@ -179,7 +179,7 @@ Resources:
       FunctionName: !Sub ${App}-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, 'latest']]
+        ImageUri: !Join [':', [!GetAtt LambdaContainerRepository.RepositoryUri, !Ref BuildId]]
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
