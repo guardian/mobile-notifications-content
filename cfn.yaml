@@ -112,12 +112,12 @@ Resources:
   ContentLambdaContainerRepository:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: mobile-notifications-content
+      RepositoryName: mobile-notifications-content-container
 
   LiveblogsLambdaContainerRepository:
     Type: AWS::ECR::Repository
     Properties:
-      RepositoryName: mobile-notifications-liveblogs
+      RepositoryName: mobile-notifications-liveblogs-container
 
   CIRole:
     Type: AWS::IAM::Role
