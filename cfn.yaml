@@ -24,6 +24,10 @@ Parameters:
     Description: Account ID of the gu moble account which
     Type: String
     Default: 201359054765
+  CapiAccountId:
+    Description: Account ID of the gu capi account which
+    Type: String
+    Default: 308506855511
   CrossAccountBaseRoleName:
     Description: Base constituent name of the mobile account roles to assume
     Type: String
@@ -129,7 +133,7 @@ Resources:
           - Effect: Allow
             Principal:
               Federated:
-                - arn:aws:iam::308506855511:oidc-provider/token.actions.githubusercontent.com
+                - !Sub arn:aws:iam::${CapiAccountId}:oidc-provider/token.actions.githubusercontent.com
             Action:
               - sts:AssumeRoleWithWebIdentity
             Condition:
