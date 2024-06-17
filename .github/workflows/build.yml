@@ -91,3 +91,5 @@ jobs:
           - mobile-notifications-content.jar
           mobile-notifications-content-cfn:
           - cfn.yaml
+          mobile-notifications-shared-resources:
+          - mobile-notifications-shared-resources.yaml
