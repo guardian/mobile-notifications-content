@@ -184,7 +184,7 @@ Resources:
       FunctionName: !Sub ${App}-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: 308506855511.dkr.ecr.eu-west-1.amazonaws.com/mobile-notifications-container:608
+        ImageUri: 308506855511.dkr.ecr.eu-west-1.amazonaws.com/mobile-notifications-content-container:608
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
