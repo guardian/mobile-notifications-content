@@ -10,6 +10,14 @@ deployments:
       fileName: mobile-notifications-content.jar
       prefixStack: false
     dependencies: [mobile-notifications-content-cfn]
+  mobile-notifications-shared-resources:
+    type: cloud-formation
+    app: mobile-notifications-content
+    parameters:
+      prependStackToCloudFormationStackName: false
+      appendStageToCloudFormationStackName: false
+      cloudFormationStackName: mobile-notifications-shared-resources
+      templatePath: mobile-notifications-shared-resources.yaml
   mobile-notifications-content-cfn:
     type: cloud-formation
     app: mobile-notifications-content
