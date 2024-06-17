@@ -44,6 +44,10 @@ Parameters:
     Description: Tag to be used for the image URL, e.g. riff raff build id
     Type: String
     Default: dev
+  SharedResourcesStack:
+    Description: Mobile notification content shared resources, e.g ecr repositories
+    Type: String
+    Default: mobile-notifications-shared-resources
 Resources:
   ExecutionRole:
     Type: AWS::IAM::Role
@@ -113,17 +117,6 @@ Resources:
                   - cloudwatch:PutMetricData
                Resource: "*"
 
-  ContentLambdaContainerRepository:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: mobile-notifications-content-container
-
-
-  LiveblogsLambdaContainerRepository:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: mobile-notifications-liveblogs-container
-
   CIRole:
     Type: AWS::IAM::Role
     Properties:
@@ -161,8 +154,10 @@ Resources:
                 - ecr:BatchCheckLayerAvailability
                 - ecr:PutImage
               Resource:
-                - !GetAtt ContentLambdaContainerRepository.Arn
-                - !GetAtt LiveblogsLambdaContainerRepository.Arn
+                - Fn::ImportValue:
+                   !Sub ${SharedResourcesStack}-ContentLambdaContainerRepository.Arn
+                - Fn::ImportValue:
+                   !Sub ${SharedResourcesStack}-LiveblogsLambdaContainerRepository.Arn
 
   ContentLambda:
     Type: AWS::Lambda::Function
@@ -191,7 +186,7 @@ Resources:
       FunctionName: !Sub ${App}-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: !Join [':', [!GetAtt ContentLambdaContainerRepository.RepositoryUri, !Ref BuildId]]
+        ImageUri: !Join [':', [Fn::ImportValue: !Sub ${SharedResourcesStack}-ContentLambdaContainerRepository.Uri, !Ref BuildId]]
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
@@ -248,7 +243,7 @@ Resources:
       FunctionName: !Sub ${App}-liveblogs-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: !Join [ ':', [ !GetAtt LiveblogsLambdaContainerRepository.RepositoryUri, !Ref BuildId ] ]
+        ImageUri: !Join [ ':', [Fn::ImportValue: !Sub ${SharedResourcesStack}-LiveblogsLambdaContainerRepository.Uri, !Ref BuildId ] ]
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
