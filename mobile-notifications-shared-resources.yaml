@@ -35,4 +35,4 @@ Outputs:
     Description: "ARN of the ECR repository for the liveblogs notification lambda"
     Value: !GetAtt LiveblogsLambdaContainerRepository.Arn
     Export:
-      Name: !Sub ${AWS::StackName}-LiveblogsLambdaContainerRepositoryUri
+      Name: !Sub ${AWS::StackName}-LiveblogsLambdaContainerRepositoryArn
