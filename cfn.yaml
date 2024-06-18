@@ -24,10 +24,6 @@ Parameters:
     Description: Account ID of the gu moble account which
     Type: String
     Default: 201359054765
-  CapiAccountId:
-    Description: Account ID of the gu capi account which
-    Type: String
-    Default: 308506855511
   CrossAccountBaseRoleName:
     Description: Base constituent name of the mobile account roles to assume
     Type: String
@@ -116,46 +112,6 @@ Resources:
                Action:
                   - cloudwatch:PutMetricData
                Resource: "*"
-
-  CIRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated:
-                - !Sub arn:aws:iam::${CapiAccountId}:oidc-provider/token.actions.githubusercontent.com
-            Action:
-              - sts:AssumeRoleWithWebIdentity
-            Condition:
-              StringEquals:
-                 "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-              StringLike:
-                 "token.actions.githubusercontent.com:sub": "repo:guardian/mobile-notifications-content:*"
-      Path: /
-      Policies:
-        - PolicyName: ecr-token
-          PolicyDocument:
-            Statement:
-              Effect: Allow
-              Action:
-                - ecr:GetAuthorizationToken
-              Resource: "*"
-        - PolicyName: ecr-upload
-          PolicyDocument:
-            Statement:
-              Effect: Allow
-              Action:
-                - ecr:CompleteLayerUpload
-                - ecr:UploadLayerPart
-                - ecr:InitiateLayerUpload
-                - ecr:BatchCheckLayerAvailability
-                - ecr:PutImage
-              Resource:
-                - arn:aws:ecr:eu-west-1:308506855511:repository/mobile-notifications-content-container
-                - arn:aws:ecr:eu-west-1:308506855511:repository/mobile-notifications-liveblogs-container
 
   ContentLambda:
     Type: AWS::Lambda::Function
