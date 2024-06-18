@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Mobile notification content shared resources
+Parameters:
+  CapiAccountId:
+    Description: Account ID of the gu capi account which
+    Type: String
+    Default: 308506855511
+Resources:
+  ContentLambdaContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      ImageScanningConfiguration: { ScanOnPush: true }
+      RepositoryName: mobile-notifications-content
+      ImageTagMutability: IMMUTABLE
+
+  LiveblogsLambdaContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      ImageScanningConfiguration: { ScanOnPush: true }
+      RepositoryName: mobile-notifications-liveblogs
+      ImageTagMutability: IMMUTABLE
+
+  CIRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated:
+                - !Sub arn:aws:iam::${CapiAccountId}:oidc-provider/token.actions.githubusercontent.com
+            Action:
+              - sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+              StringLike:
+                "token.actions.githubusercontent.com:sub": "repo:guardian/mobile-notifications-content:*"
+      Path: /
+      Policies:
+        - PolicyName: ecr-token
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - ecr:GetAuthorizationToken
+              Resource: "*"
+        - PolicyName: ecr-upload
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - ecr:CompleteLayerUpload
+                - ecr:UploadLayerPart
+                - ecr:InitiateLayerUpload
+                - ecr:BatchCheckLayerAvailability
+                - ecr:PutImage
+              Resource:
+                - !GetAtt ContentLambdaContainerRepository.Arn
+                - !GetAtt LiveblogsLambdaContainerRepository.Arn
+Outputs:
+  ContentLambdaContainerRepositoryUri:
+    Description: "Uri of the ECR repository for the content notification lambda"
+    Value: !GetAtt ContentLambdaContainerRepository.RepositoryUri
+    Export:
+      Name: !Sub ${AWS::StackName}-ContentLambdaContainerRepositoryUri
+  ContentLambdaContainerRepositoryArn:
+    Description: "ARN of the ECR repository for the content notification lambda"
+    Value: !GetAtt ContentLambdaContainerRepository.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-ContentLambdaContainerRepositoryArn
+  LiveblogsLambdaContainerRepositoryUri:
+    Description: "Uri of the ECR repository for the liveblogs notification lambda"
+    Value: !GetAtt LiveblogsLambdaContainerRepository.RepositoryUri
+    Export:
+      Name: !Sub ${AWS::StackName}-LiveblogsLambdaContainerRepositoryUri
+  LiveblogsLambdaContainerRepositoryArn:
+    Description: "ARN of the ECR repository for the liveblogs notification lambda"
+    Value: !GetAtt LiveblogsLambdaContainerRepository.Arn
+    Export:
+      Name: !Sub ${AWS::StackName}-LiveblogsLambdaContainerRepositoryArn

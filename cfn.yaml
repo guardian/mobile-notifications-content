@@ -24,10 +24,6 @@ Parameters:
     Description: Account ID of the gu moble account which
     Type: String
     Default: 201359054765
-  CapiAccountId:
-    Description: Account ID of the gu capi account which
-    Type: String
-    Default: 308506855511
   CrossAccountBaseRoleName:
     Description: Base constituent name of the mobile account roles to assume
     Type: String
@@ -44,6 +40,10 @@ Parameters:
     Description: Tag to be used for the image URL, e.g. riff raff build id
     Type: String
     Default: dev
+  SharedResourcesStack:
+    Description: Mobile notification content shared resources, e.g ecr repositories
+    Type: String
+    Default: mobile-notifications-shared-resources
 Resources:
   ExecutionRole:
     Type: AWS::IAM::Role
@@ -113,57 +113,6 @@ Resources:
                   - cloudwatch:PutMetricData
                Resource: "*"
 
-  ContentLambdaContainerRepository:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: mobile-notifications-content-container
-
-
-  LiveblogsLambdaContainerRepository:
-    Type: AWS::ECR::Repository
-    Properties:
-      RepositoryName: mobile-notifications-liveblogs-container
-
-  CIRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Federated:
-                - !Sub arn:aws:iam::${CapiAccountId}:oidc-provider/token.actions.githubusercontent.com
-            Action:
-              - sts:AssumeRoleWithWebIdentity
-            Condition:
-              StringEquals:
-                 "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-              StringLike:
-                 "token.actions.githubusercontent.com:sub": "repo:guardian/mobile-notifications-content:*"
-      Path: /
-      Policies:
-        - PolicyName: ecr-token
-          PolicyDocument:
-            Statement:
-              Effect: Allow
-              Action:
-                - ecr:GetAuthorizationToken
-              Resource: "*"
-        - PolicyName: ecr-upload
-          PolicyDocument:
-            Statement:
-              Effect: Allow
-              Action:
-                - ecr:CompleteLayerUpload
-                - ecr:UploadLayerPart
-                - ecr:InitiateLayerUpload
-                - ecr:BatchCheckLayerAvailability
-                - ecr:PutImage
-              Resource:
-                - !GetAtt ContentLambdaContainerRepository.Arn
-                - !GetAtt LiveblogsLambdaContainerRepository.Arn
-
   ContentLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -191,7 +140,11 @@ Resources:
       FunctionName: !Sub ${App}-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: !Join [':', [!GetAtt ContentLambdaContainerRepository.RepositoryUri, !Ref BuildId]]
+         ImageUri:
+          Fn::Join:
+            - ':'
+            - - Fn::ImportValue: !Sub ${SharedResourcesStack}-ContentLambdaContainerRepositoryUri
+              - !Ref BuildId
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
@@ -216,7 +169,7 @@ Resources:
     Type: AWS::Lambda::EventSourceMapping
     Properties:
       FunctionName: !Ref ContentLambdaV2
-      Enabled: true
+      Enabled: false
       EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
       StartingPosition: LATEST
       BisectBatchOnFunctionError: true
@@ -248,7 +201,11 @@ Resources:
       FunctionName: !Sub ${App}-liveblogs-${Stage}-v2
       PackageType: Image
       Code:
-        ImageUri: !Join [ ':', [ !GetAtt LiveblogsLambdaContainerRepository.RepositoryUri, !Ref BuildId ] ]
+        ImageUri:
+          Fn::Join:
+            - ':'
+            - - Fn::ImportValue: !Sub ${SharedResourcesStack}-LiveblogsLambdaContainerRepositoryUri
+              - !Ref BuildId
       Environment:
         Variables:
           CrossAccountSsmReadingRole: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-ssm-${Stage}
@@ -273,7 +230,7 @@ Resources:
     Type: AWS::Lambda::EventSourceMapping
     Properties:
       FunctionName: !Ref LiveBlogLambdaV2
-      Enabled: true
+      Enabled: false
       EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
       StartingPosition: LATEST
       BisectBatchOnFunctionError: true
