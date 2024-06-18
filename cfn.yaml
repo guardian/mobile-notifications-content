@@ -143,7 +143,7 @@ Resources:
          ImageUri:
           Fn::Join:
             - ':'
-            - - Fn::ImportValue: !Sub ${SharedResourcesStack}-ContentLambdaContainerRepository.Uri
+            - - Fn::ImportValue: !Sub ${SharedResourcesStack}-ContentLambdaContainerRepositoryUri
               - !Ref BuildId
       Environment:
         Variables:
@@ -204,7 +204,7 @@ Resources:
         ImageUri:
           Fn::Join:
             - ':'
-            - - Fn::ImportValue: !Sub ${SharedResourcesStack}-LiveblogsLambdaContainerRepository.Uri
+            - - Fn::ImportValue: !Sub ${SharedResourcesStack}-LiveblogsLambdaContainerRepositoryUri
               - !Ref BuildId
       Environment:
         Variables:
