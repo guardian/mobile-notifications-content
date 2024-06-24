@@ -29,6 +29,41 @@ jobs:
         sbt compile test assembly
         cp target/scala*/mobile-notifications-content.jar .
 
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-west-1
+        role-to-assume: ${{ secrets.AWS_ECR_ROLE }}
+
+    - name: Login to ECR
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        mask-password: 'true'
+
+    - name: Build and publish docker image for content
+      run: |
+        BUILD_NUMBER_WITH_OFFSET=$(($BUILD_NUMBER+466))
+        docker build -f mobile-notifications-content.Dockerfile --platform linux/amd64 -t mobile-notifications-content:dev .
+        docker tag mobile-notifications-content:dev $NOTIFICATION_CONTENT_LAMBDA_REPOSITORY_URL:$BUILD_NUMBER_WITH_OFFSET
+        docker push ${NOTIFICATION_CONTENT_LAMBDA_REPOSITORY_URL}:${BUILD_NUMBER_WITH_OFFSET}
+      env:
+        NOTIFICATION_CONTENT_LAMBDA_REPOSITORY_URL: ${{ secrets.NOTIFICATION_CONTENT_LAMBDA_REPOSITORY_URL }}
+        BUILD_NUMBER: ${{ github.run_number }}
+
+    - name: Build and publish docker image for liveblogs
+      run: |
+        BUILD_NUMBER_WITH_OFFSET=$(($BUILD_NUMBER+466))
+        docker build -f mobile-notifications-liveblogs.Dockerfile --platform linux/amd64 -t mobile-notifications-liveblogs:dev .
+        docker tag mobile-notifications-liveblogs:dev $NOTIFICATION_LIVEBLOGS_LAMBDA_REPOSITORY_URL:$BUILD_NUMBER_WITH_OFFSET
+        docker push ${NOTIFICATION_LIVEBLOGS_LAMBDA_REPOSITORY_URL}:${BUILD_NUMBER_WITH_OFFSET}
+      env:
+        NOTIFICATION_LIVEBLOGS_LAMBDA_REPOSITORY_URL: ${{ secrets.NOTIFICATION_LIVEBLOGS_LAMBDA_REPOSITORY_URL }}
+        BUILD_NUMBER: ${{ github.run_number }}
+
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-west-1
+        role-to-assume: ${{ secrets.GU_RIFF_RAFF_ROLE_ARN }}
+
     - name: Test Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    # run this step even if previous step failed
