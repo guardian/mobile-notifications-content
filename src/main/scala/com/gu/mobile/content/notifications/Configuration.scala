@@ -15,6 +15,8 @@ case class Configuration(
   crossAccountDynamoRole: String,
   contentDynamoTableName: String,
   liveBlogContentDynamoTableName: String,
+  crossAccountSqsRole: String,
+  sqsQueue: String,
   stage: String)
 
 object Configuration extends Logging {
@@ -66,6 +68,12 @@ object Configuration extends Logging {
     val contentLiveBlogDynamoTableName = getMandatoryProperty("content.liveblog-notifications.table")
     logger.info(s"mobile-liveblog-content-notifications $contentLiveBlogDynamoTableName")
 
+    val crossAccountSqsRole = getMandatoryProperty("content.notifications.crossAccountSqsRole")
+    logger.info(s"content.notifications.crossAccountSqsRole $crossAccountSqsRole")
+
+    val crossAccountSqs = getMandatoryProperty("content.notifications.crossAccountSqs")
+    logger.info(s"content.notifications.crossAccountSqs $crossAccountSqs")
+
     Configuration(
       guardianNotificationsEnabled,
       notificationsHost,
@@ -74,6 +82,8 @@ object Configuration extends Logging {
       crossAccountDynamoRole,
       contentDynamoTableName,
       contentLiveBlogDynamoTableName,
+      crossAccountSqsRole,
+      crossAccountSqs,
       stage)
   }
 
