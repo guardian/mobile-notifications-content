@@ -87,7 +87,5 @@ jobs:
         projectName: Mobile::mobile-notifications-content
         buildNumberOffset: 466
         contentDirectories: |
-          mobile-notifications-content:
-          - mobile-notifications-content.jar
           mobile-notifications-content-cfn:
           - cfn.yaml
