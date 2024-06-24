@@ -12,8 +12,6 @@ import org.scalatest.concurrent.Eventually._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
 import org.scalatestplus.mockito.MockitoSugar
-import software.amazon.awssdk.core.SdkBytes
-import software.amazon.awssdk.services.kinesis.model.Record
 import software.amazon.kinesis.retrieval.KinesisClientRecord
 
 import java.nio.ByteBuffer
@@ -71,13 +69,13 @@ class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers
 
     "properly deserialize a compressed event" in {
       val bytes = ThriftSerializer.serializeToBytes(event, Some(ZstdType), None)
-      val record = KinesisClientRecord.builder().data(bytes).build()
+      val record = KinesisClientRecord.builder().data(ByteBuffer.wrap(bytes)).build()
       CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
     }
 
     "properly deserialize a non-compressed event" in {
       val bytes = ThriftSerializer.serializeToBytes(event, None, None)
-      val record = KinesisClientRecord.builder().data(bytes).build()
+      val record = KinesisClientRecord.builder().data(ByteBuffer.wrap(bytes)).build()
       CapiEventProcessor.process(List(record))(event => Future.successful(true)).futureValue mustEqual 1
     }
   }
