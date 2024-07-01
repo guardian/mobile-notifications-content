@@ -6,12 +6,13 @@ description:= "lambda to replace the content-notifications-service"
 
 version := "1.0"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.11"
 
 scalacOptions ++= Seq(
   "-deprecation",
   "-encoding", "UTF-8",
-  "-Ywarn-dead-code"
+  "-Ywarn-dead-code",
+  "-release:21"
 )
 
 resolvers ++= Seq(
