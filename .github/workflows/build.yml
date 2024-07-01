@@ -21,7 +21,7 @@ jobs:
     - uses: actions/setup-java@v3
       with:
         distribution: 'corretto'
-        java-version: '11'
+        java-version: '21'
         cache: 'sbt'
 
     - name: Build and Test project, Assemble jar, copy to root dir

@@ -6,12 +6,13 @@ description:= "lambda to replace the content-notifications-service"
 
 version := "1.0"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.11"
 
 scalacOptions ++= Seq(
   "-deprecation",
   "-encoding", "UTF-8",
-  "-Ywarn-dead-code"
+  "-Ywarn-dead-code",
+  "-release:21"
 )
 
 resolvers ++= Seq(
@@ -32,8 +33,8 @@ libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "autoscaling" % awsSdk2Version,
   "software.amazon.awssdk" % "ec2" % awsSdk2Version,
   "software.amazon.awssdk" % "ssm" % awsSdk2Version,
+  "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
-  "com.amazonaws" % "amazon-kinesis-client" % "1.15.1",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
   "com.amazonaws" % "aws-lambda-java-events" % "3.11.4",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
