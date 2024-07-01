@@ -44,7 +44,9 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.8.3",
   "org.jsoup" % "jsoup" % "1.15.4",
   "com.typesafe.play" %% "play-json" % "2.8.2",
-  "org.slf4j" % "slf4j-simple" % "1.7.25",
+  //https://www.slf4j.org/faq.html#changesInVersion200
+  "org.slf4j" % "slf4j-simple" % "2.0.13",
+  "org.slf4j" % "slf4j-api" % "2.0.13",
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
   "com.gu" %% "simple-configuration-ssm" % "1.5.8",
