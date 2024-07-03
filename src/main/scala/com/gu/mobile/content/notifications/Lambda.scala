@@ -69,6 +69,9 @@ trait Lambda extends Logging {
             case EventPayload.RetrievableContent(content) =>
               logger.debug(s"Handle retrievable content or not: ${content.id}")
               handleRetrievableContent(content)
+            case EventPayload.Atom(atomAlias) =>
+              logger.debug(s"Unsupported content type: Atom, with id ${atomAlias.id}")
+              Future.successful(false)
             case UnknownUnionField(e) =>
               logger.error(s"Unknown event payload $e. Consider updating capi models")
               Future.successful(false)
