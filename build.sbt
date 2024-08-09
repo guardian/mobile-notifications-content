@@ -42,7 +42,7 @@ libraryDependencies ++= Seq(
   "com.gu" %% "mobile-notifications-api-models" % "1.0.19",
   "com.gu" %% "thrift-serializer" % "5.0.7",
   "org.joda" % "joda-convert" % "1.9.2",
-  "org.jsoup" % "jsoup" % "1.15.4",
+  "org.jsoup" % "jsoup" % "1.18.1",
   "org.slf4j" % "slf4j-simple" % "2.0.13",
   "org.slf4j" % "slf4j-api" % "2.0.13",
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
