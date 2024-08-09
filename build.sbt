@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "com.google.protobuf" % "protobuf-java" % "3.25.4",
   "org.json" % "json" % "20240303",
   "org.apache.commons" % "commons-compress" % "1.26.2",
-  "org.scalatest" %% "scalatest" % "3.0.9" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.mockito" % "mockito-all" % "1.10.19" % Test,
   "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
   "org.specs2" %% "specs2-core" % "4.20.4" % Test,
