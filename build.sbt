@@ -43,7 +43,6 @@ libraryDependencies ++= Seq(
   "com.gu" %% "thrift-serializer" % "5.0.2",
   "org.joda" % "joda-convert" % "1.8.3",
   "org.jsoup" % "jsoup" % "1.15.4",
-  "com.typesafe.play" %% "play-json" % "2.8.2",
   "org.slf4j" % "slf4j-simple" % "2.0.13",
   "org.slf4j" % "slf4j-api" % "2.0.13",
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
