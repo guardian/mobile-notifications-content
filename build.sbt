@@ -57,7 +57,7 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-all" % "1.10.19" % Test,
   "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
   "org.specs2" %% "specs2-core" % "4.20.8" % Test,
-  "org.specs2" %% "specs2-matcher-extra" % "4.20.4" % Test
+  "org.specs2" %% "specs2-matcher-extra" % "4.20.8" % Test
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-11"
 
