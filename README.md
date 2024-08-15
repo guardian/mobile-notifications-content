@@ -2,7 +2,7 @@
 
 This is a lambda that replaces the [Mobile notifications content]([https://github.com/guardian/mobile-notifications-content]) service. Instead of running as a standalone service on it's own ELB, is a [https://aws.amazon.com/lambda](lambda) that runs in the CAPI aws account
 
-The lambda consumes the CAPI [Firehose](http://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html) and sends as notification request for a new pieces of content to the [Mobile notifications service](https://github.com/guardian/mobile-notifications) 
+The lambda consumes the CAPI [Firehose](http://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html) and sends as notification request for a new pieces of content to the [Mobile notifications service](https://github.com/guardian/mobile-n10n) 
 
 ## Deployment
 
