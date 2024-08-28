@@ -7,10 +7,10 @@ import com.gu.mobile.content.notifications.model.KeyEvent
 import com.gu.mobile.notifications.client.models.TopicTypes.{ TagBlog, TagContributor, TagKeyword, TagSeries }
 import com.gu.mobile.notifications.client.models._
 import org.joda.time.{ DateTime, LocalDate }
-import org.scalatest.{ MustMatchers, WordSpecLike }
 import org.scalatestplus.mockito.MockitoSugar
+import org.specs2.matcher.MustMatchers
 
-class ContentAlertPayloadBuilderSpec extends MockitoSugar with WordSpecLike with MustMatchers {
+class ContentAlertPayloadBuilderSpec extends MockitoSugar with MustMatchers {
 
   val conf = mock[Configuration]
   val builder = new ContentAlertPayloadBuilder {
