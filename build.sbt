@@ -59,6 +59,6 @@ libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "4.20.8" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.8" % Test
 )
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-11"
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
 
 assemblyJarName := s"${name.value}.jar"
