@@ -55,8 +55,8 @@ libraryDependencies ++= Seq(
   "org.json" % "json" % "20240303",
   "org.apache.commons" % "commons-compress" % "1.26.0",
   "org.scalatest" %% "scalatest" % "3.0.9" % Test,
-  "org.mockito" % "mockito-all" % "1.9.5" % Test,
-  "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
+  "org.mockito" % "mockito-core" % "5.13.0" % Test,
+  "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
   "org.specs2" %% "specs2-core" % "4.20.4" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.4" % Test
 )
