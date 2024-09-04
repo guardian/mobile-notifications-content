@@ -53,7 +53,7 @@ libraryDependencies ++= Seq(
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
   "com.google.protobuf" % "protobuf-java" % "4.28.0",
   "org.json" % "json" % "20240303",
-  "org.apache.commons" % "commons-compress" % "1.26.2",
+  "org.apache.commons" % "commons-compress" % "1.27.1",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.specs2" %% "specs2-core" % "4.20.8" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.8" % Test,
