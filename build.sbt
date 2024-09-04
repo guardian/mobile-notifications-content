@@ -40,7 +40,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
   "com.gu" %% "content-api-client-default" % "31.1.0",
-  "com.gu" %% "mobile-notifications-api-models" % "1.0.19",
+  "com.gu" %% "mobile-notifications-api-models" % "3.0.0",
   "com.gu" %% "thrift-serializer" % "5.0.7",
   "org.joda" % "joda-convert" % "1.9.2",
   "org.jsoup" % "jsoup" % "1.18.1",
