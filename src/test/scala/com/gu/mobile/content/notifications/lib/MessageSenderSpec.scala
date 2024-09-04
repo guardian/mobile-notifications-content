@@ -10,7 +10,9 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{ BeforeAndAfterEach, MustMatchers, OneInstancePerTest, WordSpecLike, Matchers => ShouldMatchers }
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.{ BeforeAndAfterEach, OneInstancePerTest }
+import org.scalatest.matchers.must.{ Matchers => ShouldMatchers }
 import org.scalatestplus.mockito.MockitoSugar
 import software.amazon.kinesis.retrieval.KinesisClientRecord
 
@@ -19,7 +21,7 @@ import java.util.UUID
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MessageSenderSpec extends MockitoSugar with WordSpecLike with MustMatchers with OneInstancePerTest with BeforeAndAfterEach with ScalaFutures {
+class MessageSenderSpec extends MockitoSugar with AnyWordSpecLike with ShouldMatchers with OneInstancePerTest with BeforeAndAfterEach with ScalaFutures {
 
   val config = new Configuration(true, "", "", "", "", "", "", "")
   val apiClient = mock[NotificationsApiClient]

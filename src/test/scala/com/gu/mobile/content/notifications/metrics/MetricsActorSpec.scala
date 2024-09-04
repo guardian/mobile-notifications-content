@@ -4,12 +4,13 @@ import com.amazonaws.services.cloudwatch.AmazonCloudWatch
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest
 import org.mockito.Mockito._
 import org.mockito.ArgumentCaptor
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.matchers.must.{ Matchers => ShouldMatchers }
 import org.mockito.ArgumentMatchers.any
-import org.scalatest.{ MustMatchers, WordSpecLike }
 import org.scalatestplus.mockito.MockitoSugar
 import org.specs2.specification.Scope
 
-class MetricsActorSpec extends WordSpecLike with MockitoSugar with MustMatchers {
+class MetricsActorSpec extends AnyWordSpecLike with MockitoSugar with ShouldMatchers {
 
   "The Metric Actor Logic" should {
     "not call cloudwatch if there is not data" in new MetricActorScope {
