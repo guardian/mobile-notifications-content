@@ -11,7 +11,8 @@ scalaVersion := "2.13.14"
 scalacOptions ++= Seq(
   "-deprecation",
   "-encoding", "UTF-8",
-  "-Ywarn-dead-code"
+  "-Ywarn-dead-code",
+  "-release:21"
 )
 
 resolvers ++= Seq(
@@ -24,8 +25,8 @@ assembly / assemblyMergeStrategy := {
   case _ => MergeStrategy.first
 }
 
-val awsSdkVersion = "1.12.668"
-val awsSdk2Version = "2.24.12"
+val awsSdkVersion = "1.12.770"
+val awsSdk2Version = "2.24.13"
 
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
@@ -35,7 +36,7 @@ libraryDependencies ++= Seq(
   "software.amazon.kinesis" % "amazon-kinesis-client" % "2.6.0",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
-  "com.amazonaws" % "aws-lambda-java-events" % "3.11.4",
+  "com.amazonaws" % "aws-lambda-java-events" % "3.13.0",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
   "com.gu" %% "content-api-client-default" % "19.4.1",
@@ -54,10 +55,10 @@ libraryDependencies ++= Seq(
   "org.json" % "json" % "20240303",
   "org.apache.commons" % "commons-compress" % "1.26.2",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
-  "org.mockito" % "mockito-all" % "1.10.19" % Test,
-  "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test,
   "org.specs2" %% "specs2-core" % "4.20.8" % Test,
-  "org.specs2" %% "specs2-matcher-extra" % "4.20.8" % Test
+  "org.specs2" %% "specs2-matcher-extra" % "4.20.8" % Test,
+  "org.mockito" % "mockito-core" % "5.13.0" % Test,
+  "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
 
