@@ -1,0 +1,361 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "lambda to replace the content-notifications-service",
+  "Metadata": {
+    "gu:cdk:constructs": [],
+    "gu:cdk:version": "TEST",
+  },
+  "Parameters": {
+    "App": {
+      "Default": "mobile-notifications-content",
+      "Description": "Application name",
+      "Type": "String",
+    },
+    "BuildId": {
+      "Default": "dev",
+      "Description": "Tag to be used for the image URL, e.g. riff raff build id",
+      "Type": "String",
+    },
+    "ConfigurationBucket": {
+      "Default": "mobile-notifications-dist",
+      "Description": "S3 Bucket containing app configuration",
+      "Type": "String",
+    },
+    "CrossAccountBaseRoleName": {
+      "Default": "mobile-content-notifications-lambda-cross-account",
+      "Description": "Base constituent name of the mobile account roles to assume",
+      "Type": "String",
+    },
+    "DeployBucket": {
+      "Default": "content-api-dist",
+      "Description": "S3 Bucket where RiffRaff uploads artifacts on deploy",
+      "Type": "String",
+    },
+    "KinesisStreamName": {
+      "Default": "content-api-firehose-v2",
+      "Description": "Capi kinesis stream",
+      "Type": "String",
+    },
+    "MobileAccountId": {
+      "Default": 201359054765,
+      "Description": "Account ID of the gu moble account which",
+      "Type": "String",
+    },
+    "SharedResourcesStack": {
+      "Default": "mobile-notifications-shared-resources",
+      "Description": "Mobile notification content shared resources, e.g ecr repositories",
+      "Type": "String",
+    },
+    "Stack": {
+      "Default": "content-api-mobile-notifications",
+      "Description": "Stack name",
+      "Type": "String",
+    },
+    "Stage": {
+      "AllowedValues": [
+        "CODE",
+        "PROD",
+      ],
+      "Default": "CODE",
+      "Description": "Stage name",
+      "Type": "String",
+    },
+  },
+  "Resources": {
+    "ContentEventV2Source": {
+      "Properties": {
+        "BisectBatchOnFunctionError": true,
+        "Enabled": true,
+        "EventSourceArn": {
+          "Fn::Sub": "arn:aws:kinesis:\${AWS::Region}:\${AWS::AccountId}:stream/\${KinesisStreamName}-\${Stage}",
+        },
+        "FunctionName": {
+          "Ref": "ContentLambdaV2",
+        },
+        "StartingPosition": "LATEST",
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "ContentLambdaV2": {
+      "Properties": {
+        "Code": {
+          "ImageUri": {
+            "Fn::Join": [
+              ":",
+              [
+                {
+                  "Fn::ImportValue": {
+                    "Fn::Sub": "\${SharedResourcesStack}-ContentLambdaContainerRepositoryUri",
+                  },
+                },
+                {
+                  "Ref": "BuildId",
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Lambda to send notification when new content is published",
+        "Environment": {
+          "Variables": {
+            "App": {
+              "Fn::Sub": "\${App}",
+            },
+            "CrossAccountSsmReadingRole": {
+              "Fn::Sub": "arn:aws:iam::\${MobileAccountId}:role/\${CrossAccountBaseRoleName}-ssm-\${Stage}",
+            },
+            "Stack": {
+              "Fn::Sub": "\${Stack}",
+            },
+            "Stage": {
+              "Fn::Sub": "\${Stage}",
+            },
+          },
+        },
+        "FunctionName": {
+          "Fn::Sub": "\${App}-\${Stage}-v2",
+        },
+        "MemorySize": 4096,
+        "PackageType": "Image",
+        "Role": {
+          "Fn::GetAtt": "ExecutionRole.Arn",
+        },
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/mobile-notifications-content",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-mobile-notifications",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ExecutionRole": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com",
+                ],
+              },
+            },
+          ],
+        },
+        "Path": "/",
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Sub": "arn:aws:iam::\${MobileAccountId}:role/\${CrossAccountBaseRoleName}-ssm-\${Stage}",
+                },
+              },
+            },
+            "PolicyName": "assume-mobile-ssm-read-config-role",
+          },
+          {
+            "PolicyDocument": {
+              "Statement": {
+                "Action": "sts:AssumeRole",
+                "Effect": "Allow",
+                "Resource": {
+                  "Fn::Sub": "arn:aws:iam::\${MobileAccountId}:role/\${CrossAccountBaseRoleName}-dynamo-\${Stage}",
+                },
+              },
+            },
+            "PolicyName": "assume-mobile-dynamo-role",
+          },
+          {
+            "PolicyDocument": {
+              "Statement": {
+                "Action": [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+            },
+            "PolicyName": "logs",
+          },
+          {
+            "PolicyDocument": {
+              "Statement": {
+                "Action": [
+                  "lambda:InvokeFunction",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+            },
+            "PolicyName": "invoke-lambda",
+          },
+          {
+            "PolicyDocument": {
+              "Statement": {
+                "Action": [
+                  "iam:PassRole",
+                  "iam:GenerateCredentialReport",
+                  "iam:Get*",
+                  "iam:List*",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+            },
+            "PolicyName": "iam-read-and-assume",
+          },
+          {
+            "PolicyDocument": {
+              "Statement": {
+                "Action": [
+                  "Kinesis:DescribeStream",
+                  "Kinesis:GetRecords",
+                  "Kinesis:GetShardIterator",
+                  "Kinesis:ListStream",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+            },
+            "PolicyName": "kinesis-read",
+          },
+          {
+            "PolicyDocument": {
+              "Statement": {
+                "Action": [
+                  "cloudwatch:PutMetricData",
+                ],
+                "Effect": "Allow",
+                "Resource": "*",
+              },
+            },
+            "PolicyName": "cloudwatch-put-metric-daata",
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/mobile-notifications-content",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-mobile-notifications",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LiveBlogEventSourceV2": {
+      "Properties": {
+        "BisectBatchOnFunctionError": true,
+        "Enabled": true,
+        "EventSourceArn": {
+          "Fn::Sub": "arn:aws:kinesis:\${AWS::Region}:\${AWS::AccountId}:stream/\${KinesisStreamName}-\${Stage}",
+        },
+        "FunctionName": {
+          "Ref": "LiveBlogLambdaV2",
+        },
+        "StartingPosition": "LATEST",
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "LiveBlogLambdaV2": {
+      "Properties": {
+        "Code": {
+          "ImageUri": {
+            "Fn::Join": [
+              ":",
+              [
+                {
+                  "Fn::ImportValue": {
+                    "Fn::Sub": "\${SharedResourcesStack}-LiveblogsLambdaContainerRepositoryUri",
+                  },
+                },
+                {
+                  "Ref": "BuildId",
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Lambda that sends push notifications when new key events are published on a liveblog",
+        "Environment": {
+          "Variables": {
+            "App": {
+              "Fn::Sub": "\${App}",
+            },
+            "CrossAccountSsmReadingRole": {
+              "Fn::Sub": "arn:aws:iam::\${MobileAccountId}:role/\${CrossAccountBaseRoleName}-ssm-\${Stage}",
+            },
+            "Stack": {
+              "Fn::Sub": "\${Stack}",
+            },
+            "Stage": {
+              "Fn::Sub": "\${Stage}",
+            },
+          },
+        },
+        "FunctionName": {
+          "Fn::Sub": "\${App}-liveblogs-\${Stage}-v2",
+        },
+        "MemorySize": 4096,
+        "PackageType": "Image",
+        "Role": {
+          "Fn::GetAtt": "ExecutionRole.Arn",
+        },
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/mobile-notifications-content",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-mobile-notifications",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+  },
+}
+`;
