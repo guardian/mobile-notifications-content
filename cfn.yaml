@@ -119,7 +119,7 @@ Resources:
               Action:
                 - sns:Publish
               Resource:
-                - !Sub arn:aws:sns:${AWS::Region}:${AWS::MobileAccountId}:mobile-server-side-${Stage}
+                - !Sub arn:aws:sns:${AWS::Region}:${MobileAccountId}:mobile-server-side-${Stage}
 
   ContentLambdaV2:
     Type: AWS::Lambda::Function
@@ -157,7 +157,7 @@ Resources:
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Sub arn:aws:sns:${AWS::Region}:${AWS::MobileAccountId}:mobile-server-side-${Stage}
+        - !Sub arn:aws:sns:${AWS::Region}:${MobileAccountId}:mobile-server-side-${Stage}
       AlarmName:
         Fn::Join:
           - '-'
@@ -199,7 +199,7 @@ Resources:
             Stat: Sum
           ReturnData: false
       OKActions:
-        - !Sub arn:aws:sns:${AWS::Region}:${AWS::MobileAccountId}:mobile-server-side-${Stage}
+        - !Sub arn:aws:sns:${AWS::Region}:${MobileAccountId}:mobile-server-side-${Stage}
       Threshold: 1
       TreatMissingData: notBreaching
     DependsOn: ContentLambdaV2
@@ -240,7 +240,7 @@ Resources:
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Sub arn:aws:sns:${AWS::Region}:${AWS::MobileAccountId}:mobile-server-side-${Stage}
+        - !Sub arn:aws:sns:${AWS::Region}:${MobileAccountId}:mobile-server-side-${Stage}
       AlarmName:
         Fn::Join:
           - '-'
@@ -282,7 +282,7 @@ Resources:
             Stat: Sum
           ReturnData: false
       OKActions:
-        - !Sub arn:aws:sns:${AWS::Region}:${AWS::MobileAccountId}:mobile-server-side-${Stage}
+        - !Sub arn:aws:sns:${AWS::Region}:${MobileAccountId}:mobile-server-side-${Stage}
       Threshold: 1
       TreatMissingData: notBreaching
     DependsOn: LiveBlogLambdaV2
