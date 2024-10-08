@@ -69,12 +69,6 @@ Resources:
               Effect: Allow
               Action: sts:AssumeRole
               Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-dynamo-${Stage}
-        - PolicyName: assume-mobile-sns-alarm-topic
-          PolicyDocument:
-            Statement:
-              Effect: Allow
-              Action: sts:AssumeRole
-              Resource: !Sub arn:aws:iam::${MobileAccountId}:role/${CrossAccountBaseRoleName}-sns-${Stage}
         - PolicyName: logs
           PolicyDocument:
             Statement:
