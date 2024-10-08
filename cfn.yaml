@@ -144,25 +144,55 @@ Resources:
       StartingPosition: LATEST
       BisectBatchOnFunctionError: true
 
-  ContentLambdaAlarm:
+  contentLambdaErrorPercentageAlarm:
     Type: AWS::CloudWatch::Alarm
     Properties:
+      ActionsEnabled: true
       AlarmActions:
         - !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:mobile-server-side-${Stage}
-      AlarmName: !Join
-        - ' '
-        - - 'ContentLambda'
-          - !Ref 'Stage'
-      AlarmDescription:  'Impact - Users that are subscribed to content notifications may not be getting the latest updates'
-      Namespace: AWS/Lambda
-      Dimensions:
-        - Name: FunctionName
-          Value: !Ref ContentLambdaV2
-      ComparisonOperator: GreaterThanOrEqualToThreshold
-      Threshold: 1
-      Period: 60
+      AlarmName:
+        Fn::Join:
+          - '-'
+          - - 'contentLambdaErrorPercentageAlarm'
+            - !Ref Stage
+      AlarmDescription:  'Impact - Users that are subscribed to content notifications may not be getting the latest updates'm
+      ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
-      Statistic: Sum
+      Metrics:
+        - Expression: 100*m1/m2
+          Id: expr_1
+          Label:
+            Fn::Join:
+              - ""
+              - - "Error % of "
+                - Ref: ContentLambdaV2
+        - Id: m1
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: ContentLambdaV2
+              MetricName: Errors
+              Namespace: AWS/Lambda
+            Period: 60
+            Stat: Sum
+          ReturnData: false
+        - Id: m2
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: ContentLambdaV2
+              MetricName: Invocations
+              Namespace: AWS/Lambda
+            Period: 60
+            Stat: Sum
+          ReturnData: false
+      OKActions:
+        - !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:mobile-server-side-${Stage}
+      Threshold: 1
       TreatMissingData: notBreaching
     DependsOn: ContentLambdaV2
 
