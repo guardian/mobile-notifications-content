@@ -226,3 +226,55 @@ Resources:
       EventSourceArn: !Sub arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}-${Stage}
       StartingPosition: LATEST
       BisectBatchOnFunctionError: true
+
+  liveBlogLambdaErrorPercentageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ActionsEnabled: true
+      AlarmActions:
+        - !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:mobile-server-side-${Stage}
+      AlarmName:
+        Fn::Join:
+          - '-'
+          - - 'liveblogLambdaErrorPercentageAlarm'
+            - !Ref Stage
+      AlarmDescription: 'Impact - Users that are subscribed to liveblog notifications may not be getting the latest updates'
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 1
+      Metrics:
+        - Expression: 100*m1/m2
+          Id: expr_1
+          Label:
+            Fn::Join:
+              - ""
+              - - "Error % of "
+                - Ref: LiveBlogLambdaV2
+        - Id: m1
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: LiveBlogLambdaV2
+              MetricName: Errors
+              Namespace: AWS/Lambda
+            Period: 60
+            Stat: Sum
+          ReturnData: false
+        - Id: m2
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: LiveBlogLambdaV2
+              MetricName: Invocations
+              Namespace: AWS/Lambda
+            Period: 60
+            Stat: Sum
+          ReturnData: false
+      OKActions:
+        - !Sub arn:aws:sns:${AWS::Region}:${AWS::AccountId}:mobile-server-side-${Stage}
+      Threshold: 1
+      TreatMissingData: notBreaching
+    DependsOn: LiveBlogLambdaV2
