@@ -59,6 +59,7 @@ trait Lambda extends Logging {
     val records = eventRecords.map(kinesisEventRecordToRecord)
     val aggregatorUtil = new AggregatorUtil()
     val userRecords: List[KinesisClientRecord] = aggregatorUtil.deaggregate(records.asJava).asScala.toList
+    throw new RuntimeException("testing alarm")
     CapiEventProcessor.process(userRecords) { event =>
       event.eventType match {
         case EventType.Update =>
