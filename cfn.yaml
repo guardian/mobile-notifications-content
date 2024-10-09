@@ -155,7 +155,7 @@ Resources:
           - '-'
           - - 'contentLambdaErrorPercentageAlarm'
             - !Ref Stage
-      AlarmDescription:  'Impact - Users that are subscribed to content notifications may not be getting the latest updates'
+      AlarmDescription:  'Triggers if mobile-notifications-content lambda does not execute successfully. Note: this lambda is hosted in the CAPI account. Impact - Users that are subscribed to tags or contributors on their mobile device may not be getting the latest updates'
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
       Metrics:
@@ -238,7 +238,7 @@ Resources:
           - '-'
           - - 'liveblogLambdaErrorPercentageAlarm'
             - !Ref Stage
-      AlarmDescription: 'Impact - Users that are subscribed to liveblog notifications may not be getting the latest updates'
+      AlarmDescription: 'Triggers if mobile-notifications-content-liveblogs lambda does not execute successfully. Note: this lambda is hosted in the CAPI account. Impact - Users that are subscribed to liveblog notifications may not be getting the latest updates'
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
       Metrics:
