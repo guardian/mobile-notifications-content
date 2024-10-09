@@ -54,6 +54,7 @@ libraryDependencies ++= Seq(
   "com.google.protobuf" % "protobuf-java" % "4.28.2",
   "org.json" % "json" % "20240303",
   "org.apache.commons" % "commons-compress" % "1.27.1",
+  "org.apache.avro" % "avro" % "1.11.4",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.specs2" %% "specs2-core" % "4.20.8" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.8" % Test,
