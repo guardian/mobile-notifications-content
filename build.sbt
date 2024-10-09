@@ -49,7 +49,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
   "com.gu" %% "simple-configuration-ssm" % "2.0.0",
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.17.2",
+  "com.fasterxml.jackson.core" % "jackson-databind" % "2.18.0",
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
   "com.google.protobuf" % "protobuf-java" % "4.28.2",
   "org.json" % "json" % "20240303",
@@ -58,7 +58,7 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.specs2" %% "specs2-core" % "4.20.8" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.8" % Test,
-  "org.mockito" % "mockito-core" % "5.13.0" % Test,
+  "org.mockito" % "mockito-core" % "5.14.1" % Test,
   "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
