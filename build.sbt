@@ -26,7 +26,7 @@ assembly / assemblyMergeStrategy := {
 }
 
 val awsSdkVersion = "1.12.777"
-val awsSdk2Version = "2.29.15"
+val awsSdk2Version = "2.29.19"
 
 libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
