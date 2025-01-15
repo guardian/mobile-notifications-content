@@ -25,7 +25,7 @@ assembly / assemblyMergeStrategy := {
   case _ => MergeStrategy.first
 }
 
-val awsSdkVersion = "1.12.777"
+val awsSdkVersion = "1.12.780"
 val awsSdk2Version = "2.29.36"
 
 libraryDependencies ++= Seq(
