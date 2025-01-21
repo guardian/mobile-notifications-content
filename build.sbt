@@ -20,6 +20,10 @@ resolvers ++= Seq(
   "Guardian GitHub Snapshots" at "https://guardian.github.com/maven/repo-snapshots"
 )
 
+ThisBuild / libraryDependencySchemes ++= Seq(
+  "com.github.luben" % "zstd-jni" % VersionScheme.Always
+)
+
 assembly / assemblyMergeStrategy := {
   case "META-INF/MANIFEST.MF" => MergeStrategy.discard
   case _ => MergeStrategy.first
@@ -55,12 +59,13 @@ libraryDependencies ++= Seq(
   "org.json" % "json" % "20240303",
   "org.apache.commons" % "commons-compress" % "1.27.1",
   "org.apache.avro" % "avro" % "1.12.0",
+  "org.apache.kafka" % "kafka-clients" % "3.7.2",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.specs2" %% "specs2-core" % "4.20.9" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.9" % Test,
   "org.mockito" % "mockito-core" % "5.14.2" % Test,
   "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
 )
-libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
+libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.6-9"
 
 assemblyJarName := s"${name.value}.jar"
