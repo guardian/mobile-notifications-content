@@ -6,7 +6,7 @@ description:= "lambda to replace the content-notifications-service"
 
 version := "1.0"
 
-scalaVersion := "2.13.15"
+scalaVersion := "2.13.16"
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -51,14 +51,14 @@ libraryDependencies ++= Seq(
   "com.gu" %% "simple-configuration-ssm" % "4.0.2",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.18.2",
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
-  "com.google.protobuf" % "protobuf-java" % "4.29.2",
-  "org.json" % "json" % "20240303",
+  "com.google.protobuf" % "protobuf-java" % "4.29.3",
+  "org.json" % "json" % "20250107",
   "org.apache.commons" % "commons-compress" % "1.27.1",
   "org.apache.avro" % "avro" % "1.12.0",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
   "org.specs2" %% "specs2-core" % "4.20.9" % Test,
   "org.specs2" %% "specs2-matcher-extra" % "4.20.9" % Test,
-  "org.mockito" % "mockito-core" % "5.14.2" % Test,
+  "org.mockito" % "mockito-core" % "5.15.2" % Test,
   "org.scalatestplus" %% "mockito-5-12" % "3.2.19.0" % Test,
 )
 libraryDependencies += "com.github.luben" % "zstd-jni" % "1.5.5-3"
