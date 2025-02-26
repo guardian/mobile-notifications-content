@@ -36,7 +36,7 @@ libraryDependencies ++= Seq(
   "software.amazon.kinesis" % "amazon-kinesis-client" % "3.0.1",
   "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
-  "com.amazonaws" % "aws-lambda-java-events" % "3.14.0",
+  "com.amazonaws" % "aws-lambda-java-events" % "3.15.0",
   "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
   "com.gu" %% "content-api-client-default" % "34.0.0",
