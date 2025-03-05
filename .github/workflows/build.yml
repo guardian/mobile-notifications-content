@@ -28,9 +28,12 @@ jobs:
         cache-dependency-path: cdk/yarn.lock
 
     - name: CDK synth
+      working-directory: ./cdk
       run: |
-        cd cdk
-        ./script/ci
+        yarn install
+        yarn lint
+        yarn test
+        yarn synth
 
     - name: Build and Test project, Assemble jar, copy to root dir
       run: |
