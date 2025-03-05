@@ -8,4 +8,6 @@ deployments:
     parameters:
       prependStackToCloudFormationStackName: true
       cloudFormationStackName: mobile-notifications-content
-      templatePath: cfn.yaml
+      templateStagePaths:
+        CODE: MobileNotificationsContent-CODE.template.json
+        PROD: MobileNotificationsContent-PROD.template.json

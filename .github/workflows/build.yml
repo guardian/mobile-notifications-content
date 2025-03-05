@@ -21,6 +21,17 @@ jobs:
     - name: Setup JDK and sbt
       uses: guardian/setup-scala@v1
 
+    - uses: actions/setup-node@v3
+      with:
+        node-version-file: '.nvmrc'
+        cache: 'yarn'
+        cache-dependency-path: cdk/yarn.lock
+
+    - name: CDK synth
+      run: |
+        cd cdk
+        ./script/ci
+
     - name: Build and Test project, Assemble jar, copy to root dir
       run: |
         sbt compile test assembly
@@ -85,4 +96,5 @@ jobs:
         buildNumberOffset: 466
         contentDirectories: |
           mobile-notifications-content-cfn:
-          - cfn.yaml
+            - cdk/cdk.out/MobileNotificationsContent-CODE.template.json
+            - cdk/cdk.out/MobileNotificationsContent-PROD.template.json
