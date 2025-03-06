@@ -17,6 +17,8 @@ describe('The MobileNotificationsContent stack', () => {
 					'arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-dynamo-TEST',
 				kinesisStreamArn:
 					'arn:aws:kinesis:eu-west-1:308506855511:stream/content-api-firehose-v2-TEST',
+				snsAlarmTopicArn:
+					'arn:aws:sns:eu-west-1:201359054765:mobile-server-side',
 			},
 		);
 		const template = Template.fromStack(stack);

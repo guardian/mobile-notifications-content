@@ -12,6 +12,7 @@ new MobileNotificationsContent(app, 'MobileNotificationsContent-CODE', {
 		'arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-dynamo-CODE',
 	kinesisStreamArn:
 		'arn:aws:kinesis:eu-west-1:308506855511:stream/content-api-firehose-v2-CODE',
+	snsAlarmTopicArn: 'arn:aws:sns:eu-west-1:201359054765:mobile-server-side',
 	env: { region: 'eu-west-1' },
 });
 
@@ -24,5 +25,6 @@ new MobileNotificationsContent(app, 'MobileNotificationsContent-PROD', {
 		'arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-dynamo-PROD',
 	kinesisStreamArn:
 		'arn:aws:kinesis:eu-west-1:308506855511:stream/content-api-firehose-v2-PROD',
+	snsAlarmTopicArn: 'arn:aws:sns:eu-west-1:201359054765:mobile-server-side',
 	env: { region: 'eu-west-1' },
 });

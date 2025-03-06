@@ -2,6 +2,13 @@ import { join } from 'path';
 import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
 import { GuStack } from '@guardian/cdk/lib/constructs/core';
 import { type App, CfnParameter, Duration, Fn } from 'aws-cdk-lib';
+import {
+	Alarm,
+	ComparisonOperator,
+	MathExpression,
+	TreatMissingData,
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import {
@@ -9,12 +16,14 @@ import {
 	DockerImageFunction,
 	StartingPosition,
 } from 'aws-cdk-lib/aws-lambda';
+import { Topic } from 'aws-cdk-lib/aws-sns';
 import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 
 interface MobileNotificationsContentProps extends GuStackProps {
 	crossAccountSsmRole: string;
 	crossAccountDynamoRole: string;
 	kinesisStreamArn: string;
+	snsAlarmTopicArn: string;
 }
 export class MobileNotificationsContent extends GuStack {
 	constructor(scope: App, id: string, props: MobileNotificationsContentProps) {
@@ -174,5 +183,29 @@ export class MobileNotificationsContent extends GuStack {
 			enabled: true,
 			bisectBatchOnError: true,
 		});
+
+		const mathExpression = new MathExpression({
+			expression: '100*m1/m2',
+			usingMetrics: {
+				m1: liveBlogsLambda.metricErrors(),
+				m2: liveBlogsLambda.metricInvocations(),
+			},
+			label: `Error % of ${liveBlogsLambda.functionName}`,
+			period: Duration.minutes(10),
+		});
+		const alarm = new Alarm(this, 'SenderErrorAlarm', {
+			alarmDescription: `High error percentage from ${liveBlogsLambda.functionName} lambda in ${this.stage}`,
+			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+			evaluationPeriods: 1,
+			threshold: 0,
+			metric: mathExpression,
+			treatMissingData: TreatMissingData.NOT_BREACHING,
+		});
+		const snsTopicAction = new SnsAction(
+			Topic.fromTopicArn(this, 'AlarmTopic', props.snsAlarmTopicArn),
+		);
+
+		alarm.addAlarmAction(snsTopicAction);
+		alarm.addOkAction(snsTopicAction);
 	}
 }
