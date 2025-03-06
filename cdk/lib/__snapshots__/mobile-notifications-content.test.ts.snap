@@ -65,53 +65,22 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
     },
   },
   "Resources": {
-    "ContentEventV2Source": {
-      "Properties": {
-        "BisectBatchOnFunctionError": true,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Fn::Sub": "arn:aws:kinesis:\${AWS::Region}:\${AWS::AccountId}:stream/\${KinesisStreamName}-\${Stage}",
-        },
-        "FunctionName": {
-          "Ref": "ContentLambdaV2",
-        },
-        "StartingPosition": "LATEST",
-        "Tags": [
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/mobile-notifications-content",
-          },
-          {
-            "Key": "Stack",
-            "Value": "content-api-mobile-notifications",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-      },
-      "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "ContentLambdaV2": {
+    "ContentLambda9E34CFB0": {
+      "DependsOn": [
+        "ExecutionRoleDefaultPolicyA5B92313",
+        "ExecutionRole605A040B",
+      ],
       "Properties": {
         "Code": {
           "ImageUri": {
             "Fn::Join": [
-              ":",
+              "",
               [
+                "308506855511.dkr.ecr.eu-west-1.",
                 {
-                  "Fn::ImportValue": {
-                    "Fn::Sub": "\${SharedResourcesStack}-ContentLambdaContainerRepositoryUri",
-                  },
+                  "Ref": "AWS::URLSuffix",
                 },
-                {
-                  "Ref": "BuildId",
-                },
+                "/mobile-notifications-content:dev",
               ],
             ],
           },
@@ -119,27 +88,20 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
         "Description": "Lambda to send notification when new content is published",
         "Environment": {
           "Variables": {
-            "App": {
-              "Fn::Sub": "\${App}",
-            },
-            "CrossAccountSsmReadingRole": {
-              "Fn::Sub": "arn:aws:iam::\${MobileAccountId}:role/\${CrossAccountBaseRoleName}-ssm-\${Stage}",
-            },
-            "Stack": {
-              "Fn::Sub": "\${Stack}",
-            },
-            "Stage": {
-              "Fn::Sub": "\${Stage}",
-            },
+            "App": "mobile-notifications-content",
+            "CrossAccountSsmReadingRole": "arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-ssm-TEST",
+            "Stack": "content-api-mobile-notifications",
+            "Stage": "TEST",
           },
         },
-        "FunctionName": {
-          "Fn::Sub": "\${App}-\${Stage}-v2",
-        },
+        "FunctionName": "mobile-notifications-content-TEST-v2",
         "MemorySize": 4096,
         "PackageType": "Image",
         "Role": {
-          "Fn::GetAtt": "ExecutionRole.Arn",
+          "Fn::GetAtt": [
+            "ExecutionRole605A040B",
+            "Arn",
+          ],
         },
         "Tags": [
           {
@@ -162,6 +124,18 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ContentLambdaContentLambdaEventMappingA9509320": {
+      "Properties": {
+        "BisectBatchOnFunctionError": true,
+        "Enabled": true,
+        "EventSourceArn": "arn:aws:kinesis:eu-west-1:308506855511:stream/content-api-firehose-v2-TEST",
+        "FunctionName": {
+          "Ref": "ContentLambda9E34CFB0",
+        },
+        "StartingPosition": "LATEST",
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
     },
     "ExecutionRole": {
       "Properties": {
@@ -294,17 +268,21 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
       },
       "Type": "AWS::IAM::Role",
     },
-    "LiveBlogEventSourceV2": {
+    "ExecutionRole605A040B": {
       "Properties": {
-        "BisectBatchOnFunctionError": true,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Fn::Sub": "arn:aws:kinesis:\${AWS::Region}:\${AWS::AccountId}:stream/\${KinesisStreamName}-\${Stage}",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
         },
-        "FunctionName": {
-          "Ref": "LiveBlogLambdaV2",
-        },
-        "StartingPosition": "LATEST",
+        "Path": "/",
         "Tags": [
           {
             "Key": "gu:cdk:version",
@@ -323,6 +301,85 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
             "Value": "TEST",
           },
         ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ExecutionRoleDefaultPolicyA5B92313": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-ssm-TEST",
+            },
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Resource": "arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-dynamo-TEST",
+            },
+            {
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "iam:PassRole",
+                "iam:GenerateCredentialReport",
+                "iam:Get*",
+                "iam:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": [
+                "Kinesis:DescribeStream",
+                "Kinesis:GetRecords",
+                "Kinesis:GetShardIterator",
+                "Kinesis:ListStream",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ExecutionRoleDefaultPolicyA5B92313",
+        "Roles": [
+          {
+            "Ref": "ExecutionRole605A040B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LiveBlogEventSourceV2": {
+      "Properties": {
+        "BisectBatchOnFunctionError": true,
+        "Enabled": true,
+        "EventSourceArn": {
+          "Fn::Sub": "arn:aws:kinesis:\${AWS::Region}:\${AWS::AccountId}:stream/\${KinesisStreamName}-\${Stage}",
+        },
+        "FunctionName": {
+          "Ref": "LiveBlogLambdaV2",
+        },
+        "StartingPosition": "LATEST",
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
@@ -391,116 +448,6 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
-    },
-    "contentLambdaErrorPercentageAlarm": {
-      "DependsOn": [
-        "ContentLambdaV2",
-      ],
-      "Properties": {
-        "ActionsEnabled": true,
-        "AlarmActions": [
-          {
-            "Fn::Sub": "arn:aws:sns:\${AWS::Region}:\${MobileAccountId}:mobile-server-side",
-          },
-        ],
-        "AlarmDescription": "Triggers if mobile-notifications-content lambda does not execute successfully. Note: this lambda is hosted in the CAPI account. Impact - Users that are subscribed to tags or contributors on their mobile device may not be getting the latest updates",
-        "AlarmName": {
-          "Fn::Join": [
-            "-",
-            [
-              "contentLambdaErrorPercentageAlarm",
-              {
-                "Ref": "Stage",
-              },
-            ],
-          ],
-        },
-        "ComparisonOperator": "GreaterThanThreshold",
-        "EvaluationPeriods": 1,
-        "Metrics": [
-          {
-            "Expression": "100*m1/m2",
-            "Id": "expr_1",
-            "Label": {
-              "Fn::Join": [
-                "",
-                [
-                  "Error % of ",
-                  {
-                    "Ref": "ContentLambdaV2",
-                  },
-                ],
-              ],
-            },
-          },
-          {
-            "Id": "m1",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "FunctionName",
-                    "Value": {
-                      "Ref": "ContentLambdaV2",
-                    },
-                  },
-                ],
-                "MetricName": "Errors",
-                "Namespace": "AWS/Lambda",
-              },
-              "Period": 60,
-              "Stat": "Sum",
-            },
-            "ReturnData": false,
-          },
-          {
-            "Id": "m2",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "FunctionName",
-                    "Value": {
-                      "Ref": "ContentLambdaV2",
-                    },
-                  },
-                ],
-                "MetricName": "Invocations",
-                "Namespace": "AWS/Lambda",
-              },
-              "Period": 60,
-              "Stat": "Sum",
-            },
-            "ReturnData": false,
-          },
-        ],
-        "OKActions": [
-          {
-            "Fn::Sub": "arn:aws:sns:\${AWS::Region}:\${MobileAccountId}:mobile-server-side",
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/mobile-notifications-content",
-          },
-          {
-            "Key": "Stack",
-            "Value": "content-api-mobile-notifications",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
-          },
-        ],
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
     },
     "liveBlogLambdaErrorPercentageAlarm": {
       "DependsOn": [
@@ -587,24 +534,6 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
         "OKActions": [
           {
             "Fn::Sub": "arn:aws:sns:\${AWS::Region}:\${MobileAccountId}:mobile-server-side",
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "gu:cdk:version",
-            "Value": "TEST",
-          },
-          {
-            "Key": "gu:repo",
-            "Value": "guardian/mobile-notifications-content",
-          },
-          {
-            "Key": "Stack",
-            "Value": "content-api-mobile-notifications",
-          },
-          {
-            "Key": "Stage",
-            "Value": "TEST",
           },
         ],
         "Threshold": 1,
