@@ -1,4 +1,3 @@
-import { join } from 'path';
 import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
 import { GuStack } from '@guardian/cdk/lib/constructs/core';
 import { type App, CfnParameter, Duration, Fn } from 'aws-cdk-lib';
@@ -17,7 +16,6 @@ import {
 	StartingPosition,
 } from 'aws-cdk-lib/aws-lambda';
 import { Topic } from 'aws-cdk-lib/aws-sns';
-import { CfnInclude } from 'aws-cdk-lib/cloudformation-include';
 
 interface MobileNotificationsContentProps extends GuStackProps {
 	crossAccountSsmRole: string;
@@ -28,10 +26,6 @@ interface MobileNotificationsContentProps extends GuStackProps {
 export class MobileNotificationsContent extends GuStack {
 	constructor(scope: App, id: string, props: MobileNotificationsContentProps) {
 		super(scope, id, props);
-		const yamlTemplateFilePath = join(__dirname, '../..', 'cfn.yaml');
-		new CfnInclude(this, 'YamlTemplate', {
-			templateFile: yamlTemplateFilePath,
-		});
 
 		const appName = 'mobile-notifications-content';
 
