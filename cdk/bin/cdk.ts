@@ -1,14 +1,11 @@
-import "source-map-support/register";
-import { GuRoot } from "@guardian/cdk/lib/constructs/root";
-import { MobileNotificationsContent } from "../lib/mobile-notifications-content";
+import 'source-map-support/register';
+import { GuRoot } from '@guardian/cdk/lib/constructs/root';
+import { MobileNotificationsContent } from '../lib/mobile-notifications-content';
 
 const app = new GuRoot();
 new MobileNotificationsContent(app, 'MobileNotificationsContent-CODE', {
 	stack: 'content-api-mobile-notifications',
 	stage: 'CODE',
-	repositoryArn:
-		'arn:aws:ecr:eu-west-1:308506855511:repository/mobile-notifications-content',
-	repositoryName: 'mobile-notifications-content',
 	crossAccountSsmRole:
 		'arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-ssm-CODE',
 	crossAccountDynamoRole:
@@ -17,13 +14,10 @@ new MobileNotificationsContent(app, 'MobileNotificationsContent-CODE', {
 		'arn:aws:kinesis:eu-west-1:308506855511:stream/content-api-firehose-v2-CODE',
 	env: { region: 'eu-west-1' },
 });
-     
+
 new MobileNotificationsContent(app, 'MobileNotificationsContent-PROD', {
 	stack: 'content-api-mobile-notifications',
 	stage: 'PROD',
-	repositoryArn:
-		'arn:aws:ecr:eu-west-1:308506855511:repository/mobile-notifications-content',
-	repositoryName: 'mobile-notifications-content',
 	crossAccountSsmRole:
 		'arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-ssm-PROD',
 	crossAccountDynamoRole:
