@@ -1,7 +1,7 @@
 import { join } from 'path';
 import type { GuStackProps } from '@guardian/cdk/lib/constructs/core';
 import { GuStack } from '@guardian/cdk/lib/constructs/core';
-import { type App, Duration, Fn } from 'aws-cdk-lib';
+import { type App, CfnParameter, Duration, Fn } from 'aws-cdk-lib';
 import { Repository } from 'aws-cdk-lib/aws-ecr';
 import { PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import {
@@ -33,21 +33,19 @@ export class MobileNotificationsContent extends GuStack {
 		const contentImageRepositoryName = Fn.importValue(
 			'mobile-notifications-shared-resources-ContentLambdaContainerRepositoryUri',
 		);
-		// const buildId = new CfnParameter(this, 'BuildId', {
-		// 		type: 'String',
-		// 		default: 'dev',
-		// 		description: 'Tag to be used for the image URL, e.g. riff raff build id',
-		// 	}).value.toString();
 
-		const code = DockerImageCode.fromEcr(
-			Repository.fromRepositoryAttributes(this, `${appName}-ecr`, {
-				repositoryArn: contentImageRepositoryArn,
-				repositoryName: contentImageRepositoryName,
-			}),
-			{
-				tagOrDigest: 'dev',
-			},
+		const liveBlogsImageRepositoryArn = Fn.importValue(
+			'mobile-notifications-shared-resources-LiveblogsLambdaContainerRepositoryArn',
 		);
+
+		const liveBlogsImageRepositoryName = Fn.importValue(
+			'mobile-notifications-shared-resources-LiveblogsLambdaContainerRepositoryUri',
+		);
+		const buildId = new CfnParameter(this, 'BuildId', {
+			type: 'String',
+			default: 'dev',
+			description: 'Tag to be used for the image URL, e.g. riff raff build id',
+		}).value.toString();
 
 		const executionRole = new Role(this, 'ExecutionRole', {
 			assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
@@ -119,7 +117,15 @@ export class MobileNotificationsContent extends GuStack {
 
 		const contentLambda = new DockerImageFunction(this, 'ContentLambda', {
 			functionName: `${appName}-${this.stage}-v2`,
-			code: code,
+			code: DockerImageCode.fromEcr(
+				Repository.fromRepositoryAttributes(this, `${appName}-ecr`, {
+					repositoryArn: contentImageRepositoryArn,
+					repositoryName: contentImageRepositoryName,
+				}),
+				{
+					tagOrDigest: buildId,
+				},
+			),
 			environment: {
 				Stage: this.stage,
 				Stack: this.stack,
@@ -133,6 +139,36 @@ export class MobileNotificationsContent extends GuStack {
 		});
 
 		contentLambda.addEventSourceMapping('ContentLambdaEventMapping', {
+			eventSourceArn: `${props.kinesisStreamArn}`,
+			startingPosition: StartingPosition.LATEST,
+			enabled: true,
+			bisectBatchOnError: true,
+		});
+
+		const liveBlogsLambda = new DockerImageFunction(this, 'LiveblogsLambda', {
+			functionName: `${appName}-liveblogs-${this.stage}-v2`,
+			code: DockerImageCode.fromEcr(
+				Repository.fromRepositoryAttributes(this, `${appName}-liveblogs-ecr`, {
+					repositoryArn: liveBlogsImageRepositoryArn,
+					repositoryName: liveBlogsImageRepositoryName,
+				}),
+				{
+					tagOrDigest: buildId,
+				},
+			),
+			environment: {
+				Stage: this.stage,
+				Stack: this.stack,
+				App: appName,
+				CrossAccountSsmReadingRole: `${props.crossAccountSsmRole}`,
+			},
+			memorySize: 4096,
+			description: `Lambda that sends push notifications when new key events are published on a liveblo`,
+			role: executionRole,
+			timeout: Duration.seconds(60),
+		});
+
+		liveBlogsLambda.addEventSourceMapping('LiveBlogsLambdaEventMapping', {
 			eventSourceArn: `${props.kinesisStreamArn}`,
 			startingPosition: StartingPosition.LATEST,
 			enabled: true,

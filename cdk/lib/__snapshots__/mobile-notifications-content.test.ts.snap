@@ -111,7 +111,10 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
                 {
                   "Fn::ImportValue": "mobile-notifications-shared-resources-ContentLambdaContainerRepositoryUri",
                 },
-                ":dev",
+                ":",
+                {
+                  "Ref": "BuildId",
+                },
               ],
             ],
           },
@@ -400,32 +403,53 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
       },
       "Type": "AWS::IAM::Policy",
     },
-    "LiveBlogEventSourceV2": {
-      "Properties": {
-        "BisectBatchOnFunctionError": true,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Fn::Sub": "arn:aws:kinesis:\${AWS::Region}:\${AWS::AccountId}:stream/\${KinesisStreamName}-\${Stage}",
-        },
-        "FunctionName": {
-          "Ref": "LiveBlogLambdaV2",
-        },
-        "StartingPosition": "LATEST",
-      },
-      "Type": "AWS::Lambda::EventSourceMapping",
-    },
-    "LiveBlogLambdaV2": {
+    "LiveblogsLambda60F8E597": {
+      "DependsOn": [
+        "ExecutionRoleDefaultPolicyA5B92313",
+        "ExecutionRole605A040B",
+      ],
       "Properties": {
         "Code": {
           "ImageUri": {
             "Fn::Join": [
-              ":",
+              "",
               [
                 {
-                  "Fn::ImportValue": {
-                    "Fn::Sub": "\${SharedResourcesStack}-LiveblogsLambdaContainerRepositoryUri",
-                  },
+                  "Fn::Select": [
+                    4,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Fn::ImportValue": "mobile-notifications-shared-resources-LiveblogsLambdaContainerRepositoryArn",
+                        },
+                      ],
+                    },
+                  ],
                 },
+                ".dkr.ecr.",
+                {
+                  "Fn::Select": [
+                    3,
+                    {
+                      "Fn::Split": [
+                        ":",
+                        {
+                          "Fn::ImportValue": "mobile-notifications-shared-resources-LiveblogsLambdaContainerRepositoryArn",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                ".",
+                {
+                  "Ref": "AWS::URLSuffix",
+                },
+                "/",
+                {
+                  "Fn::ImportValue": "mobile-notifications-shared-resources-LiveblogsLambdaContainerRepositoryUri",
+                },
+                ":",
                 {
                   "Ref": "BuildId",
                 },
@@ -433,30 +457,23 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
             ],
           },
         },
-        "Description": "Lambda that sends push notifications when new key events are published on a liveblog",
+        "Description": "Lambda that sends push notifications when new key events are published on a liveblo",
         "Environment": {
           "Variables": {
-            "App": {
-              "Fn::Sub": "\${App}",
-            },
-            "CrossAccountSsmReadingRole": {
-              "Fn::Sub": "arn:aws:iam::\${MobileAccountId}:role/\${CrossAccountBaseRoleName}-ssm-\${Stage}",
-            },
-            "Stack": {
-              "Fn::Sub": "\${Stack}",
-            },
-            "Stage": {
-              "Fn::Sub": "\${Stage}",
-            },
+            "App": "mobile-notifications-content",
+            "CrossAccountSsmReadingRole": "arn:aws:iam::201359054765:role/mobile-content-notifications-lambda-cross-account-ssm-TEST",
+            "Stack": "content-api-mobile-notifications",
+            "Stage": "TEST",
           },
         },
-        "FunctionName": {
-          "Fn::Sub": "\${App}-liveblogs-\${Stage}-v2",
-        },
+        "FunctionName": "mobile-notifications-content-liveblogs-TEST-v2",
         "MemorySize": 4096,
         "PackageType": "Image",
         "Role": {
-          "Fn::GetAtt": "ExecutionRole.Arn",
+          "Fn::GetAtt": [
+            "ExecutionRole605A040B",
+            "Arn",
+          ],
         },
         "Tags": [
           {
@@ -480,97 +497,17 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
       },
       "Type": "AWS::Lambda::Function",
     },
-    "liveBlogLambdaErrorPercentageAlarm": {
-      "DependsOn": [
-        "LiveBlogLambdaV2",
-      ],
+    "LiveblogsLambdaLiveBlogsLambdaEventMapping6AF5A96F": {
       "Properties": {
-        "ActionsEnabled": true,
-        "AlarmActions": [
-          {
-            "Fn::Sub": "arn:aws:sns:\${AWS::Region}:\${MobileAccountId}:mobile-server-side",
-          },
-        ],
-        "AlarmDescription": "Triggers if mobile-notifications-content-liveblogs lambda does not execute successfully. Note: this lambda is hosted in the CAPI account. Impact - Users that are subscribed to liveblog notifications may not be getting the latest updates",
-        "AlarmName": {
-          "Fn::Join": [
-            "-",
-            [
-              "liveblogLambdaErrorPercentageAlarm",
-              {
-                "Ref": "Stage",
-              },
-            ],
-          ],
+        "BisectBatchOnFunctionError": true,
+        "Enabled": true,
+        "EventSourceArn": "arn:aws:kinesis:eu-west-1:308506855511:stream/content-api-firehose-v2-TEST",
+        "FunctionName": {
+          "Ref": "LiveblogsLambda60F8E597",
         },
-        "ComparisonOperator": "GreaterThanThreshold",
-        "EvaluationPeriods": 1,
-        "Metrics": [
-          {
-            "Expression": "100*m1/m2",
-            "Id": "expr_1",
-            "Label": {
-              "Fn::Join": [
-                "",
-                [
-                  "Error % of ",
-                  {
-                    "Ref": "LiveBlogLambdaV2",
-                  },
-                ],
-              ],
-            },
-          },
-          {
-            "Id": "m1",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "FunctionName",
-                    "Value": {
-                      "Ref": "LiveBlogLambdaV2",
-                    },
-                  },
-                ],
-                "MetricName": "Errors",
-                "Namespace": "AWS/Lambda",
-              },
-              "Period": 60,
-              "Stat": "Sum",
-            },
-            "ReturnData": false,
-          },
-          {
-            "Id": "m2",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "FunctionName",
-                    "Value": {
-                      "Ref": "LiveBlogLambdaV2",
-                    },
-                  },
-                ],
-                "MetricName": "Invocations",
-                "Namespace": "AWS/Lambda",
-              },
-              "Period": 60,
-              "Stat": "Sum",
-            },
-            "ReturnData": false,
-          },
-        ],
-        "OKActions": [
-          {
-            "Fn::Sub": "arn:aws:sns:\${AWS::Region}:\${MobileAccountId}:mobile-server-side",
-          },
-        ],
-        "Threshold": 1,
-        "TreatMissingData": "notBreaching",
+        "StartingPosition": "LATEST",
       },
-      "Type": "AWS::CloudWatch::Alarm",
+      "Type": "AWS::Lambda::EventSourceMapping",
     },
   },
 }
