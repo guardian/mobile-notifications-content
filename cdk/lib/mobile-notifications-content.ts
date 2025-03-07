@@ -25,7 +25,28 @@ interface MobileNotificationsContentProps extends GuStackProps {
 }
 
 
+
 export class MobileNotificationsContent extends GuStack {
+	percentageAlarm(id: string, lamdba: DockerImageFunction, scope: MobileNotificationsContent) {
+		const percentageErrorsContent = new MathExpression({
+			expression: '100*m1/m2',
+			usingMetrics: {
+				m1: lamdba.metricErrors(),
+				m2: lamdba.metricInvocations(),
+			},
+			label: `Error % of ${lamdba.functionName}`,
+			period: Duration.minutes(10),
+		});
+
+		return new Alarm(scope, id, {
+			alarmDescription: `High error percentage from ${lamdba.functionName} lambda in ${this.stage}`,
+			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+			evaluationPeriods: 1,
+			threshold: 0,
+			metric: percentageErrorsContent,
+			treatMissingData: TreatMissingData.NOT_BREACHING,
+		});
+	}
 	constructor(scope: App, id: string, props: MobileNotificationsContentProps) {
 		super(scope, id, props);
 
@@ -152,24 +173,7 @@ export class MobileNotificationsContent extends GuStack {
 			enabled: true,
 			bisectBatchOnError: true,
 		});
-		const percentageErrorsContent = new MathExpression({
-			expression: '100*m1/m2',
-			usingMetrics: {
-				m1: contentLambda.metricErrors(),
-				m2: contentLambda.metricInvocations(),
-			},
-			label: `Error % of ${contentLambda.functionName}`,
-			period: Duration.minutes(10),
-		});
-
-		const contentLambdaAlarm = new Alarm(this, 'SenderErrorAlarm-Content', {
-			alarmDescription: `High error percentage from ${contentLambda.functionName} lambda in ${this.stage}`,
-			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-			evaluationPeriods: 1,
-			threshold: 0,
-			metric: percentageErrorsContent,
-			treatMissingData: TreatMissingData.NOT_BREACHING,
-		});
+		const contentLambdaAlarm = this.percentageAlarm('SenderErrorAlarm-Content', contentLambda, this)
 
 		contentLambdaAlarm.addAlarmAction(snsTopicAction);
 		contentLambdaAlarm.addOkAction(snsTopicAction);
@@ -204,24 +208,7 @@ export class MobileNotificationsContent extends GuStack {
 			bisectBatchOnError: true,
 		});
 
-		const percentageErrorsContentLiveBlogs = new MathExpression({
-			expression: '100*m1/m2',
-			usingMetrics: {
-				m1: liveBlogsLambda.metricErrors(),
-				m2: liveBlogsLambda.metricInvocations(),
-			},
-			label: `Error % of ${liveBlogsLambda.functionName}`,
-			period: Duration.minutes(10),
-		});
-		const liveBlogsLambdaAlarm = new Alarm(this, 'SenderErrorAlarm', {
-			alarmDescription: `High error percentage from ${liveBlogsLambda.functionName} lambda in ${this.stage}`,
-			comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-			evaluationPeriods: 1,
-			threshold: 0,
-			metric: percentageErrorsContentLiveBlogs,
-			treatMissingData: TreatMissingData.NOT_BREACHING,
-		});
-
+		const liveBlogsLambdaAlarm = this.percentageAlarm('SenderErrorAlarm',liveBlogsLambda, this)
 		liveBlogsLambdaAlarm.addAlarmAction(snsTopicAction);
 		liveBlogsLambdaAlarm.addOkAction(snsTopicAction);
 	}
