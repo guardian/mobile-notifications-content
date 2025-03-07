@@ -411,6 +411,90 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "SenderErrorAlarmContent6AADA06C": {
+      "Properties": {
+        "AlarmActions": [
+          "arn:aws:sns:eu-west-1:201359054765:mobile-server-side",
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "High error percentage from ",
+              {
+                "Ref": "ContentLambda9E34CFB0",
+              },
+              " lambda in TEST",
+            ],
+          ],
+        },
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "100*m1/m2",
+            "Id": "expr_1",
+            "Label": {
+              "Fn::Join": [
+                "",
+                [
+                  "Error % of ",
+                  {
+                    "Ref": "ContentLambda9E34CFB0",
+                  },
+                ],
+              ],
+            },
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "ContentLambda9E34CFB0",
+                    },
+                  },
+                ],
+                "MetricName": "Errors",
+                "Namespace": "AWS/Lambda",
+              },
+              "Period": 600,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "m2",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "ContentLambda9E34CFB0",
+                    },
+                  },
+                ],
+                "MetricName": "Invocations",
+                "Namespace": "AWS/Lambda",
+              },
+              "Period": 600,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "OKActions": [
+          "arn:aws:sns:eu-west-1:201359054765:mobile-server-side",
+        ],
+        "Threshold": 0,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
   },
 }
 `;
