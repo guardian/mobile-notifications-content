@@ -327,91 +327,7 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
-    "SenderErrorAlarm998AF4AD": {
-      "Properties": {
-        "AlarmActions": [
-          "arn:aws:sns:eu-west-1:201359054765:mobile-server-side",
-        ],
-        "AlarmDescription": {
-          "Fn::Join": [
-            "",
-            [
-              "High error percentage from ",
-              {
-                "Ref": "LiveblogsLambda60F8E597",
-              },
-              " lambda in TEST",
-            ],
-          ],
-        },
-        "ComparisonOperator": "GreaterThanThreshold",
-        "EvaluationPeriods": 1,
-        "Metrics": [
-          {
-            "Expression": "100*m1/m2",
-            "Id": "expr_1",
-            "Label": {
-              "Fn::Join": [
-                "",
-                [
-                  "Error % of ",
-                  {
-                    "Ref": "LiveblogsLambda60F8E597",
-                  },
-                ],
-              ],
-            },
-          },
-          {
-            "Id": "m1",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "FunctionName",
-                    "Value": {
-                      "Ref": "LiveblogsLambda60F8E597",
-                    },
-                  },
-                ],
-                "MetricName": "Errors",
-                "Namespace": "AWS/Lambda",
-              },
-              "Period": 600,
-              "Stat": "Sum",
-            },
-            "ReturnData": false,
-          },
-          {
-            "Id": "m2",
-            "MetricStat": {
-              "Metric": {
-                "Dimensions": [
-                  {
-                    "Name": "FunctionName",
-                    "Value": {
-                      "Ref": "LiveblogsLambda60F8E597",
-                    },
-                  },
-                ],
-                "MetricName": "Invocations",
-                "Namespace": "AWS/Lambda",
-              },
-              "Period": 600,
-              "Stat": "Sum",
-            },
-            "ReturnData": false,
-          },
-        ],
-        "OKActions": [
-          "arn:aws:sns:eu-west-1:201359054765:mobile-server-side",
-        ],
-        "Threshold": 0,
-        "TreatMissingData": "notBreaching",
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "SenderErrorAlarmContent6AADA06C": {
+    "mobilenotificationscontentalarmF1F652F0": {
       "Properties": {
         "AlarmActions": [
           "arn:aws:sns:eu-west-1:201359054765:mobile-server-side",
@@ -475,6 +391,90 @@ exports[`The MobileNotificationsContent stack matches the snapshot 1`] = `
                     "Name": "FunctionName",
                     "Value": {
                       "Ref": "ContentLambda9E34CFB0",
+                    },
+                  },
+                ],
+                "MetricName": "Invocations",
+                "Namespace": "AWS/Lambda",
+              },
+              "Period": 600,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "OKActions": [
+          "arn:aws:sns:eu-west-1:201359054765:mobile-server-side",
+        ],
+        "Threshold": 0,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "mobilenotificationscontentliveblogsalarmB805D9CC": {
+      "Properties": {
+        "AlarmActions": [
+          "arn:aws:sns:eu-west-1:201359054765:mobile-server-side",
+        ],
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "High error percentage from ",
+              {
+                "Ref": "LiveblogsLambda60F8E597",
+              },
+              " lambda in TEST",
+            ],
+          ],
+        },
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "100*m1/m2",
+            "Id": "expr_1",
+            "Label": {
+              "Fn::Join": [
+                "",
+                [
+                  "Error % of ",
+                  {
+                    "Ref": "LiveblogsLambda60F8E597",
+                  },
+                ],
+              ],
+            },
+          },
+          {
+            "Id": "m1",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "LiveblogsLambda60F8E597",
+                    },
+                  },
+                ],
+                "MetricName": "Errors",
+                "Namespace": "AWS/Lambda",
+              },
+              "Period": 600,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "m2",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "FunctionName",
+                    "Value": {
+                      "Ref": "LiveblogsLambda60F8E597",
                     },
                   },
                 ],

@@ -173,7 +173,7 @@ export class MobileNotificationsContent extends GuStack {
 			enabled: true,
 			bisectBatchOnError: true,
 		});
-		const contentLambdaAlarm = this.percentageAlarm('SenderErrorAlarm-Content', contentLambda, this)
+		const contentLambdaAlarm = this.percentageAlarm(`${appName}-alarm`, contentLambda, this)
 
 		contentLambdaAlarm.addAlarmAction(snsTopicAction);
 		contentLambdaAlarm.addOkAction(snsTopicAction);
@@ -208,7 +208,7 @@ export class MobileNotificationsContent extends GuStack {
 			bisectBatchOnError: true,
 		});
 
-		const liveBlogsLambdaAlarm = this.percentageAlarm('SenderErrorAlarm',liveBlogsLambda, this)
+		const liveBlogsLambdaAlarm = this.percentageAlarm(`${appName}-liveblogs-alarm`,liveBlogsLambda, this)
 		liveBlogsLambdaAlarm.addAlarmAction(snsTopicAction);
 		liveBlogsLambdaAlarm.addOkAction(snsTopicAction);
 	}
