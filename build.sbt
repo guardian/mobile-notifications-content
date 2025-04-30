@@ -49,7 +49,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor" % "2.5.24",
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
   "com.gu" %% "simple-configuration-ssm" % "5.1.0",
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.18.3",
+  "com.fasterxml.jackson.core" % "jackson-databind" % "2.19.0",
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
   "com.google.protobuf" % "protobuf-java" % "4.30.2",
   "org.json" % "json" % "20250107",
