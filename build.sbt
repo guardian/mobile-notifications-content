@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "software.amazon.awssdk" % "ec2" % awsSdk2Version,
   "software.amazon.awssdk" % "ssm" % awsSdk2Version,
   "software.amazon.awssdk" % "sts" % awsSdk2Version,
-  "software.amazon.awssdk" % "dynamodb" % awsSdkV2Version,
+  "software.amazon.awssdk" % "dynamodb" % awsSdk2Version,
   "software.amazon.awssdk" % "cloudwatch" % awsSdk2Version,
   "software.amazon.kinesis" % "amazon-kinesis-client" % "3.0.2",
   "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",

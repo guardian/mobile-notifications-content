@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications
 
-import com.amazonaws.regions.Regions
+import software.amazon.awssdk.regions.Region
 import com.gu.conf.{ ConfigurationLoader, SSMConfigurationLocation }
 import com.typesafe.config.Config
 import com.gu.{ AppIdentity, AwsIdentity }
@@ -46,7 +46,7 @@ object Configuration extends Logging {
       identity <- AppIdentity.whoAmI(defaultAppName = appName, credentials = credentialsProvider)
     } yield ConfigurationLoader.load(identity = identity, credentials = credentialsProvider) {
       case AwsIdentity(app, stack, stage, _) =>
-        SSMConfigurationLocation(path = s"/$app/$stage/$stack", Regions.EU_WEST_1.getName)
+        SSMConfigurationLocation(path = s"/$app/$stage/$stack", Region.EU_WEST_1.id())
     }) match {
       case Success(c) => c
       case Failure(exception) => sys.error(s"Could not load config ${exception.getMessage}")

@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications.lib
 
-import com.amazonaws.services.cloudwatch.model.StandardUnit
+import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.mobile.content.notifications.metrics.{ MetricDataPoint, Metrics }
 import com.gu.mobile.content.notifications.model.KeyEvent
@@ -35,10 +35,10 @@ class MessageSender(config: Configuration, apiClient: NotificationsApiClient, pa
       apiClient.send(notification) match {
         case Right(id) =>
           logger.info(s"Successfully sent notification $id for : ${notification.title}")
-          metrics.send(MetricDataPoint(name = "SendNotificationLatency", value = duration.toDouble, unit = StandardUnit.Milliseconds))
+          metrics.send(MetricDataPoint(name = "SendNotificationLatency", value = duration.toDouble, unit = StandardUnit.MILLISECONDS))
         case Left(error) =>
           logger.error(s"Error sending notification: $notification. error: $error")
-          metrics.send(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration.toDouble, unit = StandardUnit.Milliseconds))
+          metrics.send(MetricDataPoint(name = "SendNotificationErrorLatency", value = duration.toDouble, unit = StandardUnit.MILLISECONDS))
       }
     }
   }
