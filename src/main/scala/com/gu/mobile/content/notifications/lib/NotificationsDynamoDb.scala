@@ -13,8 +13,6 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleRequest
 
 class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
 
-  // val contentTable = dynamoDB.getTable(config.contentDynamoTableName)
-  // val liveBlogTable = dynamoDB.getTable(config.liveBlogContentDynamoTableName)
   val client = DynamoDbClient.create()
 
   def saveContentItem(contentId: String): Unit = {
@@ -77,18 +75,24 @@ object NotificationsDynamoDb extends Logging {
     //Table is in the mobile aws account wheras the lambda runs in the capi account
     logger.info(s"Configuring database access with cross acccount role: ${config.crossAccountDynamoRole} on table: ${config.contentDynamoTableName}")
 
+    val baseProvider = ProfileCredentialsProvider.create()
+
+    val stsClient = StsClient.builder()
+      .region(Region.EU_WEST_1)
+      .credentialsProvider(baseProvider)
+      .build()
+
     val dynamoCredentialsProvider = AwsCredentialsProviderChain.of(
-      ProfileCredentialsProvider.create(),
-      StsAssumeRoleCredentialsProvider.builder
-        .stsClient(StsClient.builder
-          .region(Region.EU_WEST_1)
-          .build())
+      baseProvider,
+      StsAssumeRoleCredentialsProvider.builder()
+        .stsClient(stsClient)
         .refreshRequest(
           AssumeRoleRequest.builder
             .roleArn(config.crossAccountDynamoRole)
             .roleSessionName("mobile-db")
             .build())
         .build())
+
     val client = DynamoDbClient.builder()
       .region(Region.EU_WEST_1)
       .credentialsProvider(dynamoCredentialsProvider)
