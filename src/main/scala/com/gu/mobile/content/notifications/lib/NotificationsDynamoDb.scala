@@ -35,7 +35,8 @@ class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
       .key(item.asJava)
       .build()
 
-    Option(dynamoDB.getItem(request)).isDefined
+    val response = dynamoDB.getItem(request)
+    Option(response.item()).exists(!_.isEmpty)
   }
 
   def haveSeenBlogEvent(contentId: String, blockId: String): Boolean = {
@@ -48,18 +49,19 @@ class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
       .key(item.asJava)
       .build()
 
-    Option(request).isDefined
+    val response = dynamoDB.getItem(request)
+    Option(response.item()).exists(!_.isEmpty)
   }
 
   def saveLiveBlogEvent(contentId: String, blockId: String) = {
-    val expiry = DateTime.now().plusDays(1).getMillis / 1000 //Expiry should be an epoch value: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-how-to.html
+    val expiry = DateTime.now().plusDays(1).getMillis / 1000
     val item = Map(
       "contentId" -> AttributeValue.builder().s(contentId).build(),
       "blockId" -> AttributeValue.builder().s(blockId).build(),
       "expiry" -> AttributeValue.builder().n(expiry.toString).build())
 
     val request = PutItemRequest.builder()
-      .tableName(config.contentDynamoTableName)
+      .tableName(config.liveBlogContentDynamoTableName)
       .item(item.asJava)
       .build()
 
