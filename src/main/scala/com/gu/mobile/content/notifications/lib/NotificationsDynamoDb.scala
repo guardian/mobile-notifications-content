@@ -1,15 +1,15 @@
 package com.gu.mobile.content.notifications.lib
 
-import software.amazon.awssdk.auth.credentials.{ EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider }
+import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProviderChain, EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider }
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
+import software.amazon.awssdk.services.sts.StsClient
+import software.amazon.awssdk.services.sts.model.AssumeRoleRequest
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.{ AttributeValue, GetItemRequest, PutItemRequest }
 import software.amazon.awssdk.regions.Region
 import com.gu.mobile.content.notifications.{ Configuration, Logging }
 import org.joda.time.DateTime
 import scala.jdk.CollectionConverters._
-import software.amazon.awssdk.services.sts.StsClient
-import software.amazon.awssdk.services.sts.model.AssumeRoleRequest
 
 class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
 
@@ -75,35 +75,23 @@ object NotificationsDynamoDb extends Logging {
     //Table is in the mobile aws account wheras the lambda runs in the capi account
     logger.info(s"Configuring database access with cross acccount role: ${config.crossAccountDynamoRole} on table: ${config.contentDynamoTableName}")
 
-    val baseProvider = ProfileCredentialsProvider.create()
+  val req: AssumeRoleRequest = AssumeRoleRequest.builder
+    .roleSessionName("mobile-db")
+    .roleArn(config.crossAccountDynamoRole)
+    .build()
 
-    val stsClient = StsClient.builder()
-      .region(Region.EU_WEST_1)
-      .credentialsProvider(baseProvider)
-      .build()
+  val credentialsProvider = AwsCredentialsProviderChain.of(
+    ProfileCredentialsProvider.builder.profileName("mobile").build,
+    StsAssumeRoleCredentialsProvider.builder
+      .stsClient(StsClient.create)
+      .refreshRequest(req)
+      .build())
 
-    val identity = stsClient.getCallerIdentity()
-    logger.info(s"Assumed role identity: ${identity.arn()}")
+  val dynamoClient = DynamoDbClient.builder()
+    .region(Region.EU_WEST_1)
+    .credentialsProvider(credentialsProvider)
+    .build()
 
-    val assumeRoleProvider =
-      StsAssumeRoleCredentialsProvider.builder()
-        .refreshRequest(
-          AssumeRoleRequest.builder
-            .roleArn(config.crossAccountDynamoRole)
-            .roleSessionName("mobile-db")
-            .build())
-        .stsClient(stsClient)
-        .build()
-
-    val creds = assumeRoleProvider.resolveCredentials()
-    logger.info(s"Using AWS access key: ${creds.accessKeyId()}")
-
-    val client = DynamoDbClient.builder()
-      .region(Region.EU_WEST_1)
-      .credentialsProvider(assumeRoleProvider)
-      .build()
-
-    new NotificationsDynamoDb(client, config)
+    new NotificationsDynamoDb(dynamoClient, config)
   }
-
 }

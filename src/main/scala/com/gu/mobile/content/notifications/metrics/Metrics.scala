@@ -2,7 +2,7 @@ package com.gu.mobile.content.notifications.metrics
 
 import akka.actor.{ ActorSystem, Props }
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
-import software.amazon.awssdk.services.cloudwatch.model.StandardUnit;
+import software.amazon.awssdk.services.cloudwatch.model.StandardUnit
 import com.gu.mobile.content.notifications.{ Configuration, Logging }
 
 import scala.concurrent.ExecutionContext
