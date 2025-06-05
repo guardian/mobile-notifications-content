@@ -13,8 +13,6 @@ import scala.jdk.CollectionConverters._
 
 class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
 
-  val client = DynamoDbClient.create()
-
   def saveContentItem(contentId: String): Unit = {
     val expiry = DateTime.now().plusDays(1).getMillis / 1000 //Expiry should be an epoch value: http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/time-to-live-ttl-how-to.html
     val item = Map(
@@ -26,7 +24,7 @@ class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
       .item(item.asJava)
       .build()
 
-    client.putItem(request)
+    dynamoDB.putItem(request)
   }
 
   def haveSeenContentItem(contentId: String): Boolean = {
@@ -37,7 +35,7 @@ class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
       .key(item.asJava)
       .build()
 
-    Option(client.getItem(request)).isDefined
+    Option(dynamoDB.getItem(request)).isDefined
   }
 
   def haveSeenBlogEvent(contentId: String, blockId: String): Boolean = {
@@ -65,7 +63,7 @@ class NotificationsDynamoDb(dynamoDB: DynamoDbClient, config: Configuration) {
       .item(item.asJava)
       .build()
 
-    client.putItem(request)
+    dynamoDB.putItem(request)
   }
 }
 
