@@ -1,6 +1,6 @@
 package com.gu.mobile.content.notifications.lib
 
-import software.amazon.awssdk.auth.credentials.{ AwsCredentialsProviderChain, EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider }
+import software.amazon.awssdk.auth.credentials.{ EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider }
 import software.amazon.awssdk.services.sts.auth.StsAssumeRoleCredentialsProvider
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.{ AttributeValue, GetItemRequest, PutItemRequest }
@@ -82,20 +82,25 @@ object NotificationsDynamoDb extends Logging {
       .credentialsProvider(baseProvider)
       .build()
 
-    val dynamoCredentialsProvider = AwsCredentialsProviderChain.of(
-      baseProvider,
+    val identity = stsClient.getCallerIdentity()
+    logger.info(s"Assumed role identity: ${identity.arn()}")
+
+    val assumeRoleProvider =
       StsAssumeRoleCredentialsProvider.builder()
-        .stsClient(stsClient)
         .refreshRequest(
           AssumeRoleRequest.builder
             .roleArn(config.crossAccountDynamoRole)
             .roleSessionName("mobile-db")
             .build())
-        .build())
+        .stsClient(stsClient)
+        .build()
+
+    val creds = assumeRoleProvider.resolveCredentials()
+    logger.info(s"Using AWS access key: ${creds.accessKeyId()}")
 
     val client = DynamoDbClient.builder()
       .region(Region.EU_WEST_1)
-      .credentialsProvider(dynamoCredentialsProvider)
+      .credentialsProvider(assumeRoleProvider)
       .build()
 
     new NotificationsDynamoDb(client, config)
