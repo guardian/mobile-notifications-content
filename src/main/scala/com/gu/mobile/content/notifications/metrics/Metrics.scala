@@ -1,8 +1,8 @@
 package com.gu.mobile.content.notifications.metrics
 
 import akka.actor.{ ActorSystem, Props }
-import com.amazonaws.services.cloudwatch.AmazonCloudWatchClientBuilder
-import com.amazonaws.services.cloudwatch.model.StandardUnit
+import software.amazon.awssdk.services.cloudwatch.CloudWatchClient
+import software.amazon.awssdk.services.cloudwatch.model.StandardUnit
 import com.gu.mobile.content.notifications.{ Configuration, Logging }
 
 import scala.concurrent.ExecutionContext
@@ -20,7 +20,7 @@ class CloudWatchMetrics(config: Configuration) extends Metrics with Logging {
   implicit val executionContext: ExecutionContext = actorSystem.dispatcher
   logger.debug("Actor system created")
 
-  private val cloudWatchClient = AmazonCloudWatchClientBuilder.defaultClient()
+  private val cloudWatchClient = CloudWatchClient.builder().build()
 
   val props = Props(new MetricsActor(cloudWatchClient, config))
   private val metricsActor = actorSystem.actorOf(props)
@@ -45,7 +45,7 @@ case class MetricDataPoint(
   namespage: String = "mobile-notifications-lambda",
   name: String,
   value: Double,
-  unit: StandardUnit = StandardUnit.None) {
+  unit: StandardUnit = StandardUnit.NONE) {
   override def toString = s"Namespace: $namespage Name: $name value: $value"
 }
 

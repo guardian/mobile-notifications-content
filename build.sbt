@@ -25,21 +25,19 @@ assembly / assemblyMergeStrategy := {
   case _ => MergeStrategy.first
 }
 
-val awsSdkVersion = "1.12.783"
-val awsSdk2Version = "2.31.42"
+val awsSdkVersion = "2.31.61"
 
 libraryDependencies ++= Seq(
-  "software.amazon.awssdk" % "sts" % awsSdk2Version,
-  "software.amazon.awssdk" % "autoscaling" % awsSdk2Version,
-  "software.amazon.awssdk" % "ec2" % awsSdk2Version,
-  "software.amazon.awssdk" % "ssm" % awsSdk2Version,
+  "software.amazon.awssdk" % "sts" % awsSdkVersion,
+  "software.amazon.awssdk" % "autoscaling" % awsSdkVersion,
+  "software.amazon.awssdk" % "ec2" % awsSdkVersion,
+  "software.amazon.awssdk" % "ssm" % awsSdkVersion,
   "software.amazon.kinesis" % "amazon-kinesis-client" % "3.0.3",
-  "com.amazonaws" % "aws-java-sdk-sts" % awsSdkVersion,
-  "com.amazonaws" % "aws-lambda-java-core" % "1.2.3",
+  "software.amazon.awssdk" % "cloudwatch" % awsSdkVersion,
+  "software.amazon.awssdk" % "dynamodb" % awsSdkVersion,
+  "com.amazonaws" % "aws-lambda-java-core" % "1.3.0",
   "com.amazonaws" % "aws-lambda-java-events" % "3.15.0",
-  "com.amazonaws" % "aws-java-sdk-cloudwatch" % awsSdkVersion,
-  "com.amazonaws" % "aws-java-sdk-dynamodb" % awsSdkVersion,
-  "com.gu" %% "content-api-client-default" % "34.1.0",
+  "com.gu" %% "content-api-client-default" % "34.1.1",
   "com.gu" %% "mobile-notifications-api-models" % "3.0.0",
   "com.gu" %% "thrift-serializer" % "5.0.7",
   "org.joda" % "joda-convert" % "3.0.1",
