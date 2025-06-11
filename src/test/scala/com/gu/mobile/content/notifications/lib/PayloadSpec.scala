@@ -1,8 +1,8 @@
 package com.gu.mobile.content.notifications.lib
 
 import com.gu.mobile.notifications.client.models.Topic.BreakingNewsUk
-import com.gu.mobile.notifications.client.models.TopicTypes.{Breaking, TagSeries}
-import com.gu.mobile.notifications.client.models.{BreakingNewsPayload, ContentAlertPayload, DefaultGoalType, ExternalLink, GITContent, GITSection, GITTag, GoalType, GuardianLinkDetails, Importance, NotificationPayload, OwnGoalType, PenaltyGoalType, Topic}
+import com.gu.mobile.notifications.client.models.TopicTypes.{ Breaking, TagSeries }
+import com.gu.mobile.notifications.client.models.{ BreakingNewsPayload, ContentAlertPayload, DefaultGoalType, ExternalLink, GITContent, GITSection, GITTag, GoalType, GuardianLinkDetails, Importance, NotificationPayload, OwnGoalType, PenaltyGoalType, Topic }
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
 
@@ -33,8 +33,7 @@ class PayloadsSpec extends Specification {
         importance = Importance.Major,
         topic = List(BreakingNewsUk),
         debug = true,
-        dryRun = Some(false)
-      )
+        dryRun = Some(false))
       val expectedJson =
         """
           |{
@@ -60,7 +59,6 @@ class PayloadsSpec extends Specification {
 
       verifySerialization(payload, expectedJson)
     }
-
 
     "define serializable Content Alert payload" in {
       val payload = ContentAlertPayload(
