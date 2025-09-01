@@ -48,7 +48,7 @@ libraryDependencies ++= Seq(
   "com.squareup.okhttp3" % "okhttp" % "3.14.9",
   "com.gu" %% "simple-configuration-ssm" % "5.1.2",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.19.2",
-  "com.squareup.okhttp3" % "okhttp" % "4.12.0",
+  "com.squareup.okhttp3" % "okhttp" % "5.1.0",
   "com.google.protobuf" % "protobuf-java" % "4.32.0",
   "org.json" % "json" % "20250517",
   "org.apache.commons" % "commons-compress" % "1.27.1",
