@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws" % "aws-lambda-java-core" % "1.3.0",
   "com.amazonaws" % "aws-lambda-java-events" % "3.16.0",
   "com.gu" %% "content-api-client-default" % "41.2.0",
-  "com.gu" %% "mobile-notifications-api-models" % "3.0.0",
+  "com.gu" %% "mobile-notifications-api-models" % "5.0.0",
   "com.gu" %% "thrift-serializer" % "5.0.7",
   "org.joda" % "joda-convert" % "3.0.1",
   "org.jsoup" % "jsoup" % "1.21.2",
