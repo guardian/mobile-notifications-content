@@ -50,7 +50,7 @@ libraryDependencies ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.21.1",
   "com.squareup.okhttp3" % "okhttp" % "4.12.0",
   "com.google.protobuf" % "protobuf-java" % "4.31.1",
-  "org.json" % "json" % "20250517",
+  "org.json" % "json" % "20260719",
   "org.apache.commons" % "commons-compress" % "1.27.1",
   "org.apache.avro" % "avro" % "1.12.0",
   "org.scalatest" %% "scalatest" % "3.2.19" % Test,
