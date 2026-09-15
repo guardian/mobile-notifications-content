@@ -4,7 +4,6 @@ Parameters:
   CapiAccountId:
     Description: Account ID of the gu capi account which
     Type: String
-    Default: 308506855511
 Resources:
   ContentLambdaContainerRepository:
     Type: AWS::ECR::Repository
@@ -36,7 +35,7 @@ Resources:
               StringEquals:
                 "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
               StringLike:
-                "token.actions.githubusercontent.com:sub": "repo:guardian/mobile-notifications-content:*"
+                "token.actions.githubusercontent.com:sub": "repo:guardian@164318/mobile-notifications-content@93654960:*"
       Path: /
       Policies:
         - PolicyName: ecr-token
