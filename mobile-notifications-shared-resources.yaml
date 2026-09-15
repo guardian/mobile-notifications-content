@@ -4,7 +4,6 @@ Parameters:
   CapiAccountId:
     Description: Account ID of the gu capi account which
     Type: String
-    Default: 308506855511
 Resources:
   ContentLambdaContainerRepository:
     Type: AWS::ECR::Repository
